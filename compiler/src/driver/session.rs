@@ -1,8 +1,9 @@
 //! Compiler Session
 
-use super::{CompilerOptions, CompileResult, CompileError, CompileTiming};
-use crate::philosophy::samkhya::{SamkhyaPipeline, Tattva};
+use super::{CompileError, CompileResult, CompileTiming, CompilerOptions};
+use crate::codegen::asm::AsmEmitter;
 use crate::philosophy::kala::Kala;
+use crate::philosophy::samkhya::{SamkhyaPipeline, Tattva};
 use std::time::{Duration, Instant};
 
 /// Compiler session state
@@ -90,14 +91,24 @@ impl CompilerSession {
         Ok(tokens)
     }
 
-    fn parse(&mut self, tokens: &[crate::lexer::Token]) -> Result<crate::parser::ast::Ast, CompileError> {
+    fn parse(
+        &mut self,
+        tokens: &[crate::lexer::Token],
+    ) -> Result<crate::parser::ast::Ast, CompileError> {
         let start = Instant::now();
 
-        // TODO: Implement actual parsing
-        let ast = crate::parser::ast::Ast {
-            items: Vec::new(),
-            file_path: String::new(),
-        };
+        let mut parser = crate::parser::Parser::new(tokens.to_vec());
+        let ast = parser.parse().map_err(|errors| {
+            let mut msg = String::from("Parse errors:");
+            for e in errors {
+                msg.push_str(&format!("\n  - {} at {:?}", e.message, e.span));
+            }
+            CompileError {
+                message: msg,
+                location: None,
+                notes: Vec::new(),
+            }
+        })?;
 
         self.timing.parsing_us = start.elapsed().as_micros() as u64;
         Ok(ast)
@@ -113,7 +124,10 @@ impl CompilerSession {
         Ok(())
     }
 
-    fn build_mir(&mut self, ast: &crate::parser::ast::Ast) -> Result<crate::mir::types::MirModule, CompileError> {
+    fn build_mir(
+        &mut self,
+        ast: &crate::parser::ast::Ast,
+    ) -> Result<crate::mir::types::MirModule, CompileError> {
         let start = Instant::now();
 
         let mut builder = crate::mir::MirBuilder::new();
@@ -123,7 +137,10 @@ impl CompilerSession {
         Ok(mir)
     }
 
-    fn optimize(&mut self, mut mir: crate::mir::types::MirModule) -> Result<crate::mir::types::MirModule, CompileError> {
+    fn optimize(
+        &mut self,
+        mut mir: crate::mir::types::MirModule,
+    ) -> Result<crate::mir::types::MirModule, CompileError> {
         let start = Instant::now();
 
         let opt_level = match self.options.opt_level {
@@ -146,11 +163,24 @@ impl CompilerSession {
         Ok(mir)
     }
 
-    fn generate_code(&mut self, mir: &crate::mir::types::MirModule) -> Result<Vec<u8>, CompileError> {
+    fn generate_code(
+        &mut self,
+        mir: &crate::mir::types::MirModule,
+    ) -> Result<Vec<u8>, CompileError> {
         let start = Instant::now();
 
-        // TODO: Implement actual code generation based on target
-        let output = Vec::new();
+        // Use x86-64 emitter to generate assembly
+        let mut emitter = crate::codegen::asm::x86_64::X86_64Emitter::new();
+
+        for func in &mir.functions {
+            emitter.emit_prologue(func);
+            emitter.emit_body(func);
+            emitter.emit_epilogue(func);
+        }
+
+        // Get the generated assembly
+        let asm = emitter.get_asm();
+        let output = asm.into_bytes();
 
         self.timing.codegen_us = start.elapsed().as_micros() as u64;
         Ok(output)

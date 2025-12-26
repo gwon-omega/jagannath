@@ -5,13 +5,13 @@
 
 mod dharmaraja;
 mod judgment;
-mod yamadutas;
 mod sentence;
+mod yamadutas;
 
 pub use dharmaraja::YamaDharmaraja;
 pub use judgment::{Judgment, JudgmentResult};
-pub use yamadutas::{Yamaduta, MemoryYamaduta, SecurityYamaduta, ConcurrencyYamaduta};
 pub use sentence::Sentence;
+pub use yamadutas::{ConcurrencyYamaduta, MemoryYamaduta, SecurityYamaduta, Yamaduta};
 
 use crate::errors::Span;
 
@@ -68,6 +68,12 @@ pub struct Violation {
     pub location: Span,
     /// Evidence/description
     pub evidence: String,
+    /// The sin committed (Garuda Purana description)
+    pub sin: String,
+    /// The punishment (compiler action)
+    pub punishment: String,
+    /// The penance (how to fix)
+    pub penance: String,
 }
 
 impl Violation {
@@ -77,6 +83,28 @@ impl Violation {
             kind,
             location,
             evidence: evidence.into(),
+            sin: String::new(),
+            punishment: String::new(),
+            penance: String::new(),
+        }
+    }
+
+    /// Create a full violation with Garuda Purana fields
+    pub fn full(
+        kind: ViolationKind,
+        location: Span,
+        evidence: impl Into<String>,
+        sin: impl Into<String>,
+        punishment: impl Into<String>,
+        penance: impl Into<String>,
+    ) -> Self {
+        Self {
+            kind,
+            location,
+            evidence: evidence.into(),
+            sin: sin.into(),
+            punishment: punishment.into(),
+            penance: penance.into(),
         }
     }
 }

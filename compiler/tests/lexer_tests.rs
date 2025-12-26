@@ -6,7 +6,7 @@
 //! - Affix parsing
 //! - Unicode handling
 
-use jagannath_compiler::lexer::{Lexer, Token, TokenKind};
+use jagannath_compiler::lexer::{Lexer, TokenKind};
 
 /// Test basic keyword tokenization
 #[test]
@@ -15,7 +15,9 @@ fn test_keywords() {
     let lexer = Lexer::new(source);
     let tokens: Vec<_> = lexer.collect();
 
-    assert!(tokens.iter().any(|t| matches!(t.kind, TokenKind::KwKaryakrama)));
+    assert!(tokens
+        .iter()
+        .any(|t| matches!(t.kind, TokenKind::KwKaryakrama)));
     assert!(tokens.iter().any(|t| matches!(t.kind, TokenKind::KwPhera)));
     assert!(tokens.iter().any(|t| matches!(t.kind, TokenKind::KwYad)));
     assert!(tokens.iter().any(|t| matches!(t.kind, TokenKind::KwCala)));
@@ -57,9 +59,15 @@ fn test_karaka_markers() {
     let lexer = Lexer::new(source);
     let tokens: Vec<_> = lexer.collect();
 
-    assert!(tokens.iter().any(|t| matches!(t.kind, TokenKind::KarakaKartr)));
-    assert!(tokens.iter().any(|t| matches!(t.kind, TokenKind::KarakaKarman)));
-    assert!(tokens.iter().any(|t| matches!(t.kind, TokenKind::KarakaKarana)));
+    assert!(tokens
+        .iter()
+        .any(|t| matches!(t.kind, TokenKind::KarakaKartr)));
+    assert!(tokens
+        .iter()
+        .any(|t| matches!(t.kind, TokenKind::KarakaKarman)));
+    assert!(tokens
+        .iter()
+        .any(|t| matches!(t.kind, TokenKind::KarakaKarana)));
 }
 
 /// Test numeric literals
@@ -70,8 +78,16 @@ fn test_numeric_literals() {
     let tokens: Vec<_> = lexer.collect();
 
     // Should recognize all numeric formats
-    assert!(tokens.iter().filter(|t| matches!(t.kind, TokenKind::IntLiteral(_))).count() >= 3);
-    assert!(tokens.iter().any(|t| matches!(t.kind, TokenKind::FloatLiteral(_))));
+    assert!(
+        tokens
+            .iter()
+            .filter(|t| matches!(t.kind, TokenKind::IntLiteral(_)))
+            .count()
+            >= 3
+    );
+    assert!(tokens
+        .iter()
+        .any(|t| matches!(t.kind, TokenKind::FloatLiteral(_))));
 }
 
 /// Test string literals
@@ -81,7 +97,13 @@ fn test_string_literals() {
     let lexer = Lexer::new(source);
     let tokens: Vec<_> = lexer.collect();
 
-    assert!(tokens.iter().filter(|t| matches!(t.kind, TokenKind::StringLiteral(_))).count() >= 3);
+    assert!(
+        tokens
+            .iter()
+            .filter(|t| matches!(t.kind, TokenKind::StringLiteral(_)))
+            .count()
+            >= 3
+    );
 }
 
 /// Test Sanskrit Unicode handling
@@ -104,7 +126,13 @@ fn test_compound_words() {
     let lexer = Lexer::new(source);
     let tokens: Vec<_> = lexer.collect();
 
-    assert_eq!(tokens.iter().filter(|t| matches!(t.kind, TokenKind::Ident(_))).count(), 3);
+    assert_eq!(
+        tokens
+            .iter()
+            .filter(|t| matches!(t.kind, TokenKind::Identifier(_)))
+            .count(),
+        3
+    );
 }
 
 /// Test sandhi at word boundaries
@@ -159,7 +187,9 @@ code_here
     let tokens: Vec<_> = lexer.collect();
 
     // Comments should be captured or skipped appropriately
-    assert!(tokens.iter().any(|t| matches!(t.kind, TokenKind::Ident(_))));
+    assert!(tokens
+        .iter()
+        .any(|t| matches!(t.kind, TokenKind::Identifier(_))));
 }
 
 /// Test error recovery
@@ -171,7 +201,13 @@ fn test_error_recovery() {
     let tokens: Vec<_> = lexer.collect();
 
     // Should have both valid tokens and error tokens
-    assert!(tokens.iter().filter(|t| matches!(t.kind, TokenKind::Ident(_))).count() >= 2);
+    assert!(
+        tokens
+            .iter()
+            .filter(|t| matches!(t.kind, TokenKind::Identifier(_)))
+            .count()
+            >= 2
+    );
 }
 
 /// Test source locations

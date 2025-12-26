@@ -19,6 +19,10 @@ pub struct Scanner<'src> {
     column: usize,
     /// Start of current token
     token_start: usize,
+    /// Line at token start
+    token_start_line: usize,
+    /// Column at token start
+    token_start_column: usize,
 }
 
 impl<'src> Scanner<'src> {
@@ -30,6 +34,8 @@ impl<'src> Scanner<'src> {
             line: 1,
             column: 1,
             token_start: 0,
+            token_start_line: 1,
+            token_start_column: 1,
         }
     }
 
@@ -68,11 +74,18 @@ impl<'src> Scanner<'src> {
     /// Mark the start of a new token
     pub fn start_token(&mut self) {
         self.token_start = self.position;
+        self.token_start_line = self.line;
+        self.token_start_column = self.column;
     }
 
     /// Get the current token span
     pub fn token_span(&self) -> Span {
-        Span::new(self.token_start, self.position)
+        Span::with_location(
+            self.token_start,
+            self.position,
+            self.token_start_line,
+            self.token_start_column,
+        )
     }
 
     /// Get the current token text

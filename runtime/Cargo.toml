@@ -12,3 +12,4 @@ embedded = []
 gc = []
 
 [dependencies]
+lazy_static = "1.4"

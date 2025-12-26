@@ -12,6 +12,7 @@ members = [
     "tools/jagc",
     "tools/jagdoc",
     "tools/patra",
+    "benchmarks",
 ]
 resolver = "2"
 

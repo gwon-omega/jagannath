@@ -138,13 +138,17 @@ impl VedicMath {
 
         let n = a_digits.len();
         let m = b_digits.len();
-        let total_positions = n + m - 1;
-        let mut result_digits = vec![0i64; total_positions + 1];
+        let total_positions = n + m;
+        let mut result_digits = vec![0i64; total_positions];
 
         // Crosswise multiplication
+        // Position in result array is from the right
         for i in 0..n {
             for j in 0..m {
-                let pos = i + j;
+                // Position from the right: (n-1-i) + (m-1-j)
+                // Position from the left: total_positions - 1 - ((n-1-i) + (m-1-j))
+                //                       = i + j + 1
+                let pos = i + j + 1;
                 result_digits[pos] += a_digits[i] * b_digits[j];
             }
         }
@@ -157,7 +161,7 @@ impl VedicMath {
             result_digits[i] %= 10;
         }
 
-        // Convert to number
+        // Convert to number, skip leading zeros
         let mut result = 0i64;
         for &d in &result_digits {
             result = result * 10 + d;

@@ -209,9 +209,7 @@ impl Affix {
             "tamas" => Some(Affix::Tamas),
 
             // Lifetime region
-            s if s.starts_with('^') => {
-                s[1..].parse::<u8>().ok().map(Affix::Region)
-            }
+            s if s.starts_with('^') => s[1..].parse::<u8>().ok().map(Affix::Region),
 
             _ => None,
         }
@@ -248,7 +246,9 @@ pub struct AffixSequence {
 
 impl AffixSequence {
     pub fn new() -> Self {
-        Self { affixes: Vec::new() }
+        Self {
+            affixes: Vec::new(),
+        }
     }
 
     /// Add an affix to the sequence
@@ -273,36 +273,75 @@ impl AffixSequence {
 
     /// Get mutability affix
     pub fn mutability(&self) -> Option<Affix> {
-        self.affixes.iter().find(|a| matches!(a, Affix::A | Affix::Aa)).copied()
+        self.affixes
+            .iter()
+            .find(|a| matches!(a, Affix::A | Affix::Aa))
+            .copied()
     }
 
     /// Get storage class affix
     pub fn storage_class(&self) -> Option<Affix> {
-        self.affixes.iter().find(|a| matches!(a,
-            Affix::K | Affix::G | Affix::L | Affix::H | Affix::B
-        )).copied()
+        self.affixes
+            .iter()
+            .find(|a| matches!(a, Affix::K | Affix::G | Affix::L | Affix::H | Affix::B))
+            .copied()
     }
 
     /// Get type width affix
     pub fn type_width(&self) -> Option<Affix> {
-        self.affixes.iter().find(|a| matches!(a,
-            Affix::T8 | Affix::T16 | Affix::T32 | Affix::T64 |
-            Affix::F32 | Affix::F64 | Affix::T1
-        )).copied()
+        self.affixes
+            .iter()
+            .find(|a| {
+                matches!(
+                    a,
+                    Affix::T8
+                        | Affix::T16
+                        | Affix::T32
+                        | Affix::T64
+                        | Affix::F32
+                        | Affix::F64
+                        | Affix::T1
+                )
+            })
+            .copied()
     }
 
     /// Get lifetime region
     pub fn lifetime_region(&self) -> Option<u8> {
         self.affixes.iter().find_map(|a| {
-            if let Affix::Region(n) = a { Some(*n) } else { None }
+            if let Affix::Region(n) = a {
+                Some(*n)
+            } else {
+                None
+            }
         })
     }
 
     /// Get kāraka role
     pub fn karaka(&self) -> Option<Affix> {
-        self.affixes.iter().find(|a| matches!(a,
-            Affix::Kartr | Affix::Karman | Affix::Karana |
-            Affix::Sampradana | Affix::Apadana | Affix::Adhikarana
-        )).copied()
+        self.affixes
+            .iter()
+            .find(|a| {
+                matches!(
+                    a,
+                    Affix::Kartr
+                        | Affix::Karman
+                        | Affix::Karana
+                        | Affix::Sampradana
+                        | Affix::Apadana
+                        | Affix::Adhikarana
+                )
+            })
+            .copied()
+    }
+
+    /// Check if variable is thread-safe (has -sūtra affix)
+    pub fn has_thread_safe(&self) -> bool {
+        self.affixes.contains(&Affix::Sutra)
+    }
+
+    /// Check if variable is secret/tainted (has -guhya affix)
+    pub fn has_secret(&self) -> bool {
+        self.affixes.contains(&Affix::Guhya)
     }
 }

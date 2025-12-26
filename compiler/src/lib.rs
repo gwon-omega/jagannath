@@ -12,6 +12,15 @@
 //! - **v6.0**: Divine Cosmic (15 Astras, 33 Devatas, 9 Durgas)
 //! - **v7.0**: Life Alignment (4 Margas, 4 Varnas, 3 Purusharthas)
 
+// =============================================================================
+// Allow directives for work-in-progress code
+// These will be removed as modules are fully implemented
+// =============================================================================
+#![allow(unused_imports)]
+#![allow(unused_variables)]
+#![allow(dead_code)]
+#![allow(unused_mut)]
+
 // ============================================================================
 // Core Infrastructure
 // ============================================================================

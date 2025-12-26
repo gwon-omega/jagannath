@@ -1,0 +1,12 @@
+[package]
+name = "jagannath-bench"
+version = "0.1.0"
+edition = "2021"
+description = "Benchmark suite for Jagannath compiler"
+
+[[bin]]
+name = "jagbench"
+path = "src/main.rs"
+
+[dependencies]
+jagannath-compiler = { path = "../compiler" }

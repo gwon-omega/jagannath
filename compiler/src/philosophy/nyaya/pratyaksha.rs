@@ -228,7 +228,16 @@ mod tests {
         );
 
         let errors = resolver.validate_consistency();
-        assert!(!errors.is_empty());
-        assert!(errors[0].contains("cannot be both linear"));
+        // Should detect conflicting linear (-l) and borrowed (-b) affixes
+        assert!(
+            !errors.is_empty(),
+            "Should detect conflicting affixes, got: {:?}",
+            errors
+        );
+        assert!(
+            errors.iter().any(|e| e.contains("cannot be both linear")),
+            "Should report linear/borrowed conflict, got: {:?}",
+            errors
+        );
     }
 }

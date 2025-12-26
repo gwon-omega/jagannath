@@ -1,0 +1,7 @@
+kāryakrama dviguna(x: saṅkhyā-a-k-t32) -> saṅkhyā-a-k-t32 {
+    phera x * 2
+}
+
+kāryakrama mukhya() -> saṅkhyā-a-k-t32 {
+    phera dviguna(21)
+}

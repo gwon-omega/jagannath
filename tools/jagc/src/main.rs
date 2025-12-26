@@ -8,6 +8,11 @@
 //!   jagc run [OPTIONS] <input.jag>
 //!   jagc check [OPTIONS] <input.jag>
 
+#![allow(unused_imports)]
+#![allow(unused_variables)]
+#![allow(dead_code)]
+#![allow(unused_mut)]
+
 use clap::{Parser, Subcommand};
 use std::path::PathBuf;
 use tracing::{error, info, Level};
@@ -59,6 +64,10 @@ struct Cli {
     /// Emit assembly instead of object code
     #[arg(long, global = true)]
     emit_asm: bool,
+
+    /// Produce executable (requires assembler/linker)
+    #[arg(long, global = true)]
+    emit_exe: bool,
 }
 
 #[derive(Subcommand)]
@@ -182,38 +191,95 @@ fn compile_file(input: &PathBuf, cli: &Cli) -> Result<(), String> {
 
     // Parse target
     let target = match cli.target.as_str() {
-        "x86_64" | "x86-64" | "amd64" => Target::X86_64,
-        "aarch64" | "arm64" => Target::AArch64,
-        "riscv64" | "riscv" => Target::RiscV64,
+        "x86_64" | "x86-64" | "amd64" => jagannath_compiler::codegen::asm::Target::X86_64,
+        "aarch64" | "arm64" => jagannath_compiler::codegen::asm::Target::AArch64,
+        "riscv64" | "riscv" => jagannath_compiler::codegen::asm::Target::RiscV64,
         _ => return Err(format!("Unknown target: {}", cli.target)),
     };
 
     // Parse guṇa mode
     let guna = match cli.guna.as_str() {
-        "sattva" => Guna::Sattva,
-        "rajas" => Guna::Rajas,
-        "tamas" => Guna::Tamas,
+        "sattva" => jagannath_compiler::philosophy::guna::Guna::Sattva,
+        "rajas" => jagannath_compiler::philosophy::guna::Guna::Rajas,
+        "tamas" => jagannath_compiler::philosophy::guna::Guna::Tamas,
         _ => return Err(format!("Unknown guṇa mode: {}", cli.guna)),
     };
 
     // Create compiler options
-    let options = CompilerOptions {
+    let options = jagannath_compiler::driver::CompilerOptions {
         target,
         guna,
         opt_level: cli.opt_level,
-        debug: cli.debug,
-        emit_mir: cli.emit_mir,
-        emit_asm: cli.emit_asm,
+        debug_info: cli.debug,
+        verbose: cli.verbose,
+        time_budget_ms: None,
+        output: cli.output.as_ref().map(|p| p.to_string_lossy().to_string()),
+        inputs: vec![input.to_string_lossy().to_string()],
+        include_paths: Vec::new(),
+        library_paths: Vec::new(),
+        libraries: Vec::new(),
+        deterministic: true,
     };
-
-    // TODO: Call actual compiler
-    // let session = Session::new(options);
-    // session.compile_source(&source)?;
 
     info!(
         "Target: {:?}, Guṇa: {:?}, Opt: O{}",
         target, guna, cli.opt_level
     );
+
+    // Create compiler session and compile
+    let mut session = jagannath_compiler::driver::CompilerSession::new(options);
+    let result = session.compile(&source).map_err(|e| e.message)?;
+
+    // Write output if emit_asm is requested
+    if cli.emit_asm || cli.emit_exe {
+        let asm_path = cli
+            .output
+            .clone()
+            .map(|p| p.with_extension("s"))
+            .unwrap_or_else(|| input.with_extension("s"));
+        let asm_str = String::from_utf8_lossy(&result.output);
+        std::fs::write(&asm_path, &*asm_str)
+            .map_err(|e| format!("Failed to write assembly: {}", e))?;
+        info!("Assembly written to: {}", asm_path.display());
+
+        // If emit_exe, run assembler and linker
+        if cli.emit_exe {
+            let exe_path = cli.output.clone().unwrap_or_else(|| {
+                let mut p = input.clone();
+                #[cfg(target_os = "windows")]
+                {
+                    p.set_extension("exe");
+                }
+                #[cfg(not(target_os = "windows"))]
+                {
+                    p.set_extension("");
+                }
+                p
+            });
+
+            info!("Building executable: {}", exe_path.display());
+
+            // Use BuildPipeline for assembly + linking
+            let pipeline = jagannath_compiler::codegen::BuildPipeline::new();
+            pipeline
+                .build_executable(&asm_path, &exe_path)
+                .map_err(|e| format!("Build failed: {}", e))?;
+
+            info!("Executable written to: {}", exe_path.display());
+        }
+    }
+
+    // Show timing if verbose
+    if cli.verbose {
+        info!("Timing: lexing={}μs, parsing={}μs, typeck={}μs, mir={}μs, opt={}μs, codegen={}μs, total={}μs",
+            result.timing.lexing_us,
+            result.timing.parsing_us,
+            result.timing.type_checking_us,
+            result.timing.mir_building_us,
+            result.timing.optimization_us,
+            result.timing.codegen_us,
+            result.timing.total_us);
+    }
 
     Ok(())
 }

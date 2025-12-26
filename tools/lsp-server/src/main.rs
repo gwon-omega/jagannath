@@ -2,13 +2,18 @@
 //!
 //! Language Server Protocol implementation.
 
+#![allow(unused_imports)]
+#![allow(unused_variables)]
+#![allow(dead_code)]
+#![allow(unused_mut)]
+
 use tower_lsp::jsonrpc::Result;
 use tower_lsp::lsp_types::*;
 use tower_lsp::{Client, LanguageServer, LspService, Server};
 
 mod capabilities;
-mod handlers;
 mod diagnostics;
+mod handlers;
 
 #[derive(Debug)]
 pub struct JagannathLsp {

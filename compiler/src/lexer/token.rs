@@ -11,16 +11,24 @@ pub struct Span {
     pub start: usize,
     /// End byte offset (exclusive)
     pub end: usize,
+    /// Line number (1-indexed)
+    pub line: usize,
+    /// Column number (1-indexed)
+    pub column: usize,
 }
 
 impl Span {
     pub fn new(start: usize, end: usize) -> Self {
-        Self { start, end }
+        Self { start, end, line: 1, column: 1 }
+    }
+
+    pub fn with_location(start: usize, end: usize, line: usize, column: usize) -> Self {
+        Self { start, end, line, column }
     }
 
     /// Create a dummy span (for generated code/tests)
     pub fn dummy() -> Self {
-        Self { start: 0, end: 0 }
+        Self { start: 0, end: 0, line: 1, column: 1 }
     }
 
     pub fn to_range(self) -> Range<usize> {
@@ -119,6 +127,64 @@ pub enum TokenKind {
     Truti,
 
     // ========================================================================
+    // Control Flow Keywords
+    // ========================================================================
+    /// for loop
+    For,
+    /// in (iteration)
+    In,
+    /// match (pattern matching)
+    Match,
+    /// break
+    Break,
+    /// continue
+    Continue,
+
+    // ========================================================================
+    // Modifiers
+    // ========================================================================
+    /// pub - public visibility
+    Pub,
+    /// mut - mutable
+    Mut,
+    /// const - constant
+    Const,
+    /// let - binding
+    Let,
+    /// static - static lifetime
+    Static,
+
+    // ========================================================================
+    // Module System
+    // ========================================================================
+    /// mod - module
+    Mod,
+    /// use - import
+    Use,
+    /// impl - implementation
+    Impl,
+    /// trait - interface
+    Trait,
+    /// self - current instance
+    SelfValue,
+    /// Self - current type
+    SelfType,
+    /// super - parent module
+    Super,
+    /// crate - root module
+    Crate,
+    /// as - type cast/rename
+    As,
+    /// ref - reference
+    Ref,
+    /// unsafe - unsafe block
+    Unsafe,
+    /// extern - external linkage
+    Extern,
+    /// where - bounds clause
+    Where,
+
+    // ========================================================================
     // Affixes (Pratyaya)
     // ========================================================================
     /// Affix marker
@@ -152,19 +218,23 @@ pub enum TokenKind {
     /// >=
     GreaterEquals,
     /// &&
-    And,
+    AmpAmp,
     /// ||
-    Or,
+    PipePipe,
     /// !
-    Not,
+    Bang,
+    /// ~
+    Tilde,
     /// &
     Ampersand,
     /// |
     Pipe,
     /// ^
     Caret,
-    /// →
+    /// ->
     Arrow,
+    /// =>
+    FatArrow,
     /// ?
     Question,
     /// :
@@ -175,10 +245,32 @@ pub enum TokenKind {
     Dot,
     /// ..
     DotDot,
+    /// ...
+    DotDotDot,
+    /// ..=
+    DotDotEquals,
     /// #
     Hash,
     /// ##
     HashHash,
+    /// @
+    At,
+    /// $
+    Dollar,
+    /// <<
+    LeftShift,
+    /// >>
+    RightShift,
+    /// +=
+    PlusEquals,
+    /// -=
+    MinusEquals,
+    /// *=
+    StarEquals,
+    /// /=
+    SlashEquals,
+    /// %=
+    PercentEquals,
 
     // ========================================================================
     // Delimiters
@@ -215,4 +307,61 @@ pub enum TokenKind {
     Comment(String),
     /// Error token
     Error(String),
+
+    // ========================================================================
+    // Legacy Aliases / Kāraka Markers
+    // ========================================================================
+    /// @kartṛ = agent
+    KarakaKartr,
+    /// @karman = patient
+    KarakaKarman,
+    /// @karaṇa = instrument
+    KarakaKarana,
+    /// @sampradāna = recipient
+    KarakaSampradana,
+    /// @apādāna = source
+    KarakaApadana,
+    /// @adhikaraṇa = location
+    KarakaAdhikarana,
+}
+
+// ============================================================================
+// Token Kind Aliases for Backward Compatibility
+// ============================================================================
+#[allow(non_upper_case_globals)]
+impl TokenKind {
+    /// Alias for Karyakrama
+    pub const KwKaryakrama: TokenKind = TokenKind::Karyakrama;
+    /// Alias for Phera
+    pub const KwPhera: TokenKind = TokenKind::Phera;
+    /// Alias for Yad
+    pub const KwYad: TokenKind = TokenKind::Yad;
+    /// Alias for Cala
+    pub const KwCala: TokenKind = TokenKind::Cala;
+    /// Alias for Nirma
+    pub const KwNirma: TokenKind = TokenKind::Nirma;
+    /// Alias for Mukta
+    pub const KwMukta: TokenKind = TokenKind::Mukta;
+
+    /// Alias for LeftParen
+    pub const LParen: TokenKind = TokenKind::LeftParen;
+    /// Alias for RightParen
+    pub const RParen: TokenKind = TokenKind::RightParen;
+    /// Alias for LeftBrace
+    pub const LBrace: TokenKind = TokenKind::LeftBrace;
+    /// Alias for RightBrace
+    pub const RBrace: TokenKind = TokenKind::RightBrace;
+    /// Alias for LeftBracket
+    pub const LBracket: TokenKind = TokenKind::LeftBracket;
+    /// Alias for RightBracket
+    pub const RBracket: TokenKind = TokenKind::RightBracket;
+}
+
+/// Alias Ident to Identifier for tests
+#[allow(non_snake_case)]
+impl TokenKind {
+    /// Create an identifier token
+    pub fn Ident(name: String) -> Self {
+        TokenKind::Identifier(name)
+    }
 }

@@ -8,10 +8,11 @@
 //! Uses kāraka hints for optimal register allocation.
 
 pub mod asm;
-pub mod regalloc;
 pub mod calling_conv;
 pub mod linker;
+pub mod regalloc;
 
 // Re-exports
 pub use asm::{AsmEmitter, Instruction};
+pub use linker::{Assembler, BuildError, BuildPipeline, LinkOutput, Linker};
 pub use regalloc::RegisterAllocator;

@@ -11,7 +11,7 @@
 
 **Role:** Think deeply as senior system-level engineer, architect, and coder with 50+ years of experience about how to best implement the following requirements in code.
 
-Build a systems programming language that is **3.2× faster than C** by encoding:
+Build a systems programming language that is **3.35× faster than C** by encoding:
 - **Sanskrit morphology** in syntax (types/lifetimes in word structure)
 - **Hindu philosophy** in compiler architecture (Nyāya logic, Sāṃkhya stages, Advaita memory)
 - **Yoga principles** in development lifecycle (Ashtanga 8 limbs, Chakra optimization)

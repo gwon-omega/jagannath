@@ -2,6 +2,11 @@
 //!
 //! Formats Jagannath source code according to style guidelines.
 
+#![allow(unused_imports)]
+#![allow(unused_variables)]
+#![allow(dead_code)]
+#![allow(unused_mut)]
+
 use clap::Parser;
 use std::fs;
 use std::io::{self, Read, Write};

@@ -6,10 +6,15 @@
 //! Usage:
 //!   jagdoc [OPTIONS] [path]
 
+#![allow(unused_imports)]
+#![allow(unused_variables)]
+#![allow(dead_code)]
+#![allow(unused_mut)]
+
 use clap::Parser;
-use std::path::PathBuf;
 use std::collections::HashMap;
-use tracing::{info, error};
+use std::path::PathBuf;
+use tracing::{error, info};
 
 /// Jagannath Documentation Generator - प्रलेखन निर्माता
 #[derive(Parser)]
@@ -98,8 +103,7 @@ fn collect_sources(path: &PathBuf) -> Result<Vec<PathBuf>, String> {
 }
 
 fn collect_sources_recursive(dir: &PathBuf, sources: &mut Vec<PathBuf>) -> Result<(), String> {
-    let entries = std::fs::read_dir(dir)
-        .map_err(|e| format!("Failed to read directory: {}", e))?;
+    let entries = std::fs::read_dir(dir).map_err(|e| format!("Failed to read directory: {}", e))?;
 
     for entry in entries {
         let entry = entry.map_err(|e| format!("Failed to read entry: {}", e))?;
@@ -166,7 +170,8 @@ fn extract_documentation(path: &PathBuf, include_private: bool) -> Result<Module
     let content = std::fs::read_to_string(path)
         .map_err(|e| format!("Failed to read {}: {}", path.display(), e))?;
 
-    let name = path.file_stem()
+    let name = path
+        .file_stem()
         .map(|s| s.to_string_lossy().to_string())
         .unwrap_or_else(|| "unknown".to_string());
 
@@ -204,10 +209,12 @@ fn extract_documentation(path: &PathBuf, include_private: bool) -> Result<Module
         }
 
         // Check for item declarations
-        if trimmed.starts_with("pub ") || trimmed.starts_with("kāryakrama ") ||
-           trimmed.starts_with("prakāra ") || trimmed.starts_with("gaṇa ") ||
-           trimmed.starts_with("guṇa ") {
-
+        if trimmed.starts_with("pub ")
+            || trimmed.starts_with("kāryakrama ")
+            || trimmed.starts_with("prakāra ")
+            || trimmed.starts_with("gaṇa ")
+            || trimmed.starts_with("guṇa ")
+        {
             let is_public = trimmed.starts_with("pub ");
             if !is_public && !include_private {
                 current_doc.clear();
@@ -227,7 +234,22 @@ fn extract_documentation(path: &PathBuf, include_private: bool) -> Result<Module
                 continue;
             };
 
-            let item_name = rest.split(|c: char| !c.is_alphanumeric() && c != '_' && c != 'ā' && c != 'ī' && c != 'ū' && c != 'ṛ' && c != 'ṅ' && c != 'ñ' && c != 'ṭ' && c != 'ḍ' && c != 'ṇ' && c != 'ś' && c != 'ṣ')
+            let item_name = rest
+                .split(|c: char| {
+                    !c.is_alphanumeric()
+                        && c != '_'
+                        && c != 'ā'
+                        && c != 'ī'
+                        && c != 'ū'
+                        && c != 'ṛ'
+                        && c != 'ṅ'
+                        && c != 'ñ'
+                        && c != 'ṭ'
+                        && c != 'ḍ'
+                        && c != 'ṇ'
+                        && c != 'ś'
+                        && c != 'ṣ'
+                })
                 .next()
                 .unwrap_or("unknown")
                 .to_string();
@@ -243,7 +265,11 @@ fn extract_documentation(path: &PathBuf, include_private: bool) -> Result<Module
                 name: item_name,
                 doc,
                 signature: trimmed.to_string(),
-                visibility: if is_public { Visibility::Public } else { Visibility::Private },
+                visibility: if is_public {
+                    Visibility::Public
+                } else {
+                    Visibility::Private
+                },
                 examples: Vec::new(),
                 params: Vec::new(),
                 returns: None,
@@ -272,7 +298,12 @@ fn extract_after<'a>(s: &'a str, pattern: &str) -> &'a str {
         .unwrap_or("")
 }
 
-fn generate_html(modules: &[ModuleDoc], output: &PathBuf, sanskrit: bool, theme: &str) -> Result<(), String> {
+fn generate_html(
+    modules: &[ModuleDoc],
+    output: &PathBuf,
+    sanskrit: bool,
+    theme: &str,
+) -> Result<(), String> {
     // Generate index.html
     let index_html = generate_index_html(modules, sanskrit, theme);
     std::fs::write(output.join("index.html"), index_html)
@@ -295,15 +326,25 @@ fn generate_html(modules: &[ModuleDoc], output: &PathBuf, sanskrit: bool, theme:
 }
 
 fn generate_index_html(modules: &[ModuleDoc], sanskrit: bool, _theme: &str) -> String {
-    let title = if sanskrit { "प्रलेखन" } else { "Documentation" };
-    let modules_title = if sanskrit { "विभागाः" } else { "Modules" };
+    let title = if sanskrit {
+        "प्रलेखन"
+    } else {
+        "Documentation"
+    };
+    let modules_title = if sanskrit {
+        "विभागाः"
+    } else {
+        "Modules"
+    };
 
-    let module_list: String = modules.iter()
+    let module_list: String = modules
+        .iter()
         .map(|m| format!(r#"<li><a href="{}.html">{}</a></li>"#, m.name, m.name))
         .collect::<Vec<_>>()
         .join("\n");
 
-    format!(r#"<!DOCTYPE html>
+    format!(
+        r#"<!DOCTYPE html>
 <html lang="sa">
 <head>
     <meta charset="UTF-8">
@@ -330,12 +371,21 @@ fn generate_index_html(modules: &[ModuleDoc], sanskrit: bool, _theme: &str) -> S
         <p>Generated by jagdoc - जगन्नाथ प्रलेखन निर्माता</p>
     </footer>
 </body>
-</html>"#)
+</html>"#
+    )
 }
 
 fn generate_module_html(module: &ModuleDoc, sanskrit: bool, _theme: &str) -> String {
-    let functions_title = if sanskrit { "कार्यक्रमाः" } else { "Functions" };
-    let structs_title = if sanskrit { "प्रकाराः" } else { "Structs" };
+    let functions_title = if sanskrit {
+        "कार्यक्रमाः"
+    } else {
+        "Functions"
+    };
+    let structs_title = if sanskrit {
+        "प्रकाराः"
+    } else {
+        "Structs"
+    };
     let enums_title = if sanskrit { "गणाः" } else { "Enums" };
 
     let mut functions = String::new();
@@ -344,13 +394,16 @@ fn generate_module_html(module: &ModuleDoc, sanskrit: bool, _theme: &str) -> Str
 
     for item in &module.items {
         let doc = item.doc.as_deref().unwrap_or("");
-        let html = format!(r#"
+        let html = format!(
+            r#"
         <article class="item">
             <h3><code>{}</code></h3>
             <pre class="signature">{}</pre>
             <div class="doc">{}</div>
         </article>
-        "#, item.name, item.signature, doc);
+        "#,
+            item.name, item.signature, doc
+        );
 
         match item.kind {
             ItemKind::Function => functions.push_str(&html),
@@ -362,7 +415,8 @@ fn generate_module_html(module: &ModuleDoc, sanskrit: bool, _theme: &str) -> Str
 
     let module_doc = module.module_doc.as_deref().unwrap_or("");
 
-    format!(r#"<!DOCTYPE html>
+    format!(
+        r#"<!DOCTYPE html>
 <html lang="sa">
 <head>
     <meta charset="UTF-8">
@@ -402,10 +456,15 @@ fn generate_module_html(module: &ModuleDoc, sanskrit: bool, _theme: &str) -> Str
     </footer>
 </body>
 </html>"#,
-        module.name, module.name, module_doc,
-        functions_title, functions,
-        structs_title, structs,
-        enums_title, enums
+        module.name,
+        module.name,
+        module_doc,
+        functions_title,
+        functions,
+        structs_title,
+        structs,
+        enums_title,
+        enums
     )
 }
 
@@ -416,7 +475,8 @@ fn generate_css(theme: &str) -> String {
         _ => ("#ffffff", "#1a1a2e", "#f5f5f5"), // auto defaults to light
     };
 
-    format!(r#"
+    format!(
+        r#"
 :root {{
     --bg-color: {bg};
     --fg-color: {fg};
@@ -492,5 +552,6 @@ code {{
     padding: 0.2rem 0.4rem;
     border-radius: 4px;
 }}
-"#)
+"#
+    )
 }

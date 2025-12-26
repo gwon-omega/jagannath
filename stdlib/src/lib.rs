@@ -3,6 +3,10 @@
 //! All APIs use Sanskrit naming conventions.
 
 #![cfg_attr(not(feature = "std"), no_std)]
+#![allow(unused_imports)]
+#![allow(unused_variables)]
+#![allow(dead_code)]
+#![allow(unused_mut)]
 
 #[cfg(feature = "alloc")]
 extern crate alloc;
