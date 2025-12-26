@@ -1,0 +1,270 @@
+{
+    "Jagannath Function": {
+        "prefix": ["karyakrama", "fn", "function"],
+        "description": "Define a Jagannath function (kāryakrama)",
+        "body": [
+            "kāryakrama ${1:nāma}(${2:parāmiti}: ${3:Prakāra}) -> ${4:Pariṇāma} {",
+            "    $0",
+            "}"
+        ]
+    },
+    "Jagannath Struct": {
+        "prefix": ["prakara", "struct", "type"],
+        "description": "Define a Jagannath struct (prakāra)",
+        "body": [
+            "prakāra ${1:Nāma}${2:-ā-l-p} {",
+            "    ${3:kṣetra}: ${4:Prakāra},",
+            "    $0",
+            "}"
+        ]
+    },
+    "Jagannath Enum": {
+        "prefix": ["gana", "enum"],
+        "description": "Define a Jagannath enum (gaṇa)",
+        "body": [
+            "gaṇa ${1:Nāma} {",
+            "    ${2:Vibhāga1},",
+            "    ${3:Vibhāga2},",
+            "    $0",
+            "}"
+        ]
+    },
+    "Jagannath Variable Mutable": {
+        "prefix": ["mana-m", "let-mut", "var"],
+        "description": "Declare a mutable variable",
+        "body": "māna ${1:nāma}-ā: ${2:Prakāra} = ${3:mūlya};"
+    },
+    "Jagannath Variable Immutable": {
+        "prefix": ["mana", "let", "const"],
+        "description": "Declare an immutable variable",
+        "body": "māna ${1:nāma}: ${2:Prakāra} = ${3:mūlya};"
+    },
+    "Jagannath If Statement": {
+        "prefix": ["yad", "if"],
+        "description": "If statement (yad)",
+        "body": [
+            "yad ${1:śarta} {",
+            "    $0",
+            "}"
+        ]
+    },
+    "Jagannath If-Else": {
+        "prefix": ["yad-anyatha", "if-else"],
+        "description": "If-else statement",
+        "body": [
+            "yad ${1:śarta} {",
+            "    $2",
+            "} anyathā {",
+            "    $0",
+            "}"
+        ]
+    },
+    "Jagannath Loop For": {
+        "prefix": ["cala", "for", "loop"],
+        "description": "For loop (cala antarāle)",
+        "body": [
+            "cala ${1:i} antarāle ${2:0}..${3:n} {",
+            "    $0",
+            "}"
+        ]
+    },
+    "Jagannath Loop While": {
+        "prefix": ["yāvat", "while"],
+        "description": "While loop (yāvat)",
+        "body": [
+            "yāvat ${1:śarta} {",
+            "    $0",
+            "}"
+        ]
+    },
+    "Jagannath Match": {
+        "prefix": ["chaya", "match"],
+        "description": "Match expression (chāyā)",
+        "body": [
+            "match ${1:mūlya} {",
+            "    ${2:Prakāra1} => $3,",
+            "    ${4:Prakāra2} => $5,",
+            "    _ => $0,",
+            "}"
+        ]
+    },
+    "Jagannath Import": {
+        "prefix": ["ayata", "import", "use"],
+        "description": "Import statement (āyāta)",
+        "body": "āyāta ${1:patha}::${2:vastu};"
+    },
+    "Jagannath Return": {
+        "prefix": ["phera", "return"],
+        "description": "Return statement (phera)",
+        "body": "phera ${1:mūlya};"
+    },
+    "Jagannath Print": {
+        "prefix": ["mudrana", "print"],
+        "description": "Print to console (mudraṇa)",
+        "body": "mudraṇa(\"${1:sandēśa}\");"
+    },
+    "Jagannath Print Format": {
+        "prefix": ["mudrana-f", "printf", "format"],
+        "description": "Formatted print (mudraṇa with placeholders)",
+        "body": "mudraṇa(\"${1:sandēśa}: {}\", ${2:mūlya});"
+    },
+    "Jagannath Async Function": {
+        "prefix": ["samakalika", "async"],
+        "description": "Async function (samakālika kāryakrama)",
+        "body": [
+            "samakālika kāryakrama ${1:nāma}(${2:parāmiti}: ${3:Prakāra}) -> ${4:Pariṇāma}<${5:Prakāra}> {",
+            "    $0",
+            "}"
+        ]
+    },
+    "Jagannath Await": {
+        "prefix": ["pratiksha", "await"],
+        "description": "Await expression (pratīkṣā)",
+        "body": "${1:bhāvī}.pratīkṣā"
+    },
+    "Jagannath Impl Block": {
+        "prefix": ["impl", "implementation"],
+        "description": "Implementation block",
+        "body": [
+            "impl ${1:Prakāra} {",
+            "    kāryakrama ${2:nāma}(&sva${3:, parāmiti: Prakāra}) -> ${4:Pariṇāma} {",
+            "        $0",
+            "    }",
+            "}"
+        ]
+    },
+    "Jagannath Trait": {
+        "prefix": ["svabhava", "trait"],
+        "description": "Define a trait (svabhāva)",
+        "body": [
+            "svabhāva ${1:Nāma} {",
+            "    kāryakrama ${2:nāma}(&sva) -> ${3:Prakāra};",
+            "    $0",
+            "}"
+        ]
+    },
+    "Jagannath Karaka Function": {
+        "prefix": ["karaka-fn", "semantic-fn"],
+        "description": "Function with kāraka semantic roles",
+        "body": [
+            "kāryakrama ${1:nāma}(",
+            "    kartṛ ${2:kartā}: ${3:Prakāra}-a,     // Agent (doer)",
+            "    karman ${4:kārya}: ${5:Prakāra}-ā,   // Patient (affected)",
+            "    karaṇa ${6:sādhana}: ${7:Prakāra}-a,  // Instrument",
+            ") -> ${8:Pariṇāma} {",
+            "    $0",
+            "}"
+        ]
+    },
+    "Jagannath Linear Type": {
+        "prefix": ["linear", "rekha"],
+        "description": "Linear type declaration (must be consumed exactly once)",
+        "body": "māna ${1:nāma}: ${2:Prakāra}-l = ${3:mūlya};"
+    },
+    "Jagannath Arena Region": {
+        "prefix": ["kshetra", "arena", "region"],
+        "description": "Arena allocation with lifetime region",
+        "body": [
+            "māna kṣetra = Kṣetra::nirmā(${1:1024});  // ${1:1024} bytes",
+            "māna ${2:dattā}: ${3:Prakāra}^1 = kṣetra.āvanṭana(${4:mūlya});",
+            "$0"
+        ]
+    },
+    "Jagannath Guṇa Mode": {
+        "prefix": ["guna", "mode"],
+        "description": "Guṇa optimization mode attribute",
+        "body": "#[guṇa(${1|sattva,rajas,tamas|})]  // ${1:sattva}=correctness, rajas=speed, tamas=memory"
+    },
+    "Jagannath Chakra Layer": {
+        "prefix": ["chakra", "layer"],
+        "description": "Chakra architectural layer attribute",
+        "body": "#[chakra(${1|mūlādhāra,svādhiṣṭhāna,maṇipūra,anāhata,viśuddha,ājñā,sahasrāra|})]"
+    },
+    "Jagannath Kosha Memory Tier": {
+        "prefix": ["kosha", "memory-tier"],
+        "description": "Kosha memory tier hint",
+        "body": "#[kosha(${1|anna,prāṇa,manas,vijñāna,ānanda|})]  // ${1:anna}=register, prāṇa=cache, manas=RAM, vijñāna=disk, ānanda=network"
+    },
+    "Jagannath Assertion": {
+        "prefix": ["drdha", "assert"],
+        "description": "Assertion with Nyāya evidence",
+        "body": [
+            "dṛḍha ${1:śarta} : ",
+            "    hetu: \"${2:reason}\",",
+            "    pramāṇa: Pramana::${3|Pratyaksha,Anumana,Upamana,Shabda|};"
+        ]
+    },
+    "Jagannath Error Handling": {
+        "prefix": ["parinana", "result"],
+        "description": "Result type for error handling",
+        "body": "Pariṇāma<${1:Prakāra}, ${2:Doṣa}>"
+    },
+    "Jagannath Option": {
+        "prefix": ["kincit", "option", "maybe"],
+        "description": "Optional type (Kiñcit)",
+        "body": "Kiñcit<${1:Prakāra}>"
+    },
+    "Jagannath Main": {
+        "prefix": ["pradhana", "main"],
+        "description": "Main function entry point",
+        "body": [
+            "kāryakrama pradhāna() -> Pariṇāma<()> {",
+            "    $0",
+            "    phera Samṛddha(());",
+            "}"
+        ]
+    },
+    "Jagannath Test": {
+        "prefix": ["pariksha", "test"],
+        "description": "Test function",
+        "body": [
+            "#[parīkṣā]",
+            "kāryakrama parīkṣā_${1:nāma}() {",
+            "    $0",
+            "}"
+        ]
+    },
+    "Jagannath Benchmark": {
+        "prefix": ["mana", "bench", "benchmark"],
+        "description": "Benchmark function",
+        "body": [
+            "#[māna]",
+            "kāryakrama māna_${1:nāma}(b: &māna Mānaka) {",
+            "    b.cala(|| {",
+            "        $0",
+            "    });",
+            "}"
+        ]
+    },
+    "Jagannath Documentation": {
+        "prefix": ["doc", "///"],
+        "description": "Documentation comment",
+        "body": [
+            "/// ${1:Description}",
+            "///",
+            "/// # Examples",
+            "///",
+            "/// ```",
+            "/// ${2:code}",
+            "/// ```"
+        ]
+    },
+    "Jagannath Thread-Safe": {
+        "prefix": ["sutra", "thread-safe"],
+        "description": "Thread-safe type suffix",
+        "body": "${1:Prakāra}-sūtra"
+    },
+    "Jagannath Packed Struct": {
+        "prefix": ["packed", "binary"],
+        "description": "Packed struct for binary protocols",
+        "body": [
+            "#[repr(packed)]",
+            "prakāra ${1:Nāma}-p {",
+            "    ${2:kṣetra1}: Bāita-t8,",
+            "    ${3:kṣetra2}: Saṅkhyā-t16,",
+            "    ${4:kṣetra3}: Saṅkhyā-t32,",
+            "    $0",
+            "}"
+        ]
+    }
+}

@@ -1,0 +1,16 @@
+//! Hello World Example
+//!
+//! The simplest Jagannath program.
+
+// Import prelude
+āyāti upakrama::*;
+
+// Main function (मुख्य कार्यक्रम)
+kāryakrama mukhya() -> saṅkhyā-a-k-t32 {
+    // Print greeting (मुद्रण)
+    mudraṇa!("नमस्ते, जगत्!");  // Hello, World!
+    mudraṇa!("Namaste, Jagat!");
+
+    // Return success
+    phera 0
+}

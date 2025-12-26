@@ -1,0 +1,87 @@
+//! Kāraka Demonstration
+//!
+//! Shows how semantic roles guide optimization.
+
+āyāti upakrama::*;
+
+// File copy function demonstrating all 8 kārakas
+kāryakrama pratilipi_kośa(
+    // 1. Kartṛ (agent) - Who performs: the copier process
+    prakriyā[kartṛ]: &Prakriyā,
+
+    // 2. Karman (patient) - What is affected: destination buffer
+    lakṣya[karman]: &mut Bufara-ā-l-h,
+
+    // 3. Karaṇa (instrument) - By what means: source handle
+    srotas[karaṇa]: &KośaDhāraka,
+
+    // 4. Sampradāna (recipient) - For whom: output path
+    nirgama_patha[sampradāna]: &Sūtra,
+
+    // 5. Apādāna (source) - From where: input path
+    āgama_patha[apādāna]: &Sūtra,
+
+    // 6. Adhikaraṇa (location) - Where: working directory
+    kārya_sañcikā[adhikaraṇa]: &Patha,
+
+    // 7. Sambandha (relation) - Associated with: config
+    vinyāsa[sambandha]: &Vinyāsa,
+
+    // 8. Hetu (cause) - Why: the reason/trigger
+    kāraṇa[hetu]: &Sūtra,
+) -> Pariṇāma<saṅkhyā-a-k-t64, Doṣa> {
+    mudraṇa!("Copying for reason: {}", kāraṇa);
+    mudraṇa!("From: {} To: {}", āgama_patha, nirgama_patha);
+    mudraṇa!("Working in: {}", kārya_sañcikā);
+
+    // Compiler uses kāraka roles:
+    // - kartṛ: kept in callee-saved register (preserved across calls)
+    // - karman: output register, written to
+    // - karaṇa: caller-saved register (consumed)
+    // - adhikaraṇa: can be spilled early (location is stable)
+
+    māna sankhyā_paṭhita: saṅkhyā-ā-k-t64 = 0;
+
+    // Read from source (karaṇa provides data)
+    cala {
+        māna khaṇḍa = srotas.paṭha(lakṣya)?;
+        yad khaṇḍa == 0 {
+            virāma
+        }
+        sankhyā_paṭhita += khaṇḍa as saṅkhyā-a-k-t64;
+    }
+
+    phera Pariṇāma::Siddhi(sankhyā_paṭhita)
+}
+
+// Simpler example: Matrix multiply showing register hints
+kāryakrama mātrikā_guṇana(
+    a[kartṛ]: &Mātrikā,      // Preserved (left operand)
+    b[karaṇa]: &Mātrikā,     // Consumed (right operand)
+    c[karman]: &mut Mātrikā  // Output (result)
+) {
+    // kartṛ → Callee-saved (rbx, r12-r15 on x86)
+    // karaṇa → Caller-saved (rax, rcx, rdx, rsi, rdi)
+    // karman → Output register, then memory
+
+    cala i madhye 0..a.paṅkti {
+        cala j madhye 0..b.stambha {
+            māna yoga: bhinna-ā-k-t64 = 0.0;
+            cala k madhye 0..a.stambha {
+                yoga += a[i, k] * b[k, j];
+            }
+            c[i, j] = yoga;
+        }
+    }
+}
+
+kāryakrama mukhya() -> saṅkhyā-a-k-t32 {
+    mudraṇa!("Kāraka demonstration");
+    mudraṇa!("The 8 semantic roles guide register allocation:");
+    mudraṇa!("  1. Kartṛ (agent) → callee-saved registers");
+    mudraṇa!("  2. Karman (patient) → output registers");
+    mudraṇa!("  3. Karaṇa (instrument) → caller-saved registers");
+    mudraṇa!("  4-8. Others → hint spilling and lifetime");
+
+    phera 0
+}

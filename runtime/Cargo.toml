@@ -1,0 +1,14 @@
+[package]
+name = "jagannath-runtime"
+version = "0.1.0"
+edition = "2021"
+description = "Runtime support for Jagannath programs"
+license = "MIT OR Apache-2.0"
+
+[features]
+default = ["std"]
+std = []
+embedded = []
+gc = []
+
+[dependencies]

@@ -1,0 +1,210 @@
+// philosophy_demo.jag — Using Hindu philosophy concepts in code
+//
+// This demonstrates how Sanskrit philosophical concepts map to
+// practical programming patterns.
+
+āyāta darshana::nyaya;
+āyāta darshana::samkhya;
+āyāta darshana::advaita;
+āyāta darshana::yoga;
+
+// ═══════════════════════════════════════════════════════════════════
+// NYĀYA — Logic and Type Inference
+// ═══════════════════════════════════════════════════════════════════
+
+// The four Pramāṇas (means of valid knowledge)
+kāryakrama nyaya_pradarsana() {
+    // 1. Pratyakṣa (direct perception) — Explicit types
+    māna spashṭa: Saṅkhyā-t32 = 42;  // 100% certain
+
+    // 2. Anumāna (inference) — Type inference
+    māna anumita = 42;  // Inferred as Saṅkhyā-t32 (95% certain)
+
+    // 3. Śabda (verbal testimony) — From documentation
+    /// @prakāra Saṅkhyā-t64
+    māna prāmāṇika = api_kārya();  // Trusts doc comment
+
+    // 4. Upamāna (analogy) — Pattern matching
+    māna sādr̥śya = match mūlya {
+        Saṅkhyā(n) => n,
+        Sūtra(s) => s.dīrghatā(),
+    };  // Type inferred from pattern
+}
+
+// Pañcāvayava — Five-membered syllogism for assertions
+kāryakrama tarka_pradarśana(niviṣṭa: Saṅkhyā-t32) {
+    // Pratijñā (thesis): niviṣṭa is positive
+    // Hetu (reason): it is greater than zero
+    // Udāharaṇa (example): all numbers > 0 are positive
+    // Upanaya (application): niviṣṭa > 0
+    // Nigamana (conclusion): therefore, niviṣṭa is positive
+
+    dṛḍha niviṣṭa > 0 :
+        hetu: "greater than zero",
+        udāharaṇa: "all n > 0 are positive",
+        pramāṇa: Pramana::Anumana;
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// SĀṂKHYA — 25 Tattvas as Compilation Pipeline
+// ═══════════════════════════════════════════════════════════════════
+
+// The compiler processes through 25 stages (tattvas)
+// This attribute controls which stage to stop at for debugging
+#[tattva(buddhi)]  // Stop at semantic analysis
+kāryakrama samkhya_pradarśana() {
+    // Level 25: Puruṣa (consciousness) = Source intent
+    // Level 24: Prakṛti (nature) = AST potential
+    // Level 23: Buddhi (intellect) = Semantic analysis
+    // Level 22: Ahaṃkāra (ego) = Symbol table
+    // Level 21: Manas (mind) = IR generation
+    // ... down to ...
+    // Level 1: Pṛthivī (earth) = Binary emission
+
+    mudraṇa("Compilation flows from subtle to gross");
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// ADVAITA — Non-Duality and Memory Unity
+// ═══════════════════════════════════════════════════════════════════
+
+// Brahman: Unified memory substrate
+kāryakrama advaita_pradarśana() {
+    // Create unified memory (Brahman)
+    māna brahman = Brahman::<1024>::nirmā();
+
+    // View as different types (Maya overlays)
+    asurākṣita {
+        māna saṅkhyā = brahman.maya_dṛṣṭi::<Saṅkhyā-t32>();
+        māna sūtra = brahman.maya_dṛṣṭi::<Sūtra>();
+    }
+
+    // Ātman: Identity within values
+    māna a: Saṅkhyā-ātman = 42;
+    māna b: Saṅkhyā-ātman = 42;
+
+    // Same value, different identity (Ātman)
+    yad a.sama_ātman(b) {
+        mudraṇa("Same identity");
+    } anyathā {
+        mudraṇa("Different identity, same value");
+    }
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// PANCHA KOSHA — Five Memory Sheaths
+// ═══════════════════════════════════════════════════════════════════
+
+// Memory tier hints using kosha annotations
+kāryakrama kosha_pradarśana() {
+    // Annamaya (physical) → Register/L1 cache
+    #[kosha(anna)]
+    māna uṣṇa: Saṅkhyā-t32 = critical_counter();
+
+    // Prāṇamaya (vital) → L2/L3 cache
+    #[kosha(prāṇa)]
+    māna madhya: Bufara-k = frequently_accessed();
+
+    // Manomaya (mental) → RAM
+    #[kosha(manas)]
+    māna śīta: Sūci<Dattā> = standard_collection();
+
+    // Vijñānamaya (wisdom) → Disk/SSD
+    #[kosha(vijñāna)]
+    māna acala: Kośa = persistent_storage();
+
+    // Ānandamaya (bliss) → Network/cloud
+    #[kosha(ānanda)]
+    māna dūra: VitaritaSañcaya = cloud_storage();
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// GUṆA — Three Optimization Modes
+// ═══════════════════════════════════════════════════════════════════
+
+// Compile with different guṇa modes for different priorities
+#[guṇa(sattva)]  // Correctness-first: extra safety checks
+kāryakrama sattva_kārya() {
+    // Bounds checking enabled
+    // Overflow detection enabled
+    // Additional assertions
+    māna sūci = Sūci::nirmā();
+    sūci.dhāraṇa(42);
+    // Runtime bounds check on access
+}
+
+#[guṇa(rajas)]  // Speed-first: aggressive optimization (default)
+kāryakrama rajas_kārya() {
+    // Vectorization enabled
+    // Loop unrolling
+    // Inlining aggressive
+    cala i antarāle 0..1000000 {
+        gaṇanā(i);  // Vectorized, unrolled
+    }
+}
+
+#[guṇa(tamas)]  // Memory-first: minimal footprint
+kāryakrama tamas_kārya() {
+    // Size optimization
+    // No inlining
+    // Packed structures
+    // Ideal for embedded systems
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// CHAKRA — Seven-Layer Architecture
+// ═══════════════════════════════════════════════════════════════════
+
+// Layer annotations guide optimization and organization
+#[chakra(mūlādhāra)]  // Hardware layer
+kāryakrama yantrika_kārya() {
+    // Direct hardware interaction
+    // Assembly allowed
+    // No abstractions
+}
+
+#[chakra(anāhata)]  // Business logic layer
+kāryakrama vyāpāra_niyama() {
+    // Domain logic
+    // Pure functions preferred
+    // Testable, composable
+}
+
+#[chakra(viśuddha)]  // API layer
+kāryakrama sāmānya_bindu() {
+    // Communication protocols
+    // Serialization
+    // External interfaces
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// KĀLA — Time-Bounded Compilation
+// ═══════════════════════════════════════════════════════════════════
+
+// Set compilation budget per module
+#[kāla(laghu, 100ms)]  // Micro-timespan: must compile in 100ms
+kāryakrama tvarita_kārya() {
+    // Compiler prioritizes speed over optimization
+}
+
+#[kāla(dīrgha, 5s)]  // Macro-timespan: can take up to 5s
+kāryakrama śreṣṭha_kārya() {
+    // Compiler applies full optimization
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// KARMA — Dependency Tracking
+// ═══════════════════════════════════════════════════════════════════
+
+// Automatic dependency analysis using karma chains
+#[karma(phala)]  // Marks this as producing effects
+kāryakrama hetuka_kārya() -> Dattā {
+    // This function's output affects downstream computations
+    // Compiler tracks causal chains
+}
+
+#[karma(nimitta)]  // Marks this as dependent
+kāryakrama anuphala_kārya(niviṣṭa: Dattā) {
+    // Depends on hetuka_kārya
+    // Compiler ensures correct ordering
+}

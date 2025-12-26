@@ -1,0 +1,30 @@
+[package]
+name = "jagannath-compiler"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+description = "The Jagannath/Juggernaut programming language compiler"
+
+[dependencies]
+logos.workspace = true
+chumsky.workspace = true
+ariadne.workspace = true
+typed-arena.workspace = true
+cranelift.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+toml.workspace = true
+clap.workspace = true
+tracing.workspace = true
+tracing-subscriber.workspace = true
+rayon.workspace = true
+dashmap.workspace = true
+
+[dev-dependencies]
+proptest.workspace = true
+criterion.workspace = true
+
+[[bench]]
+name = "compile_bench"
+harness = false

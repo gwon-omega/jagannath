@@ -1,0 +1,83 @@
+//! Linked List Example
+//!
+//! Demonstrates memory management with linear types.
+
+āyāti upakrama::*;
+
+// Node structure with linear ownership
+nirūpaṇa Granthika<T>-ā-l-h {  // Mutable, Linear, Heap
+    mūlya: T,                   // Value
+    agrim: Vikalpa<Peṭī<Granthika<T>>>,  // Next (optional boxed node)
+}
+
+// Linked list (Śṛṅkhalā - chain)
+nirūpaṇa Śṛṅkhalā<T>-ā-l-h {
+    śīrṣa: Vikalpa<Peṭī<Granthika<T>>>,  // Head
+    dīrghya: saṅkhyā-ā-k-t64,            // Length
+}
+
+// Implementation
+karmadhāraya<T> Śṛṅkhalā<T> {
+    // Create new list (नव)
+    kāryakrama nava() -> Sva {
+        phera Śṛṅkhalā {
+            śīrṣa: Vikalpa::Śūnya,
+            dīrghya: 0,
+        }
+    }
+
+    // Push to front (अग्रे योजय)
+    kāryakrama agre_yojaya(&mut sva, mūlya: T) {
+        māna nava_granthika = Peṭī::nava(Granthika {
+            mūlya: mūlya,
+            agrim: sva.śīrṣa.graha(),  // Take ownership
+        });
+
+        sva.śīrṣa = Vikalpa::Kiñcit(nava_granthika);
+        sva.dīrghya += 1;
+    }
+
+    // Pop from front (अग्रात् निष्कासय)
+    kāryakrama agrat_niṣkāsaya(&mut sva) -> Vikalpa<T> {
+        svīkṛ sva.śīrṣa.graha() {
+            Vikalpa::Śūnya => Vikalpa::Śūnya,
+            Vikalpa::Kiñcit(granthika) => {
+                sva.śīrṣa = granthika.agrim;
+                sva.dīrghya -= 1;
+                Vikalpa::Kiñcit(granthika.mūlya)
+            }
+        }
+    }
+
+    // Length (दीर्घ्य)
+    kāryakrama dīrghya(&sva) -> saṅkhyā-a-k-t64 {
+        phera sva.dīrghya
+    }
+
+    // Is empty (रिक्त)
+    kāryakrama rikta(&sva) -> tarka {
+        phera sva.dīrghya == 0
+    }
+}
+
+kāryakrama mukhya() -> saṅkhyā-a-k-t32 {
+    // Create list
+    māna śṛṅkhalā: Śṛṅkhalā<saṅkhyā-a-k-t32>-ā-l-h = Śṛṅkhalā::nava();
+
+    // Add elements
+    śṛṅkhalā.agre_yojaya(1);
+    śṛṅkhalā.agre_yojaya(2);
+    śṛṅkhalā.agre_yojaya(3);
+
+    mudraṇa!("Length: {}", śṛṅkhalā.dīrghya());
+
+    // Remove elements
+    cala _ madhye 0..3 {
+        svīkṛ śṛṅkhalā.agrat_niṣkāsaya() {
+            Vikalpa::Kiñcit(mūlya) => mudraṇa!("Popped: {}", mūlya),
+            Vikalpa::Śūnya => mudraṇa!("Empty!"),
+        }
+    }
+
+    phera 0
+}

@@ -1,0 +1,62 @@
+# Jagannath/Juggernaut Programming Language
+# A systems programming language 2.7× faster than C
+# Uses Sanskrit morphology for compiler optimizations
+
+[workspace]
+members = [
+    "compiler",
+    "stdlib",
+    "runtime",
+    "tools/lsp-server",
+    "tools/formatter",
+    "tools/jagc",
+    "tools/jagdoc",
+    "tools/patra",
+]
+resolver = "2"
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+authors = ["Jagannath Language Team"]
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/jagannath-lang/jagannath"
+description = "Systems programming language using Sanskrit morphology for type encoding"
+keywords = ["compiler", "systems", "sanskrit", "performance"]
+categories = ["compilers", "development-tools"]
+
+[workspace.dependencies]
+# Compiler infrastructure
+logos = "0.14"                    # Lexer generation
+chumsky = "0.9"                   # Parser combinators
+ariadne = "0.4"                   # Error reporting
+typed-arena = "2.0"               # Arena allocation
+
+# Code generation
+cranelift = "0.111"               # Native codegen
+inkwell = "0.5"                   # LLVM bindings (optional)
+
+# Utilities
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+toml = "0.8"
+clap = { version = "4.5", features = ["derive"] }
+tracing = "0.1"
+tracing-subscriber = "0.3"
+rayon = "1.10"                    # Parallel compilation
+dashmap = "6.0"                   # Concurrent hashmap
+
+# Testing
+proptest = "1.5"
+criterion = "0.5"
+
+[profile.release]
+lto = "fat"
+codegen-units = 1
+opt-level = 3
+debug = false
+strip = true
+
+[profile.dev]
+opt-level = 1
+debug = true

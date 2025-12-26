@@ -1,0 +1,165 @@
+// affix_system.jag — Comprehensive demonstration of the Sanskrit affix system
+//
+// The affix system encodes type information directly in names:
+// - Mutability: -a (immutable), -ā (mutable)
+// - Ownership: -l (linear), -b (borrowed), -s (shared), -g (global)
+// - Memory: -k (stack), -h (heap), -p (packed)
+// - Size: -t8, -t16, -t32, -t64, -t128
+// - Thread: -sūtra (thread-safe)
+// - Lifetime: ^N (region N)
+
+// ═══════════════════════════════════════════════════════════════════
+// MUTABILITY AFFIXES
+// ═══════════════════════════════════════════════════════════════════
+
+// -a = immutable (default, like Rust's normal bindings)
+māna pūrṇāṅka-a: Saṅkhyā-t32 = 42;    // Cannot be changed
+// pūrṇāṅka = 100;  // ERROR: immutable
+
+// -ā = mutable (like Rust's `mut`)
+māna pūrṇāṅka-ā: Saṅkhyā-t32 = 42;    // Can be changed
+pūrṇāṅka = 100;  // OK
+
+// ═══════════════════════════════════════════════════════════════════
+// OWNERSHIP AFFIXES
+// ═══════════════════════════════════════════════════════════════════
+
+// -l = linear (owned, must be used exactly once)
+prakāra Sampada-l {
+    mūlya: Saṅkhyā-t64,
+}
+
+kāryakrama upayoga_rekha(sampada: Sampada-l) {
+    // sampada must be consumed exactly once
+    mudraṇa(sampada.mūlya);
+    // sampada is now consumed - cannot use again
+}
+
+// -b = borrowed (temporary reference)
+kāryakrama paṭha_mātra(sampada: Sampada-b) {
+    // Can read but not consume
+    mudraṇa(sampada.mūlya);
+    // sampada still valid for caller
+}
+
+// -s = shared (reference counted)
+prakāra Vṛkṣa-s {
+    mūlya: Saṅkhyā-t32,
+    vāma: Vṛkṣa-s?,      // Optional shared child
+    dakṣiṇa: Vṛkṣa-s?,   // Optional shared child
+}
+
+// -g = global/pooled (static lifetime)
+prakāra Saṃrūpaṇa-g {
+    nāma: Sūtra,
+    sthiti: Sthiti,
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// MEMORY LAYOUT AFFIXES
+// ═══════════════════════════════════════════════════════════════════
+
+// -k = stack allocated (fastest, automatic cleanup)
+prakāra Bindu-k {
+    x: Saṅkhyā-t32,
+    y: Saṅkhyā-t32,
+}
+
+// -h = heap allocated (for large/dynamic data)
+prakāra Citrakā-h {
+    śīrṣaka: Sūtra,
+    dattā: Bāitāḥ-sūci,
+}
+
+// -p = packed (no padding, for binary protocols)
+#[repr(packed)]
+prakāra Śīrṣa-p {
+    saṃskaraṇa: Bāita-t8,
+    dīrghāḥ: Saṅkhyā-t16,
+    prakoṣṭhaḥ: Saṅkhyā-t32,
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// SIZE AFFIXES
+// ═══════════════════════════════════════════════════════════════════
+
+māna aṇu: Saṅkhyā-t8 = 255;           // 8-bit (0-255)
+māna laghu: Saṅkhyā-t16 = 65535;       // 16-bit
+māna madhya: Saṅkhyā-t32 = 4294967295; // 32-bit (default)
+māna dīrgha: Saṅkhyā-t64 = 0;          // 64-bit
+māna mahā: Saṅkhyā-t128 = 0;           // 128-bit (SIMD friendly)
+
+// Signed variants
+māna dhana: Pūrṇāṅka-t32 = 2147483647;    // Signed 32-bit
+māna ṛṇa: Pūrṇāṅka-t32 = -2147483648;     // Negative
+
+// ═══════════════════════════════════════════════════════════════════
+// THREAD SAFETY AFFIX
+// ═══════════════════════════════════════════════════════════════════
+
+// -sūtra = thread-safe (like Send + Sync in Rust)
+prakāra Gaṇaka-ā-sūtra {
+    mūlya: Āṇavika<Saṅkhyā-t64>,  // Atomic counter
+}
+
+kāryakrama samānāntara_gaṇanā(gaṇaka: Gaṇaka-ā-sūtra-b) {
+    // Safe to use across threads
+    gaṇaka.mūlya.vardhana(1);
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// LIFETIME REGIONS
+// ═══════════════════════════════════════════════════════════════════
+
+// ^N = lifetime region N (for arena allocation)
+kāryakrama kṣetra_āvanṭana() {
+    māna kṣetra = Kṣetra::nirmā(1024);  // 1KB arena
+
+    // All allocations in region ^1
+    māna a: Saṅkhyā-t32^1 = kṣetra.āvanṭana(42);
+    māna b: Saṅkhyā-t32^1 = kṣetra.āvanṭana(100);
+    māna c: Sūtra^1 = kṣetra.āvanṭana("namaste");
+
+    // All freed together when kṣetra drops
+    // No individual deallocation needed!
+}
+
+// Cross-region references require explicit lifetimes
+kāryakrama kṣetra_sandarbha(
+    dattā: Sūtra^1,    // Data in region 1
+    sañcaya: Sūci^2,   // Storage in region 2
+) {
+    // Compiler ensures region 1 outlives region 2
+    sañcaya.dhāraṇa(dattā);
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// COMPILE-TIME CONSTANTS
+// ═══════════════════════════════════════════════════════════════════
+
+// # = compile-time constant
+sthira ĀYATANA#: Saṅkhyā-t32 = 1024;
+sthira SAṂSKARAṆA#: Sūtra = "1.0.0";
+
+// Compile-time array sizing
+prakāra Bufara<N#: Saṅkhyā> {
+    dattā: [Bāita; N#],
+    sthiti: Saṅkhyā-t32,
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// COMBINED AFFIXES
+// ═══════════════════════════════════════════════════════════════════
+
+// Full combination: mutable, linear, packed, 32-bit, thread-safe, region 1
+prakāra Sampūrṇa-ā-l-p-t32-sūtra^1 {
+    kṣetra: [Bāita; 16],
+}
+
+// Common patterns:
+// -a-b    = immutable borrowed (like &T)
+// -ā-b    = mutable borrowed (like &mut T)
+// -a-l    = immutable owned (like T)
+// -ā-l    = mutable owned (like T with interior mutability)
+// -a-s    = immutable shared (like Rc<T>)
+// -ā-s-sūtra = mutable shared thread-safe (like Arc<Mutex<T>>)

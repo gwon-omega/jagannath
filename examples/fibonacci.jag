@@ -1,0 +1,49 @@
+//! Fibonacci Example
+//!
+//! Calculate Fibonacci numbers using Sanskrit naming.
+
+āyāti upakrama::*;
+
+// Fibonacci function (फिबोनाची)
+// Uses kāraka roles for parameter semantics
+kāryakrama phiḍabanāci(
+    n[kartṛ]: saṅkhyā-a-k-t32  // n is the agent (doer)
+) -> saṅkhyā-a-k-t32 {
+    // Base cases
+    yad n <= 1 {
+        phera n
+    }
+
+    // Recursive case
+    phera phiḍabanāci(n - 1) + phiḍabanāci(n - 2)
+}
+
+// Iterative version (more efficient)
+kāryakrama phiḍabanāci_pariṣkṛta(
+    n[kartṛ]: saṅkhyā-a-k-t32
+) -> saṅkhyā-a-k-t64 {
+    yad n == 0 {
+        phera 0
+    }
+
+    māna pūrva: saṅkhyā-ā-k-t64 = 0;   // Previous (mutable)
+    māna vartamāna: saṅkhyā-ā-k-t64 = 1;  // Current (mutable)
+
+    cala i madhye 1..n {
+        māna agrim = pūrva + vartamāna;  // Next
+        pūrva = vartamāna;
+        vartamāna = agrim;
+    }
+
+    phera vartamāna
+}
+
+kāryakrama mukhya() -> saṅkhyā-a-k-t32 {
+    // Calculate first 20 Fibonacci numbers
+    cala i madhye 0..20 {
+        māna phala = phiḍabanāci_pariṣkṛta(i);
+        mudraṇa!("F({}) = {}", i, phala);
+    }
+
+    phera 0
+}

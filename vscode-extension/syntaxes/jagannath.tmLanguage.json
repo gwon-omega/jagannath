@@ -1,0 +1,154 @@
+{
+  "name": "Jagannath",
+  "scopeName": "source.jagannath",
+  "patterns": [
+    { "include": "#comments" },
+    { "include": "#keywords" },
+    { "include": "#strings" },
+    { "include": "#numbers" },
+    { "include": "#types" },
+    { "include": "#functions" },
+    { "include": "#karakas" },
+    { "include": "#affixes" }
+  ],
+  "repository": {
+    "comments": {
+      "patterns": [
+        {
+          "name": "comment.line.double-slash.jagannath",
+          "match": "//.*$"
+        },
+        {
+          "name": "comment.block.jagannath",
+          "begin": "/\\*",
+          "end": "\\*/"
+        },
+        {
+          "name": "comment.block.documentation.jagannath",
+          "begin": "///",
+          "end": "$"
+        }
+      ]
+    },
+    "keywords": {
+      "patterns": [
+        {
+          "name": "keyword.control.jagannath",
+          "match": "\\b(kāryakrama|karyakrama|yad|anyathā|anyatha|cala|phera|virāma|virama|svīkṛ|svikr|madhye)\\b"
+        },
+        {
+          "name": "keyword.declaration.jagannath",
+          "match": "\\b(māna|mana|nirūpaṇa|nirupana|gaṇa|gana|guṇa|guna|karmadhāraya|karmadhāraya)\\b"
+        },
+        {
+          "name": "keyword.import.jagannath",
+          "match": "\\b(āyāti|ayati)\\b"
+        },
+        {
+          "name": "keyword.modifier.jagannath",
+          "match": "\\b(sārvajanika|sarvajanika|guhya|sthira)\\b"
+        },
+        {
+          "name": "constant.language.jagannath",
+          "match": "\\b(satya|asatya|śūnya|shunya)\\b"
+        }
+      ]
+    },
+    "strings": {
+      "patterns": [
+        {
+          "name": "string.quoted.double.jagannath",
+          "begin": "\"",
+          "end": "\"",
+          "patterns": [
+            {
+              "name": "constant.character.escape.jagannath",
+              "match": "\\\\."
+            }
+          ]
+        },
+        {
+          "name": "string.quoted.single.jagannath",
+          "begin": "'",
+          "end": "'"
+        }
+      ]
+    },
+    "numbers": {
+      "patterns": [
+        {
+          "name": "constant.numeric.hex.jagannath",
+          "match": "\\b0x[0-9a-fA-F]+\\b"
+        },
+        {
+          "name": "constant.numeric.binary.jagannath",
+          "match": "\\b0b[01]+\\b"
+        },
+        {
+          "name": "constant.numeric.float.jagannath",
+          "match": "\\b[0-9]+\\.[0-9]+\\b"
+        },
+        {
+          "name": "constant.numeric.integer.jagannath",
+          "match": "\\b[0-9]+\\b"
+        }
+      ]
+    },
+    "types": {
+      "patterns": [
+        {
+          "name": "storage.type.primitive.jagannath",
+          "match": "\\b(saṅkhyā|sankhya|bhinna|tarka|sūtra|sutra|akṣara|akshara)\\b"
+        },
+        {
+          "name": "storage.type.collection.jagannath",
+          "match": "\\b(sūcī|suci|sāraṇī|sarani|Vikalpa|Pariṇāma|Parinama)\\b"
+        },
+        {
+          "name": "entity.name.type.jagannath",
+          "match": "\\b[A-ZĀ-Ṛ][a-zA-Zā-ṛ0-9]*\\b"
+        }
+      ]
+    },
+    "functions": {
+      "patterns": [
+        {
+          "name": "entity.name.function.jagannath",
+          "match": "\\b([a-zā-ṛ][a-zA-Zā-ṛ0-9_]*)\\s*\\("
+        },
+        {
+          "name": "support.function.macro.jagannath",
+          "match": "\\b(mudraṇa|mudrana|oṁ|om|parikṣā|pariksha)!"
+        }
+      ]
+    },
+    "karakas": {
+      "patterns": [
+        {
+          "name": "support.type.karaka.jagannath",
+          "match": "\\[(kartṛ|kartr|karman|karaṇa|karana|sampradāna|sampradana|apādāna|apadana|adhikaraṇa|adhikarana|sambandha|hetu)\\]"
+        }
+      ]
+    },
+    "affixes": {
+      "patterns": [
+        {
+          "name": "storage.modifier.affix.jagannath",
+          "match": "-[abāglkhp]\\b"
+        },
+        {
+          "name": "storage.modifier.size.jagannath",
+          "match": "-t(8|16|32|64|128|256)\\b"
+        },
+        {
+          "name": "storage.modifier.lifetime.jagannath",
+          "match": "\\^[0-9]+\\b"
+        },
+        {
+          "name": "storage.modifier.thread.jagannath",
+          "match": "-sūtra\\b"
+        }
+      ]
+    }
+  }
+}

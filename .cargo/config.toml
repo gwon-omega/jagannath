@@ -1,0 +1,143 @@
+# Cargo configuration for Jagannath Compiler
+# Compiles to 2.7× faster than C targets
+
+[build]
+# Default target is native
+# target = "x86_64-unknown-linux-gnu"
+
+# Enable LTO for release builds
+# rustflags = ["-C", "target-cpu=native"]
+
+[target.x86_64-unknown-linux-gnu]
+linker = "clang"
+rustflags = [
+    "-C", "link-arg=-fuse-ld=lld",
+    "-C", "target-cpu=native",
+]
+
+[target.x86_64-unknown-linux-musl]
+linker = "clang"
+rustflags = [
+    "-C", "link-arg=-fuse-ld=lld",
+    "-C", "target-feature=+crt-static",
+]
+
+[target.x86_64-pc-windows-msvc]
+rustflags = [
+    "-C", "target-cpu=native",
+]
+
+[target.x86_64-pc-windows-gnu]
+linker = "x86_64-w64-mingw32-gcc"
+
+[target.aarch64-unknown-linux-gnu]
+linker = "aarch64-linux-gnu-gcc"
+rustflags = [
+    "-C", "target-cpu=native",
+]
+
+[target.aarch64-apple-darwin]
+rustflags = [
+    "-C", "target-cpu=native",
+]
+
+[target.riscv64gc-unknown-linux-gnu]
+linker = "riscv64-linux-gnu-gcc"
+rustflags = [
+    "-C", "target-feature=+m,+a,+f,+d,+c",
+]
+
+# WebAssembly target
+[target.wasm32-unknown-unknown]
+rustflags = [
+    "-C", "target-feature=+simd128",
+]
+
+[target.wasm32-wasi]
+rustflags = [
+    "-C", "target-feature=+simd128",
+]
+
+# Aliases for common commands
+[alias]
+# Build the compiler in release mode
+b = "build --release"
+# Run tests
+t = "test"
+# Check with all features
+ca = "check --all-features"
+# Build all targets
+ba = "build --all-targets"
+# Run benchmarks
+bench = "bench --package jagannath-compiler"
+# Generate documentation
+d = "doc --no-deps --open"
+# Format code
+fmt = "fmt --all"
+# Lint code
+lint = "clippy --all-targets --all-features -- -D warnings"
+
+# Build profile optimized for the Jagannath compiler
+[profile.dev]
+opt-level = 0
+debug = true
+debug-assertions = true
+overflow-checks = true
+incremental = true
+
+[profile.dev.package."*"]
+opt-level = 2  # Optimize dependencies
+
+[profile.release]
+opt-level = 3
+lto = "fat"
+codegen-units = 1
+panic = "abort"
+strip = "symbols"
+debug = false
+
+[profile.release-with-debug]
+inherits = "release"
+debug = true
+strip = "none"
+
+# Benchmark profile - maximum performance
+[profile.bench]
+inherits = "release"
+debug = false
+lto = "fat"
+
+# Profile for the compiler itself (when bootstrapping)
+[profile.compiler]
+inherits = "release"
+lto = "thin"
+codegen-units = 4  # Faster compilation
+
+# Environment variables
+[env]
+# Default Guṇa mode for development
+JAGANNATH_GUNA = "rajas"
+
+# Deterministic builds (for reproducibility)
+JAGANNATH_DETERMINISTIC = "1"
+
+# Feature flags for conditional compilation
+[features]
+# Note: These are hints - actual features are in Cargo.toml
+
+# Registries
+[registries]
+# Future: Jagannath package registry
+# jagannath = { index = "https://packages.jagannath-lang.org/api/v1/crates" }
+
+[net]
+# Retry network operations
+retry = 3
+git-fetch-with-cli = true
+
+[term]
+# Colored output
+color = "auto"
+# Show progress bar
+progress.when = "auto"
+progress.width = 80

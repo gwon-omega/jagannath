@@ -1,0 +1,372 @@
+// ashtanga_sdlc.jag — Ashtanga Yoga as Software Development Lifecycle
+//
+// Demonstrates how the 8 limbs of Yoga map to SDLC phases:
+// 1. Yama (यम) → Code Standards
+// 2. Niyama (नियम) → Best Practices
+// 3. Āsana (आसन) → Stable Architecture
+// 4. Prāṇāyāma (प्राणायाम) → Data Flow
+// 5. Pratyāhāra (प्रत्याहार) → Encapsulation
+// 6. Dhāraṇā (धारणा) → Single Responsibility
+// 7. Dhyāna (ध्यान) → Continuous Review
+// 8. Samādhi (समाधि) → Perfect Deployment
+
+āyāta darshana::yoga::*;
+āyāta suci::Sūci;
+āyāta smriti::Peṭī;
+
+// ═══════════════════════════════════════════════════════════════════
+// 1. YAMA (यम) — Code Standards / Ethical Constraints
+// ═══════════════════════════════════════════════════════════════════
+
+// Ahiṃsā (अहिंसा) - Non-violence: No harmful code patterns
+// ✓ No null pointer dereference
+// ✓ No buffer overflow
+// ✓ No infinite loops without escape
+#[yama(ahiṃsā)]
+kāryakrama surakṣita_vibhājana(a: Saṅkhyā-t32, b: Saṅkhyā-t32) -> Vikalpa<Saṅkhyā-t32> {
+    yadi b == 0 {
+        pratyāvartana Kiṃcit::Śūnya;  // Safe: no division by zero
+    }
+    pratyāvartana Kiṃcit::Kiṃcana(a / b);
+}
+
+// Satya (सत्य) - Truthfulness: Honest interfaces
+// ✓ Functions do what they claim
+// ✓ No hidden side effects
+// ✓ Accurate documentation
+#[yama(satya)]
+/// Returns the sum of two numbers (no side effects)
+kāryakrama śuddha_yoga(a: Saṅkhyā-t32, b: Saṅkhyā-t32) -> Saṅkhyā-t32 {
+    pratyāvartana a + b;
+}
+
+// Asteya (अस्तेय) - Non-stealing: Respect ownership
+// ✓ Proper borrowing semantics
+// ✓ No use-after-free
+// ✓ Clear ownership transfer
+#[yama(asteya)]
+kāryakrama svāmitva_pradarśana() {
+    māna mūla = Peṭī::nirmā(42);
+    māna nūtana = cāla(mūla);  // Ownership transferred
+    // mūla is no longer valid here
+}
+
+// Brahmacarya (ब्रह्मचर्य) - Conservation: Efficient resources
+// ✓ No resource leaks
+// ✓ Optimal memory usage
+// ✓ CPU efficiency
+#[yama(brahmacarya)]
+kāryakrama dākṣya_pradarśana() {
+    māna bufara = Bufara::nirmā(1024);
+    // Automatic cleanup when scope ends
+}
+
+// Aparigraha (अपरिग्रह) - Non-attachment: Release resources
+// ✓ RAII pattern
+// ✓ Prompt deallocation
+// ✓ No unnecessary caching
+#[yama(aparigraha)]
+kāryakrama mukti_pradarśana() {
+    {
+        māna kṣaṇika = Saṃsādhana::prāpti();
+        // Use resource
+    }  // Resource automatically released here
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// 2. NIYAMA (नियम) — Best Practices / Positive Observances
+// ═══════════════════════════════════════════════════════════════════
+
+// Śauca (शौच) - Purity: Clean code
+// ✓ Meaningful names
+// ✓ Single purpose functions
+// ✓ Minimal complexity
+#[niyama(śauca)]
+kāryakrama supaṭhya_nāma_pradarśana() {
+    māna krayakartṛ_saṃkhyā = grāhaka_gaṇanā();
+    māna ausat_mūlya = kula_rāśi / krayakartṛ_saṃkhyā;
+}
+
+// Santoṣa (संतोष) - Contentment: Simple solutions
+// ✓ KISS principle
+// ✓ No over-engineering
+// ✓ Pragmatic choices
+#[niyama(santoṣa)]
+kāryakrama sarala_samādhāna(sūci: &Sūci<Saṅkhyā-t32>) -> Saṅkhyā-t32 {
+    māna kula = 0;
+    pratī vastu antarāle sūci {
+        kula += vastu;
+    }
+    pratyāvartana kula;
+}
+
+// Tapas (तपस्) - Discipline: Rigorous testing
+// ✓ Comprehensive test coverage
+// ✓ Edge case handling
+// ✓ Regression prevention
+#[niyama(tapas)]
+#[parīkṣā]
+kāryakrama sarala_samādhāna_parīkṣā() {
+    dṛḍha sarala_samādhāna(&Sūci::nirmā()) == 0;
+    dṛḍha sarala_samādhāna(&Sūci::rūpāntara([1, 2, 3])) == 6;
+    dṛḍha sarala_samādhāna(&Sūci::rūpāntara([-1, 1])) == 0;
+}
+
+// Svādhyāya (स्वाध्याय) - Self-study: Documentation
+// ✓ Clear documentation
+// ✓ Code comments where needed
+// ✓ README files
+#[niyama(svādhyāya)]
+/// Calculates compound interest
+///
+/// # Arguments
+/// * `mūladhana` - Principal amount
+/// * `dara` - Interest rate (as decimal, e.g., 0.05 for 5%)
+/// * `kāla` - Number of periods
+///
+/// # Returns
+/// Final amount after compounding
+///
+/// # Example
+/// ```
+/// māna phala = cakravṛddhi_vyāja(1000.0, 0.05, 12);
+/// ```
+kāryakrama cakravṛddhi_vyāja(
+    mūladhana: Bhinna-t64,
+    dara: Bhinna-t64,
+    kāla: Saṅkhyā-t32
+) -> Bhinna-t64 {
+    pratyāvartana mūladhana * (1.0 + dara).ghāta(kāla);
+}
+
+// Īśvarapraṇidhāna (ईश्वरप्रणिधान) - Higher purpose
+// ✓ User-centric design
+// ✓ Accessibility
+// ✓ Social responsibility
+#[niyama(īśvarapraṇidhāna)]
+kāryakrama sarva_sulabha() {
+    // Design for all users
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// 3. ĀSANA (आसन) — Stable Architecture
+// ═══════════════════════════════════════════════════════════════════
+
+// Stable, comfortable foundation
+// ✓ Modular design
+// ✓ Clear boundaries
+// ✓ Scalable structure
+#[āsana]
+saṃrachanā VyāpāraYantrika {
+    kṣetra vinyāsa: Vinyāsa,
+    kṣetra pratikriyākartṛ: PratikriyāKartṛ,
+    kṣetra sañcaya: Sañcaya,
+}
+
+vidhāna VyāpāraYantrika {
+    kāryakrama nirmā(vinyāsa: Vinyāsa) -> Svayam {
+        pratyāvartana Svayam {
+            vinyāsa,
+            pratikriyākartṛ: PratikriyāKartṛ::nirmā(),
+            sañcaya: Sañcaya::nirmā(),
+        };
+    }
+
+    // Clear separation of concerns
+    kāryakrama pratikriyā(&svayam, yācanā: Yācanā) -> Phala {
+        svayam.pratikriyākartṛ.pratikriyā(yācanā)
+    }
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// 4. PRĀṆĀYĀMA (प्राणायाम) — Data Flow Control
+// ═══════════════════════════════════════════════════════════════════
+
+// Control of vital energy (data)
+// ✓ Input validation
+// ✓ Transformation pipelines
+// ✓ Flow control
+#[prāṇāyāma]
+kāryakrama dattā_vāhana() {
+    // Pūraka (inhalation) - Input validation
+    māna niviṣṭa = grāhaka_dattā();
+    māna mānita = mānīkuruta(niviṣṭa)?;
+
+    // Kumbhaka (retention) - Processing
+    māna saṃskarita = rūpāntarita(mānita);
+
+    // Recaka (exhalation) - Output
+    nirgatara(saṃskarita);
+}
+
+// Stream processing with backpressure
+#[prāṇāyāma(saṃtulit)]  // Balanced breathing = balanced throughput
+kāryakrama dhārā_saṃskaraṇa<T>(śrota: Dhārā<T>) -> Dhārā<T> {
+    śrota
+        .chāda(mānīkuruta)
+        .mānacitra(rūpāntarita)
+        .chunni(100)  // Backpressure buffer
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// 5. PRATYĀHĀRA (प्रत्याहार) — Encapsulation / Information Hiding
+// ═══════════════════════════════════════════════════════════════════
+
+// Withdrawal of senses = hiding internals
+// ✓ Private implementation details
+// ✓ Minimal public API
+// ✓ Clear boundaries
+#[pratyāhāra]
+saṃrachanā Grāhaka {
+    // Private fields - withdrawn from external access
+    guhya nāma: Sūtra,
+    guhya ānurūpya_bīja: Sūtra,
+    guhya śeṣa: Saṅkhyā-t64,
+
+    // Only expose what's necessary
+    sārvajanika id: GrāhakaId,
+}
+
+vidhāna Grāhaka {
+    // Public API - controlled interface
+    sārvajanika kāryakrama darśaya_nāma(&svayam) -> &Sūtra {
+        &svayam.nāma
+    }
+
+    // Internal helpers are private
+    guhya kāryakrama prāmāṇīkaroti(&svayam, ānurūpya_bīja: &Sūtra) -> Tathya {
+        svayam.ānurūpya_bīja == ānurūpya_bīja
+    }
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// 6. DHĀRAṆĀ (धारणा) — Single Responsibility / Focused Concentration
+// ═══════════════════════════════════════════════════════════════════
+
+// One-pointed focus = Single Responsibility Principle
+// ✓ One reason to change
+// ✓ Cohesive functionality
+// ✓ Focused modules
+#[dhāraṇā]
+saṃrachanā Lekhaka {
+    kṣetra patha: Patha,
+}
+
+// Only writes - nothing else
+vidhāna Lekhaka {
+    kāryakrama likha(&svayam, dattā: &[Bāṭu]) -> IoPhala<()> {
+        // Focused on writing only
+    }
+}
+
+#[dhāraṇā]
+saṃrachanā Paṭhaka {
+    kṣetra patha: Patha,
+}
+
+// Only reads - nothing else
+vidhāna Paṭhaka {
+    kāryakrama paṭha(&svayam) -> IoPhala<Vec<Bāṭu>> {
+        // Focused on reading only
+    }
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// 7. DHYĀNA (ध्यान) — Continuous Review / Meditation
+// ═══════════════════════════════════════════════════════════════════
+
+// Unbroken flow of awareness = continuous monitoring
+// ✓ Logging
+// ✓ Metrics
+// ✓ Alerting
+#[dhyāna]
+saṃrachanā NirīkṣakaSevā {
+    kṣetra māpaka: MāpakaGrāhaka,
+    kṣetra sūcanā: SūcanāPraṇālī,
+}
+
+vidhāna NirīkṣakaSevā {
+    // Continuous observation
+    kāryakrama nirīkṣā(&svayam, ghaṭanā: &Ghaṭanā) {
+        svayam.māpaka.lekhana(ghaṭanā);
+
+        yadi ghaṭanā.ghanatā() > Ghanatā::Cētāvanī {
+            svayam.sūcanā.preṣaṇa(ghaṭanā);
+        }
+    }
+
+    // Meditative review cycle
+    kāryakrama samīkṣā_cakra(&svayam) {
+        prāpya {
+            māna māpakāḥ = svayam.māpaka.saṅgraha();
+            svayam.viśleṣaṇa(māpakāḥ);
+            nidra(Avadhi::kṣaṇa(60));
+        }
+    }
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// 8. SAMĀDHI (समाधि) — Perfect Deployment / Absorption
+// ═══════════════════════════════════════════════════════════════════
+
+// Complete absorption = seamless production
+// ✓ Zero-downtime deployment
+// ✓ Graceful degradation
+// ✓ Self-healing
+#[samādhi]
+saṃrachanā Niyojana {
+    kṣetra vinyāsa: NiyojanaVinyāsa,
+    kṣetra sthiti: Sthiti,
+}
+
+vidhāna Niyojana {
+    // Gradual rollout (like entering deeper states)
+    kāryakrama kramika_pravartana(&pariv svayam, nūtana_saṃskaraṇa: Saṃskaraṇa) {
+        // Start with small percentage
+        svayam.nirmocana(5);   // 5%
+        svayam.nirīkṣā(Avadhi::nimīṣa(5));
+
+        // Gradually increase if healthy
+        yadi svayam.susvāsthya() {
+            svayam.nirmocana(25);
+            svayam.nirīkṣā(Avadhi::nimīṣa(5));
+        }
+
+        // Full deployment
+        yadi svayam.susvāsthya() {
+            svayam.nirmocana(100);
+        } anyathā {
+            // Rollback - return from deep state
+            svayam.pratyāvartana();
+        }
+    }
+
+    // Self-healing (samādhi state recovers automatically)
+    kāryakrama sva_cikitsā(&pariv svayam) {
+        yadi !svayam.susvāsthya() {
+            svayam.punaḥārambha_asvastha_sevāḥ();
+        }
+    }
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// COMPLETE SDLC FLOW
+// ═══════════════════════════════════════════════════════════════════
+
+kāryakrama mukhya() {
+    mudraṇa("╔═══════════════════════════════════════════════════════╗");
+    mudraṇa("║      Ashtanga Yoga Software Development Lifecycle     ║");
+    mudraṇa("╚═══════════════════════════════════════════════════════╝");
+    mudraṇa("");
+
+    mudraṇa("1. यम (Yama)     → Code Standards        ✓");
+    mudraṇa("2. नियम (Niyama)  → Best Practices        ✓");
+    mudraṇa("3. आसन (Āsana)   → Stable Architecture   ✓");
+    mudraṇa("4. प्राणायाम (Prāṇāyāma) → Data Flow       ✓");
+    mudraṇa("5. प्रत्याहार (Pratyāhāra) → Encapsulation  ✓");
+    mudraṇa("6. धारणा (Dhāraṇā) → Single Responsibility ✓");
+    mudraṇa("7. ध्यान (Dhyāna)  → Continuous Review     ✓");
+    mudraṇa("8. समाधि (Samādhi) → Perfect Deployment    ✓");
+    mudraṇa("");
+    mudraṇa("🕉️  Yogaḥ karmasu kauśalam — Yoga is skill in action");
+}

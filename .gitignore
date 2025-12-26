@@ -1,0 +1,48 @@
+# Rust/Cargo
+/target/
+**/*.rs.bk
+Cargo.lock
+
+# Generated files
+*.o
+*.a
+*.so
+*.dll
+*.dylib
+*.exe
+*.pdb
+
+# Build outputs
+/build/
+/dist/
+/out/
+
+# IDE
+.idea/
+.vscode/settings.json
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Test artifacts
+*.profraw
+*.profdata
+
+# Jagannath compiler outputs
+*.jago          # Object files
+*.jagir         # IR files
+*.jagasm        # Assembly files
+*.jagcache/     # Compiler cache
+
+# Documentation builds
+/docs/_build/
+/docs/api/
+
+# Package manager
+/.patra/
+/patra-lock.toml
+
+# Runtime artifacts
+core
+vgcore.*

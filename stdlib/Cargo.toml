@@ -1,0 +1,16 @@
+[package]
+name = "jagannath-stdlib"
+version = "0.1.0"
+edition = "2021"
+description = "Jagannath Standard Library - Sanskrit-named APIs"
+license = "MIT OR Apache-2.0"
+authors = ["Jagannath Team"]
+repository = "https://github.com/jagannath-lang/jagannath"
+
+[features]
+default = ["std"]
+std = []
+alloc = []
+embedded = []
+
+[dependencies]

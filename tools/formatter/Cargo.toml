@@ -1,0 +1,14 @@
+[package]
+name = "jagannath-fmt"
+version = "0.1.0"
+edition = "2021"
+description = "Code formatter for Jagannath"
+license = "MIT OR Apache-2.0"
+
+[[bin]]
+name = "jagannath-fmt"
+path = "src/main.rs"
+
+[dependencies]
+jagannath-compiler = { path = "../../compiler" }
+clap = { version = "4", features = ["derive"] }

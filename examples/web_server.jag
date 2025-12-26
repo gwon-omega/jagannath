@@ -1,0 +1,160 @@
+// web_server.jag — Simple web server demonstrating Jagannath features
+//
+// A practical example showing how Sanskrit naming and philosophy
+// concepts apply to real-world server programming.
+
+āyāta jāla::http::{Anurodhā, Pratikriyā, Prakāra, Sthiti};
+āyāta jāla::sevaka::Sevaka;
+āyāta jāla::mārgaṇa::Mārgaka;
+āyāta saṃyojana::postgres::Tālaka;
+āyāta kramikā::json;
+
+// Configuration with Guṇa modes
+#[guṇa(rajas)]  // Speed-first for production
+prakāra Saṃrūpaṇa {
+    porta: Saṅkhyā-t16,
+    samāna_vāhaka: Saṅkhyā-t32,
+    db_sūtra: Sūtra,
+}
+
+impl Saṃrūpaṇa {
+    kāryakrama pūrva_niyata() -> Sva {
+        Sva {
+            porta: 8080,
+            samāna_vāhaka: 4,
+            db_sūtra: "postgres://localhost/jagannath",
+        }
+    }
+}
+
+// User model with kāraka semantics
+prakāra Upayoktṛ-ā-l-p {
+    id: Saṅkhyā-t64,
+    nāma: Sūtra,
+    vidyutpatrā: Sūtra,  // Email
+    nirmita: Kālachihna,  // Created timestamp
+}
+
+// Request handler with semantic roles
+// kartṛ = the server processing the request
+// karman = the request being processed
+// karaṇa = database connection as instrument
+kāryakrama prapta_upayoktṛ(
+    kartṛ _sevaka: Sevaka-b,
+    karman anu: Anurodhā-b,
+    karaṇa tālaka: Tālaka-b,
+) -> Pariṇāma<Pratikriyā> {
+    // Extract user ID from path
+    māna id = anu.parāmiti::<Saṅkhyā-t64>("id")?;
+
+    // Query database (karaṇa role = instrument for the action)
+    māna upayoktṛ = tālaka.pṛccha_eka::<Upayoktṛ>(
+        "SELECT * FROM upayoktṛ WHERE id = $1",
+        &[&id],
+    ).pratīkṣā?;
+
+    // Return JSON response
+    match upayoktṛ {
+        Kiñcit(u) => {
+            phera Pratikriyā::nirman()
+                .sthiti(Sthiti::Samṛddha)  // 200 OK
+                .json(&u);
+        }
+        Śūnya => {
+            phera Pratikriyā::nirman()
+                .sthiti(Sthiti::Na_Prāpta)  // 404 Not Found
+                .json(&Doṣa { sandēśa: "User not found" });
+        }
+    }
+}
+
+// POST handler for creating users
+kāryakrama nirmā_upayoktṛ(
+    kartṛ _sevaka: Sevaka-b,
+    karman anu: Anurodhā-ā,  // Mutable - we consume the body
+    karaṇa tālaka: Tālaka-b,
+) -> Pariṇāma<Pratikriyā> {
+    // Parse request body
+    māna śarīra: UpayoktṛNirmāṇa = anu.json().pratīkṣā?;
+
+    // Validate input (Pratyāhāra - input validation)
+    yad śarīra.nāma.riktā() || śarīra.vidyutpatrā.riktā() {
+        phera Pratikriyā::nirman()
+            .sthiti(Sthiti::Duṣṭa_Anurodhā)  // 400 Bad Request
+            .json(&Doṣa { sandēśa: "Name and email required" });
+    }
+
+    // Insert into database
+    māna nūtana = tālaka.pṛccha_eka::<Upayoktṛ>(
+        "INSERT INTO upayoktṛ (nāma, vidyutpatrā) VALUES ($1, $2) RETURNING *",
+        &[&śarīra.nāma, &śarīra.vidyutpatrā],
+    ).pratīkṣā?;
+
+    phera Pratikriyā::nirman()
+        .sthiti(Sthiti::Nirmita)  // 201 Created
+        .json(&nūtana);
+}
+
+// Main server setup using Ashtanga SDLC principles
+#[chakra(viśuddha)]  // API layer
+samakālika kāryakrama pradhāna() -> Pariṇāma<()> {
+    // Yama (ethical standards) - logging, monitoring
+    tracing_subscriber::prāramhba();
+
+    // Niyama (best practices) - configuration
+    māna saṃrūpaṇa = Saṃrūpaṇa::pūrva_niyata();
+
+    // Āsana (stable architecture) - connection pool
+    māna tālaka = Tālaka::nirmā(&saṃrūpaṇa.db_sūtra)
+        .nyūnatama_saṃyojana(2)
+        .adhikatama_saṃyojana(10)
+        .nirmā()
+        .pratīkṣā?;
+
+    // Prāṇāyāma (data flow) - router setup
+    māna mārgaka = Mārgaka::nirmā()
+        .mārga(Prakāra::PRĀPTA, "/upayoktṛ/:id", prapta_upayoktṛ)
+        .mārga(Prakāra::PREṢITA, "/upayoktṛ", nirmā_upayoktṛ)
+        .avasta(tālaka);
+
+    // Pratyāhāra (sense withdrawal) - bind address
+    māna pata = format!("0.0.0.0:{}", saṃrūpaṇa.porta);
+
+    // Dhāraṇā (concentration) - server instance
+    māna sevaka = Sevaka::bandha(&pata)
+        .pratīkṣā?
+        .sevā(mārgaka);
+
+    // Dhyāna (meditation) - health check, metrics
+    mudraṇa("Sevaka āramha: {}", pata);
+
+    // Samādhi (absorption) - run server
+    sevaka.calana().pratīkṣā?;
+
+    phera Samṛddha(());
+}
+
+// Supporting types
+prakāra UpayoktṛNirmāṇa {
+    nāma: Sūtra,
+    vidyutpatrā: Sūtra,
+}
+
+prakāra Doṣa {
+    sandēśa: Sūtra,
+}
+
+// Error handling with hetvābhāsa (fallacies)
+prakāra SevaDoṣa {
+    prakāra: DoṣaPrakāra,
+    sandēśa: Sūtra,
+    hetu: Kiñcit<Sūtra>,  // Optional cause
+}
+
+gaṇa DoṣaPrakāra {
+    Asiddha,      // Not established (404)
+    Viruddha,     // Contradictory (409)
+    Anaikāntika,  // Inconclusive (400)
+    Badhita,      // Invalid (422)
+    Āntarika,     // Internal (500)
+}

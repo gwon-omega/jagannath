@@ -1,0 +1,99 @@
+{
+  "name": "jagannath",
+  "displayName": "Jagannath Language",
+  "description": "Language support for Jagannath programming language",
+  "version": "0.1.0",
+  "publisher": "jagannath-lang",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jagannath-lang/jagannath"
+  },
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Programming Languages",
+    "Formatters",
+    "Linters"
+  ],
+  "keywords": [
+    "jagannath",
+    "sanskrit",
+    "systems programming"
+  ],
+  "activationEvents": [
+    "onLanguage:jagannath"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "languages": [
+      {
+        "id": "jagannath",
+        "aliases": ["Jagannath", "jagannath", "jag"],
+        "extensions": [".jag", ".jagannath"],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "jagannath",
+        "scopeName": "source.jagannath",
+        "path": "./syntaxes/jagannath.tmLanguage.json"
+      }
+    ],
+    "configuration": {
+      "title": "Jagannath",
+      "properties": {
+        "jagannath.serverPath": {
+          "type": "string",
+          "default": "",
+          "description": "Path to the Jagannath language server"
+        },
+        "jagannath.formatOnSave": {
+          "type": "boolean",
+          "default": true,
+          "description": "Format files on save"
+        },
+        "jagannath.guna": {
+          "type": "string",
+          "enum": ["sattva", "rajas", "tamas"],
+          "default": "rajas",
+          "description": "Default optimization mode"
+        }
+      }
+    },
+    "commands": [
+      {
+        "command": "jagannath.build",
+        "title": "Jagannath: Build"
+      },
+      {
+        "command": "jagannath.run",
+        "title": "Jagannath: Run"
+      },
+      {
+        "command": "jagannath.format",
+        "title": "Jagannath: Format Document"
+      }
+    ],
+    "snippets": [
+      {
+        "language": "jagannath",
+        "path": "./snippets/jagannath.json"
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/vscode": "^1.85.0",
+    "typescript": "^5.3.0"
+  },
+  "dependencies": {
+    "vscode-languageclient": "^9.0.0"
+  }
+}
