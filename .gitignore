@@ -46,3 +46,21 @@ Cargo.lock
 # Runtime artifacts
 core
 vgcore.*
+
+# Extras
+AGENTS.md
+
+# Ignore versioned markdown files v1 to v13
+v1.md
+v2.md
+v3.md
+v4.md
+v5.md
+v6.md
+v7.md
+v8.md
+v9.md
+v10.md
+v11.md
+v12.md
+v13.md
