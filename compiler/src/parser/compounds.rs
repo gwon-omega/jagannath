@@ -93,12 +93,12 @@ impl SamasaResolver {
     }
 
     /// Get the head (final element) of a compound
-    pub fn head(&self, compound: &str) -> &str {
+    pub fn head<'a>(&self, compound: &'a str) -> &'a str {
         compound.rsplit(&['-', ':', '_']).next().unwrap_or(compound)
     }
 
     /// Get the modifier (non-final elements) of a compound
-    pub fn modifier(&self, compound: &str) -> Option<&str> {
+    pub fn modifier<'a>(&self, compound: &'a str) -> Option<&'a str> {
         let head_start = compound.rfind(&['-', ':', '_'])?;
         Some(&compound[..head_start])
     }

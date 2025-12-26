@@ -16,7 +16,7 @@ pub mod optimizer;
 pub use optimizer::{ChakraOptimizer, Optimizable, OptimizationPass, OptimizerConfig};
 
 /// The 7 Chakras as software layers
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum Chakra {
     /// Mūlādhāra (root) - Hardware/OS layer
     Muladhara = 1,

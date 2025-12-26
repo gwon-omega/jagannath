@@ -19,23 +19,31 @@ pub use sandhi::SandhiFst;
 pub use scanner::Scanner;
 pub use affixes::{Affix, AffixSequence};
 
-use crate::driver::session::Session;
-
 /// Main lexer structure
 pub struct Lexer<'src> {
     /// Source code being lexed
     source: &'src str,
     /// Current position in source
     position: usize,
-    /// Dhātu dictionary for root recognition
-    dhatu_dict: &'src DhatuDictionary,
-    /// Sandhi FST for phonetic splitting
-    sandhi_fst: &'src SandhiFst,
+    /// Dhātu dictionary for root recognition (optional)
+    dhatu_dict: Option<&'src DhatuDictionary>,
+    /// Sandhi FST for phonetic splitting (optional)
+    sandhi_fst: Option<&'src SandhiFst>,
 }
 
 impl<'src> Lexer<'src> {
-    /// Create a new lexer for the given source
-    pub fn new(
+    /// Create a new lexer for the given source (simple mode)
+    pub fn new(source: &'src str) -> Self {
+        Self {
+            source,
+            position: 0,
+            dhatu_dict: None,
+            sandhi_fst: None,
+        }
+    }
+
+    /// Create a new lexer with full Sanskrit morphology support
+    pub fn with_morphology(
         source: &'src str,
         dhatu_dict: &'src DhatuDictionary,
         sandhi_fst: &'src SandhiFst,
@@ -43,8 +51,8 @@ impl<'src> Lexer<'src> {
         Self {
             source,
             position: 0,
-            dhatu_dict,
-            sandhi_fst,
+            dhatu_dict: Some(dhatu_dict),
+            sandhi_fst: Some(sandhi_fst),
         }
     }
 

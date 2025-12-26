@@ -2,7 +2,7 @@
 //!
 //! Defines the complete AST structure for Jagannath programs.
 
-use crate::lexer::{Span, AffixSequence};
+use crate::lexer::{AffixSequence, Span};
 
 /// Complete AST for a Jagannath source file
 #[derive(Debug, Clone)]
@@ -221,10 +221,7 @@ pub enum Stmt {
     /// Expression statement
     Expr(Expr),
     /// Return statement (phera)
-    Return {
-        value: Option<Expr>,
-        span: Span,
-    },
+    Return { value: Option<Expr>, span: Span },
     /// If statement (yad)
     If {
         condition: Expr,
@@ -281,10 +278,7 @@ pub enum Pattern {
 #[derive(Debug, Clone)]
 pub enum LoopKind {
     /// For-in loop (cala x : iterable)
-    ForIn {
-        binding: Identifier,
-        iterable: Expr,
-    },
+    ForIn { binding: Identifier, iterable: Expr },
     /// While loop (cala yāvat condition)
     While { condition: Box<Expr> },
     /// Infinite loop
@@ -350,15 +344,9 @@ pub enum Expr {
         span: Span,
     },
     /// Array literal
-    Array {
-        elements: Vec<Expr>,
-        span: Span,
-    },
+    Array { elements: Vec<Expr>, span: Span },
     /// Tuple literal
-    Tuple {
-        elements: Vec<Expr>,
-        span: Span,
-    },
+    Tuple { elements: Vec<Expr>, span: Span },
     /// Lambda/closure
     Lambda {
         params: Vec<Parameter>,
@@ -375,15 +363,9 @@ pub enum Expr {
         span: Span,
     },
     /// Try operator (?)
-    Try {
-        expr: Box<Expr>,
-        span: Span,
-    },
+    Try { expr: Box<Expr>, span: Span },
     /// Await expression
-    Await {
-        expr: Box<Expr>,
-        span: Span,
-    },
+    Await { expr: Box<Expr>, span: Span },
     /// Type cast
     Cast {
         expr: Box<Expr>,
@@ -406,25 +388,138 @@ pub enum Literal {
 /// Binary operators
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum BinaryOp {
-    Add, Sub, Mul, Div, Mod,
-    And, Or,
-    Eq, Ne, Lt, Le, Gt, Ge,
-    BitAnd, BitOr, BitXor,
-    Shl, Shr,
+    Add,
+    Sub,
+    Mul,
+    Div,
+    Mod,
+    And,
+    Or,
+    Eq,
+    Ne,
+    Lt,
+    Le,
+    Gt,
+    Ge,
+    BitAnd,
+    BitOr,
+    BitXor,
+    Shl,
+    Shr,
     Assign,
-    AddAssign, SubAssign, MulAssign, DivAssign,
+    AddAssign,
+    SubAssign,
+    MulAssign,
+    DivAssign,
 }
 
 /// Unary operators
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum UnaryOp {
-    Neg,    // -
-    Not,    // !
-    Ref,    // &
-    Deref,  // *
+    Neg,   // -
+    Not,   // !
+    Ref,   // &
+    Deref, // *
 }
 
 /// AST node trait for common operations
 pub trait AstNode {
     fn span(&self) -> Span;
+}
+
+// ============================================================================
+// AST Helper Methods for Garuda Analysis
+// ============================================================================
+
+impl Ast {
+    /// Get all function definitions
+    pub fn functions(&self) -> Vec<&FunctionDef> {
+        self.items
+            .iter()
+            .filter_map(|item| {
+                if let Item::Function(f) = item {
+                    Some(f)
+                } else {
+                    None
+                }
+            })
+            .collect()
+    }
+
+    /// Get all function calls in the AST (placeholder)
+    pub fn function_calls(&self) -> Vec<FunctionCallInfo> {
+        // TODO: Walk AST to collect all function calls
+        Vec::new()
+    }
+}
+
+impl FunctionDef {
+    /// Get allocations in function (placeholder)
+    pub fn allocations(&self) -> Vec<AllocationInfo> {
+        Vec::new()
+    }
+
+    /// Get deallocations in function (placeholder)
+    pub fn deallocations(&self) -> Vec<DeallocationInfo> {
+        Vec::new()
+    }
+}
+
+impl Expr {
+    /// Get referenced variables in expression (placeholder)
+    pub fn referenced_variables(&self) -> Vec<String> {
+        match self {
+            Expr::Identifier(id) => vec![id.name.clone()],
+            _ => Vec::new(),
+        }
+    }
+}
+
+impl Stmt {
+    /// Get span of statement
+    pub fn span(&self) -> Span {
+        match self {
+            Stmt::Let { span, .. } => *span,
+            Stmt::Expr(e) => match e {
+                Expr::Binary { span, .. } => *span,
+                Expr::Call { span, .. } => *span,
+                _ => Span::dummy(),
+            },
+            Stmt::Return { span, .. } => *span,
+            Stmt::If { span, .. } => *span,
+            Stmt::Match { span, .. } => *span,
+            Stmt::Loop { span, .. } => *span,
+            Stmt::Break { span } => *span,
+            Stmt::Continue { span } => *span,
+        }
+    }
+
+    /// Try to get assignment (target, source)
+    pub fn as_assignment(&self) -> Option<(&str, &Expr)> {
+        // Simplified - would need more complex analysis
+        None
+    }
+}
+
+/// Function call information for analysis
+#[derive(Debug, Clone)]
+pub struct FunctionCallInfo {
+    pub function_name: String,
+    pub arguments: Vec<Expr>,
+    pub span: Span,
+}
+
+/// Allocation information for analysis
+#[derive(Debug, Clone)]
+pub struct AllocationInfo {
+    pub variable: String,
+    pub allocation_type: String,
+    pub span: Span,
+}
+
+/// Deallocation information for analysis
+#[derive(Debug, Clone)]
+pub struct DeallocationInfo {
+    pub variable: String,
+    pub span: Span,
 }

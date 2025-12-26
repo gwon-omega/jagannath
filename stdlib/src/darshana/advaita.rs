@@ -208,7 +208,7 @@ pub struct Jnana<T> {
 
 impl<T> Jnana<T> {
     /// Create knowledge about a type
-    pub const fn of() -> Self {
+    pub fn of() -> Self {
         Self {
             known_type: PhantomData,
             type_name: core::any::type_name::<T>(),

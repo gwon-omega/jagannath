@@ -18,6 +18,11 @@ impl Span {
         Self { start, end }
     }
 
+    /// Create a dummy span (for generated code/tests)
+    pub fn dummy() -> Self {
+        Self { start: 0, end: 0 }
+    }
+
     pub fn to_range(self) -> Range<usize> {
         self.start..self.end
     }

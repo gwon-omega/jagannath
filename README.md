@@ -54,11 +54,11 @@ Semantic Encoding    | ❌   | ❌   | ❌     | ✅ (Sanskrit)
 # Install Jagannath compiler
 cargo install jagc
 
-# Create new project
-patra nirmā mera-pariyojana
+# Create new project (मम = my in Sanskrit)
+patra nirmā mam-pariyojanā
 
 # Build and run
-cd mera-pariyojana
+cd mam-pariyojanā
 jagc build
 jagc run
 ```

@@ -8,13 +8,15 @@
 //! - `maya_overlay`: Type system as overlay on raw bytes (illusion)
 //! - `atman_optimization`: Identity-based optimizations (self-recognition)
 
+pub mod atman_optimization;
 pub mod brahman_memory;
 pub mod maya_overlay;
-pub mod atman_optimization;
 
-pub use brahman_memory::{BrahmanMemory, BrahmanHandle, AccessFrequency, LifetimeEstimate};
-pub use maya_overlay::{MayaOverlay, MayaType, TypeKind, TransmuteResult};
-pub use atman_optimization::{AtmanOptimizer, AtmanOptimization};
+pub use atman_optimization::{AtmanOptimization, AtmanOptimizer};
+pub use brahman_memory::{
+    AccessFrequency, BrahmanHandle, BrahmanMemory, LifetimeEstimate, MaterializationResult,
+};
+pub use maya_overlay::{MayaOverlay, MayaType, TransmuteResult, TypeKind};
 
 use std::collections::HashMap;
 
@@ -84,17 +86,25 @@ impl AdvaitaMemory {
 
     /// Create a memory region
     pub fn create_region(&mut self, name: String, kind: RegionKind, size: usize) {
-        self.regions.insert(name.clone(), MemoryRegion {
-            name,
-            kind,
-            size,
-            allocations: Vec::new(),
-        });
+        self.regions.insert(
+            name.clone(),
+            MemoryRegion {
+                name,
+                kind,
+                size,
+                allocations: Vec::new(),
+            },
+        );
     }
 
     /// Allocate memory
     /// The system decides optimal placement (māyā selection)
-    pub fn allocate(&mut self, name: String, size: usize, alignment: usize) -> Option<AllocationHandle> {
+    pub fn allocate(
+        &mut self,
+        name: String,
+        size: usize,
+        alignment: usize,
+    ) -> Option<AllocationHandle> {
         // Find best region (Advaita insight - all are ultimately the same)
         let region_name = self.select_region(size, alignment)?;
 
@@ -127,20 +137,32 @@ impl AdvaitaMemory {
 
         // Small values might fit in registers
         if size <= 8 {
-            if let Some((name, _)) = self.regions.iter().find(|(_, r)| r.kind == RegionKind::Register) {
+            if let Some((name, _)) = self
+                .regions
+                .iter()
+                .find(|(_, r)| r.kind == RegionKind::Register)
+            {
                 return Some(name.clone());
             }
         }
 
         // Medium values go to stack
         if size <= 4096 {
-            if let Some((name, _)) = self.regions.iter().find(|(_, r)| r.kind == RegionKind::Stack) {
+            if let Some((name, _)) = self
+                .regions
+                .iter()
+                .find(|(_, r)| r.kind == RegionKind::Stack)
+            {
                 return Some(name.clone());
             }
         }
 
         // Larger values go to heap or arena
-        if let Some((name, _)) = self.regions.iter().find(|(_, r)| r.kind == RegionKind::Arena || r.kind == RegionKind::Heap) {
+        if let Some((name, _)) = self
+            .regions
+            .iter()
+            .find(|(_, r)| r.kind == RegionKind::Arena || r.kind == RegionKind::Heap)
+        {
             return Some(name.clone());
         }
 
@@ -150,7 +172,11 @@ impl AdvaitaMemory {
     /// Free memory
     pub fn free(&mut self, handle: &AllocationHandle) {
         if let Some(region) = self.regions.get_mut(&handle.region) {
-            if let Some(pos) = region.allocations.iter().position(|a| a.name == handle.name) {
+            if let Some(pos) = region
+                .allocations
+                .iter()
+                .position(|a| a.name == handle.name)
+            {
                 let alloc = region.allocations.remove(pos);
                 self.global_state.total_used -= alloc.size;
                 self.global_state.active_allocations -= 1;

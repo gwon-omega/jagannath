@@ -76,15 +76,9 @@ pub enum AtmanOptimization {
         representative: String,
     },
     /// Remove dead store (value is overwritten by identical)
-    DeadStore {
-        variable: String,
-        location: usize,
-    },
+    DeadStore { variable: String, location: usize },
     /// Replace expression with known value
-    ConstantFolding {
-        expression: String,
-        value: String,
-    },
+    ConstantFolding { expression: String, value: String },
     /// Skip redundant check (already known to be true/false)
     RedundantCheck {
         condition: String,
@@ -107,23 +101,27 @@ impl AtmanOptimizer {
         // Get or create identity group for a
         let key = IdentityKey::Variable(a.clone());
 
-        let group = self.identity_groups.entry(key.clone()).or_insert_with(|| {
-            IdentityGroup {
-                representative: a.clone(),
-                members: vec![a.clone()],
-                shared_properties: vec![],
+        let group_for_b = {
+            let group = self
+                .identity_groups
+                .entry(key.clone())
+                .or_insert_with(|| IdentityGroup {
+                    representative: a.clone(),
+                    members: vec![a.clone()],
+                    shared_properties: vec![],
+                });
+
+            if !group.members.contains(&b) {
+                group.members.push(b.clone());
             }
-        });
 
-        if !group.members.contains(&b) {
-            group.members.push(b.clone());
-        }
+            // Clone the group for reverse lookup insertion
+            group.clone()
+        };
 
-        // Also record reverse lookup
-        self.identity_groups.insert(
-            IdentityKey::Variable(b),
-            group.clone(),
-        );
+        // Insert reverse lookup after the mutable borrow is released
+        self.identity_groups
+            .insert(IdentityKey::Variable(b), group_for_b);
     }
 
     /// Get value number for an expression (for CSE)
@@ -161,7 +159,12 @@ impl AtmanOptimizer {
     }
 
     /// Analyze a comparison and return optimization if possible
-    pub fn analyze_comparison(&self, left: &str, op: &str, right: &str) -> Option<AtmanOptimization> {
+    pub fn analyze_comparison(
+        &self,
+        left: &str,
+        op: &str,
+        right: &str,
+    ) -> Option<AtmanOptimization> {
         // x == x is always true
         // x != x is always false
         if self.are_identical(left, right) {
@@ -198,7 +201,12 @@ impl AtmanOptimizer {
     }
 
     /// Analyze an assignment and check for dead stores
-    pub fn analyze_assignment(&self, var: &str, value: &str, location: usize) -> Option<AtmanOptimization> {
+    pub fn analyze_assignment(
+        &self,
+        var: &str,
+        value: &str,
+        location: usize,
+    ) -> Option<AtmanOptimization> {
         // If var already has this value (same identity), it's a dead store
         if self.are_identical(var, value) {
             return Some(AtmanOptimization::DeadStore {
@@ -233,12 +241,14 @@ impl AtmanOptimizer {
         }
 
         // Find common subexpressions
-        let expressions: Vec<String> = code.statements.iter().filter_map(|s| {
-            match s {
+        let expressions: Vec<String> = code
+            .statements
+            .iter()
+            .filter_map(|s| match s {
                 Statement::Assign { value, .. } => Some(value.clone()),
                 _ => None,
-            }
-        }).collect();
+            })
+            .collect();
 
         optimizations.extend(self.find_common_subexpressions(&expressions));
 
@@ -287,8 +297,15 @@ pub struct CodeBlock {
 /// Statement types
 #[derive(Debug)]
 pub enum Statement {
-    Assign { var: String, value: String },
-    Compare { left: String, op: String, right: String },
+    Assign {
+        var: String,
+        value: String,
+    },
+    Compare {
+        left: String,
+        op: String,
+        right: String,
+    },
 }
 
 impl Default for AtmanOptimizer {
@@ -307,11 +324,17 @@ mod tests {
 
         // x == x should be optimized to true
         let opt = optimizer.analyze_comparison("x", "==", "x");
-        assert!(matches!(opt, Some(AtmanOptimization::IdentityComparison { result: true, .. })));
+        assert!(matches!(
+            opt,
+            Some(AtmanOptimization::IdentityComparison { result: true, .. })
+        ));
 
         // x != x should be optimized to false
         let opt = optimizer.analyze_comparison("x", "!=", "x");
-        assert!(matches!(opt, Some(AtmanOptimization::IdentityComparison { result: false, .. })));
+        assert!(matches!(
+            opt,
+            Some(AtmanOptimization::IdentityComparison { result: false, .. })
+        ));
     }
 
     #[test]

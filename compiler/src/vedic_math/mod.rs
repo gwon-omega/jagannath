@@ -125,11 +125,13 @@ impl VedicMath {
     /// General multiplication using vertical-crosswise method
     /// Works for any numbers, optimal for multi-digit
     pub fn urdhva_multiply(a: i64, b: i64) -> i64 {
-        let a_digits: Vec<i64> = a.to_string()
+        let a_digits: Vec<i64> = a
+            .to_string()
             .chars()
             .map(|c| c.to_digit(10).unwrap() as i64)
             .collect();
-        let b_digits: Vec<i64> = b.to_string()
+        let b_digits: Vec<i64> = b
+            .to_string()
             .chars()
             .map(|c| c.to_digit(10).unwrap() as i64)
             .collect();
@@ -204,7 +206,10 @@ impl VedicMath {
     /// Solve equations where sum of coefficients is equal
     /// (ax + b)(cx + d) = (ex + f)(gx + h)
     /// If a+b = e+f AND c+d = g+h, then x = 0 is a solution
-    pub fn sunyam_check(coeffs_left: (i64, i64, i64, i64), coeffs_right: (i64, i64, i64, i64)) -> bool {
+    pub fn sunyam_check(
+        coeffs_left: (i64, i64, i64, i64),
+        coeffs_right: (i64, i64, i64, i64),
+    ) -> bool {
         let (a, b, c, d) = coeffs_left;
         let (e, f, g, h) = coeffs_right;
 
@@ -389,6 +394,59 @@ impl VedicMath {
     // UTILITY FUNCTIONS
     // ==========================================
 
+    /// Integer square root using Vedic approximation
+    pub fn integer_sqrt(n: i64) -> i64 {
+        if n < 0 {
+            return 0;
+        }
+        if n < 2 {
+            return n;
+        }
+
+        // Newton's method with integer arithmetic
+        let mut x = n;
+        let mut y = (x + 1) / 2;
+        while y < x {
+            x = y;
+            y = (x + n / x) / 2;
+        }
+        x
+    }
+
+    /// Square a number ending in 5 (special case of एकाधिकेन)
+    /// 25² = 2×3|25 = 625
+    pub fn ekadhikena_square(n: i64) -> i64 {
+        if n % 10 == 5 {
+            Self::square_ending_5(n)
+        } else {
+            n * n
+        }
+    }
+
+    /// Multiply by repeated 9s (9, 99, 999, etc.)
+    /// n × 99 = n × 100 - n = 100n - n
+    pub fn multiply_by_nines(n: i64, nines_count: usize) -> i64 {
+        let base = 10i64.pow(nines_count as u32);
+        n * base - n
+    }
+
+    /// 2-digit Ūrdhva-Tiryagbhyām multiplication
+    /// More efficient for small numbers
+    pub fn urdhva_multiply_2digit(a: i64, b: i64) -> i64 {
+        // For 2-digit: ab × cd = (10a + b)(10c + d)
+        // = 100ac + 10(ad + bc) + bd
+        let a_tens = a / 10;
+        let a_units = a % 10;
+        let b_tens = b / 10;
+        let b_units = b % 10;
+
+        let diagonal1 = a_tens * b_tens * 100;
+        let cross = (a_tens * b_units + a_units * b_tens) * 10;
+        let diagonal2 = a_units * b_units;
+
+        diagonal1 + cross + diagonal2
+    }
+
     /// Determine best sūtra for multiplication
     pub fn best_multiply_sutra(a: i64, b: i64) -> Sutra {
         // Near 100?
@@ -421,12 +479,8 @@ impl VedicMath {
                 let base = if a > 500 && b > 500 { 1000 } else { 100 };
                 Self::nikhilam_multiply(a, b, base)
             }
-            Sutra::EkadhikenaPurvena => {
-                Self::ekadhikena_multiply(a, b).unwrap_or(a * b)
-            }
-            Sutra::EkanyunenaPurvena => {
-                Self::ekanyunena_multiply(a, b)
-            }
+            Sutra::EkadhikenaPurvena => Self::ekadhikena_multiply(a, b).unwrap_or(a * b),
+            Sutra::EkanyunenaPurvena => Self::ekanyunena_multiply(a, b),
             _ => Self::urdhva_multiply(a, b),
         }
     }
@@ -491,8 +545,17 @@ mod tests {
 
     #[test]
     fn test_best_sutra_selection() {
-        assert_eq!(VedicMath::best_multiply_sutra(97, 96), Sutra::NikhilamNavatascaramam);
-        assert_eq!(VedicMath::best_multiply_sutra(23, 27), Sutra::EkadhikenaPurvena);
-        assert_eq!(VedicMath::best_multiply_sutra(45, 99), Sutra::EkanyunenaPurvena);
+        assert_eq!(
+            VedicMath::best_multiply_sutra(97, 96),
+            Sutra::NikhilamNavatascaramam
+        );
+        assert_eq!(
+            VedicMath::best_multiply_sutra(23, 27),
+            Sutra::EkadhikenaPurvena
+        );
+        assert_eq!(
+            VedicMath::best_multiply_sutra(45, 99),
+            Sutra::EkanyunenaPurvena
+        );
     }
 }

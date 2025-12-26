@@ -10,7 +10,7 @@
 
 use clap::{Parser, Subcommand};
 use std::path::PathBuf;
-use tracing::{info, error, Level};
+use tracing::{error, info, Level};
 use tracing_subscriber::FmtSubscriber;
 
 /// Jagannath Compiler - संस्कृत-आधारित प्रणाली भाषा
@@ -129,45 +129,35 @@ fn main() {
     let cli = Cli::parse();
 
     // Initialize logging
-    let log_level = if cli.verbose { Level::DEBUG } else { Level::INFO };
+    let log_level = if cli.verbose {
+        Level::DEBUG
+    } else {
+        Level::INFO
+    };
     let subscriber = FmtSubscriber::builder()
         .with_max_level(log_level)
         .with_target(false)
         .finish();
-    tracing::subscriber::set_global_default(subscriber)
-        .expect("Failed to set tracing subscriber");
+    tracing::subscriber::set_global_default(subscriber).expect("Failed to set tracing subscriber");
 
-    info!("जगन्नाथ संकलक v{} (Jagannath Compiler)", env!("CARGO_PKG_VERSION"));
+    info!(
+        "जगन्नाथ संकलक v{} (Jagannath Compiler)",
+        env!("CARGO_PKG_VERSION")
+    );
 
-    let result = match cli.command {
-        Some(Commands::Build { project, release }) => {
-            build_project(&project, release, &cli)
-        }
-        Some(Commands::Run { input, args }) => {
-            run_program(&input, &args, &cli)
-        }
-        Some(Commands::Check { input }) => {
-            check_source(&input, &cli)
-        }
-        Some(Commands::New { name, lib }) => {
-            create_project(&name, lib)
-        }
-        Some(Commands::Init { lib }) => {
-            init_project(lib)
-        }
-        Some(Commands::Test { filter }) => {
-            run_tests(&filter, &cli)
-        }
-        Some(Commands::Doc { open }) => {
-            generate_docs(open, &cli)
-        }
-        Some(Commands::Clean) => {
-            clean_artifacts()
-        }
+    let result = match &cli.command {
+        Some(Commands::Build { project, release }) => build_project(project, *release, &cli),
+        Some(Commands::Run { input, args }) => run_program(input, args, &cli),
+        Some(Commands::Check { input }) => check_source(input, &cli),
+        Some(Commands::New { name, lib }) => create_project(name, *lib),
+        Some(Commands::Init { lib }) => init_project(*lib),
+        Some(Commands::Test { filter }) => run_tests(filter, &cli),
+        Some(Commands::Doc { open }) => generate_docs(*open, &cli),
+        Some(Commands::Clean) => clean_artifacts(),
         None => {
             // Default: compile single file
-            if let Some(input) = cli.input {
-                compile_file(&input, &cli)
+            if let Some(ref input) = cli.input {
+                compile_file(input, &cli)
             } else {
                 error!("No input file specified. Use --help for usage.");
                 std::process::exit(1);
@@ -187,8 +177,8 @@ fn compile_file(input: &PathBuf, cli: &Cli) -> Result<(), String> {
     info!("Compiling: {}", input.display());
 
     // Read source file
-    let source = std::fs::read_to_string(input)
-        .map_err(|e| format!("Failed to read file: {}", e))?;
+    let source =
+        std::fs::read_to_string(input).map_err(|e| format!("Failed to read file: {}", e))?;
 
     // Parse target
     let target = match cli.target.as_str() {
@@ -220,7 +210,10 @@ fn compile_file(input: &PathBuf, cli: &Cli) -> Result<(), String> {
     // let session = Session::new(options);
     // session.compile_source(&source)?;
 
-    info!("Target: {:?}, Guṇa: {:?}, Opt: O{}", target, guna, cli.opt_level);
+    info!(
+        "Target: {:?}, Guṇa: {:?}, Opt: O{}",
+        target, guna, cli.opt_level
+    );
 
     Ok(())
 }
@@ -256,8 +249,8 @@ fn check_source(input: &PathBuf, cli: &Cli) -> Result<(), String> {
     info!("Checking: {}", input.display());
 
     // Read source
-    let source = std::fs::read_to_string(input)
-        .map_err(|e| format!("Failed to read file: {}", e))?;
+    let source =
+        std::fs::read_to_string(input).map_err(|e| format!("Failed to read file: {}", e))?;
 
     // TODO: Run lexer, parser, type checker without codegen
 
@@ -279,7 +272,8 @@ fn create_project(name: &str, lib: bool) -> Result<(), String> {
         .map_err(|e| format!("Failed to create directory: {}", e))?;
 
     // Create Jagannath.toml
-    let manifest = format!(r#"[pariyojanā]
+    let manifest = format!(
+        r#"[pariyojanā]
 nāma = "{}"
 saṃskaraṇa = "0.1.0"
 kartāraḥ = ["Your Name <you@example.com>"]
@@ -287,7 +281,9 @@ kartāraḥ = ["Your Name <you@example.com>"]
 [nirmaṇa]
 lakṣya = "x86_64"
 guṇa = "rajas"
-"#, name);
+"#,
+        name
+    );
 
     std::fs::write(project_dir.join("Jagannath.toml"), manifest)
         .map_err(|e| format!("Failed to write manifest: {}", e))?;
@@ -343,10 +339,13 @@ fn init_project(lib: bool) -> Result<(), String> {
         .unwrap_or_else(|| "project".to_string());
 
     // Create Jagannath.toml
-    let manifest_content = format!(r#"[pariyojanā]
+    let manifest_content = format!(
+        r#"[pariyojanā]
 nāma = "{}"
 saṃskaraṇa = "0.1.0"
-"#, name);
+"#,
+        name
+    );
 
     std::fs::write("Jagannath.toml", manifest_content)
         .map_err(|e| format!("Failed to write manifest: {}", e))?;

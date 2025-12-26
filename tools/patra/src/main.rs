@@ -12,9 +12,9 @@
 
 use clap::{Parser, Subcommand};
 use serde::{Deserialize, Serialize};
-use std::path::PathBuf;
 use std::collections::HashMap;
-use tracing::{info, warn, error};
+use std::path::PathBuf;
+use tracing::{error, info, warn};
 
 /// Jagannath Package Manager - पत्र
 #[derive(Parser)]
@@ -168,6 +168,193 @@ struct PackageInfo {
 const REGISTRY_URL: &str = "https://patra.jagannath-lang.org/api/v1";
 const PATRA_DIR: &str = ".patra";
 
+/// Create a new Jagannath project
+/// निर्मा (nirmā) = to create, construct, build
+/// परियोजना (pariyojanā) = project
+fn nirma_pariyojana(
+    nāma: &str, phalaka: &str, dvyaṅka: bool, grantha: bool
+) -> Result<(), String> {
+    info!(
+        "निर्माण नव परियोजना: {} (Creating new project: {})",
+        nāma, nāma
+    );
+
+    let project_dir = PathBuf::from(nāma);
+
+    if project_dir.exists() {
+        return Err(format!(
+            "Directory '{}' already exists. Choose a different name or remove it.",
+            nāma
+        ));
+    }
+
+    // Create project directory structure
+    std::fs::create_dir_all(&project_dir)
+        .map_err(|e| format!("Failed to create directory: {}", e))?;
+
+    let src_dir = project_dir.join("mūla"); // मूल = source/root
+    std::fs::create_dir_all(&src_dir)
+        .map_err(|e| format!("Failed to create source directory: {}", e))?;
+
+    // Determine project type
+    let is_library = grantha || (!dvyaṅka && phalaka == "grantha");
+
+    // Create Jagannath.toml manifest
+    let manifest_content = format!(
+        r#"# जगन्नाथ परियोजना विन्यास (Jagannath Project Configuration)
+
+[pariyojanā]
+nāma = "{name}"
+saṃskaraṇa = "0.1.0"
+kartāraḥ = []
+vivaraṇa = "एक नव जगन्नाथ परियोजना (A new Jagannath project)"
+anujñā = "MIT"
+
+[nirmaṇa]
+lakṣya = "{target}"
+guṇa = "sattva"  # sattva=correctness, rajas=speed, tamas=memory
+
+[āvaśyakatā]
+# Add your dependencies here
+# उदाहरण (Example):
+# saṅkhyā-gaṇita = "0.1.0"
+
+[dev-āvaśyakatā]
+# Add dev dependencies here
+"#,
+        name = nāma,
+        target = if is_library { "grantha" } else { "dvyaṅka" }
+    );
+
+    std::fs::write(project_dir.join("Jagannath.toml"), manifest_content)
+        .map_err(|e| format!("Failed to create manifest: {}", e))?;
+
+    // Create main source file
+    let main_file = if is_library {
+        format!(
+            r#"//! {} - जगन्नाथ ग्रन्थ (Jagannath Library)
+//!
+//! विवरण (Description): A new Jagannath library
+
+/// उदाहरण कार्यक्रम (Example function)
+/// Returns the sum of two numbers
+सार्वजनिक कार्यक्रम योग-k(
+    प्रथम: त३२-क^कर्तृ,
+    द्वितीय: त३२-क^करण
+) -> त३२-क {{
+    फेर प्रथम + द्वितीय;
+}}
+
+#[परीक्षा]
+मापांक परीक्षाः {{
+    #[परीक्षा]
+    कार्यक्रम परीक्षा_योग() {{
+        अभिकथन!(योग(२, ३) == ५);
+    }}
+}}
+"#,
+            nāma
+        )
+    } else {
+        format!(
+            r#"//! {} - जगन्नाथ कार्यक्रम (Jagannath Program)
+//!
+//! नमस्ते विश्व! (Hello World!)
+
+/// मुख्य प्रवेश बिन्दु (Main entry point)
+प्रधान कार्यक्रम() {{
+    // नमस्ते संदेश छापें (Print hello message)
+    मुद्रण("नमस्ते विश्व!");
+    मुद्रण("Welcome to {}!");
+
+    // सरल गणना (Simple calculation)
+    मान फल: त३२-क = योग(४२, ८);
+    मुद्रण("४२ + ८ = {{}}", फल);
+}}
+
+/// दो संख्याओं का योग (Sum of two numbers)
+कार्यक्रम योग-k(अ: त३२-क, ब: त३२-क) -> त३२-क {{
+    फेर अ + ब;
+}}
+"#,
+            nāma, nāma
+        )
+    };
+
+    let main_filename = if is_library {
+        "grantha.jag"
+    } else {
+        "pradhāna.jag"
+    };
+    std::fs::write(src_dir.join(main_filename), main_file)
+        .map_err(|e| format!("Failed to create source file: {}", e))?;
+
+    // Create .gitignore
+    let gitignore = r#"# जगन्नाथ निर्माण कलाकृतियाँ (Jagannath build artifacts)
+/lakṣya/
+/target/
+/.patra/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+"#;
+    std::fs::write(project_dir.join(".gitignore"), gitignore)
+        .map_err(|e| format!("Failed to create .gitignore: {}", e))?;
+
+    // Create README
+    let readme = format!(
+        r#"# {}
+
+एक जगन्नाथ परियोजना (A Jagannath project)
+
+## निर्माण (Build)
+
+```bash
+jagc build
+```
+
+## चालन (Run)
+
+```bash
+jagc run
+```
+
+## परीक्षण (Test)
+
+```bash
+jagc test
+```
+
+## अनुज्ञा (License)
+
+MIT
+"#,
+        nāma
+    );
+    std::fs::write(project_dir.join("README.md"), readme)
+        .map_err(|e| format!("Failed to create README: {}", e))?;
+
+    info!(
+        "✓ परियोजना '{}' सफलतापूर्वक निर्मित (Project created successfully)",
+        nāma
+    );
+    info!("");
+    info!("  आगे के चरण (Next steps):");
+    info!("    cd {}", nāma);
+    info!("    jagc build");
+    info!("    jagc run");
+    info!("");
+
+    Ok(())
+}
+
 fn main() {
     tracing_subscriber::fmt::init();
     let cli = Cli::parse();
@@ -175,7 +362,11 @@ fn main() {
     info!("पत्र - जगन्नाथ पैकेज प्रबंधक (Patra - Jagannath Package Manager)");
 
     let result = match cli.command {
-        Commands::Add { package, version, dev } => add_package(&package, version, dev),
+        Commands::Add {
+            package,
+            version,
+            dev,
+        } => add_package(&package, version, dev),
         Commands::Remove { package } => remove_package(&package),
         Commands::Update { package } => update_packages(package),
         Commands::Install => install_all(),
@@ -202,8 +393,7 @@ fn load_manifest() -> Result<Manifest, String> {
     let content = std::fs::read_to_string(&path)
         .map_err(|e| format!("Failed to read Jagannath.toml: {}", e))?;
 
-    toml::from_str(&content)
-        .map_err(|e| format!("Failed to parse Jagannath.toml: {}", e))
+    toml::from_str(&content).map_err(|e| format!("Failed to parse Jagannath.toml: {}", e))
 }
 
 fn save_manifest(manifest: &Manifest) -> Result<(), String> {
@@ -228,17 +418,24 @@ fn add_package(package: &str, version: Option<String>, dev: bool) -> Result<(), 
     let dependency = Dependency::Version(resolved_version.clone());
 
     if dev {
-        manifest.dev_dependencies.insert(package.to_string(), dependency);
+        manifest
+            .dev_dependencies
+            .insert(package.to_string(), dependency);
     } else {
         manifest.āvaśyakatā.insert(package.to_string(), dependency);
     }
 
     save_manifest(&manifest)?;
 
-    info!("Added {} {} to {}",
+    info!(
+        "Added {} {} to {}",
         package,
         resolved_version,
-        if dev { "dev dependencies" } else { "dependencies" }
+        if dev {
+            "dev dependencies"
+        } else {
+            "dependencies"
+        }
     );
 
     // Install the package
@@ -252,8 +449,8 @@ fn remove_package(package: &str) -> Result<(), String> {
 
     let mut manifest = load_manifest()?;
 
-    let removed = manifest.āvaśyakatā.remove(package).is_some() ||
-                  manifest.dev_dependencies.remove(package).is_some();
+    let removed = manifest.āvaśyakatā.remove(package).is_some()
+        || manifest.dev_dependencies.remove(package).is_some();
 
     if !removed {
         return Err(format!("Package '{}' not found in dependencies", package));
@@ -272,8 +469,8 @@ fn update_packages(package: Option<String>) -> Result<(), String> {
     if let Some(pkg) = package {
         info!("Updating package: {}", pkg);
 
-        if !manifest.āvaśyakatā.contains_key(&pkg) &&
-           !manifest.dev_dependencies.contains_key(&pkg) {
+        if !manifest.āvaśyakatā.contains_key(&pkg) && !manifest.dev_dependencies.contains_key(&pkg)
+        {
             return Err(format!("Package '{}' not found in dependencies", pkg));
         }
 
@@ -370,9 +567,9 @@ fn search_packages(query: &str) -> Result<(), String> {
 fn publish_package(skip_confirm: bool) -> Result<(), String> {
     let manifest = load_manifest()?;
 
-    info!("Publishing {} {}...",
-        manifest.pariyojanā.nāma,
-        manifest.pariyojanā.saṃskaraṇa
+    info!(
+        "Publishing {} {}...",
+        manifest.pariyojanā.nāma, manifest.pariyojanā.saṃskaraṇa
     );
 
     if !skip_confirm {
@@ -382,9 +579,9 @@ fn publish_package(skip_confirm: bool) -> Result<(), String> {
 
     // TODO: Build package and upload to registry
 
-    info!("Published {} {}",
-        manifest.pariyojanā.nāma,
-        manifest.pariyojanā.saṃskaraṇa
+    info!(
+        "Published {} {}",
+        manifest.pariyojanā.nāma, manifest.pariyojanā.saṃskaraṇa
     );
 
     Ok(())
@@ -424,7 +621,10 @@ fn show_info(package: &str) -> Result<(), String> {
 fn list_packages(tree: bool) -> Result<(), String> {
     let manifest = load_manifest()?;
 
-    println!("\n{} {}", manifest.pariyojanā.nāma, manifest.pariyojanā.saṃskaraṇa);
+    println!(
+        "\n{} {}",
+        manifest.pariyojanā.nāma, manifest.pariyojanā.saṃskaraṇa
+    );
 
     if tree {
         println!("├── Dependencies");

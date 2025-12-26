@@ -9,7 +9,7 @@
 //! - Return type declarations: `-> t32-k`
 
 use super::{Pramana, TypeEvidence};
-use crate::parser::ast::{Type, TypeAnnotation};
+use crate::parser::ast::Type;
 use std::collections::HashMap;
 
 /// Pratyakṣa type resolver - handles explicit annotations

@@ -94,7 +94,10 @@ impl CompilerSession {
         let start = Instant::now();
 
         // TODO: Implement actual parsing
-        let ast = crate::parser::ast::Ast { items: Vec::new() };
+        let ast = crate::parser::ast::Ast {
+            items: Vec::new(),
+            file_path: String::new(),
+        };
 
         self.timing.parsing_us = start.elapsed().as_micros() as u64;
         Ok(ast)

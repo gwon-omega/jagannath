@@ -5,14 +5,17 @@
 //! 6. Anupalabdhi (non-apprehension) - Negative type proof
 
 // Submodules
-pub mod arthapatti;
 pub mod anupalabdhi;
+pub mod arthapatti;
 
 // Re-exports
-pub use arthapatti::{ArthapattEngine, ArthapattRule, InferredType, Observed, Impossibility, Conclusion};
-pub use anupalabdhi::{AnupalabdhiEngine, AbsenceRule, AbsenceProof, SoughtFeature, AbsenceConclusion};
+pub use anupalabdhi::AbsenceRule as AnupalabdhiAbsenceRule;
+pub use anupalabdhi::{AbsenceConclusion, AbsenceProof, AnupalabdhiEngine, SoughtFeature};
+pub use arthapatti::{
+    ArthapattEngine, ArthapattRule, Conclusion, Impossibility, InferredType, Observed,
+};
 
-use super::philosophy::nyaya::{Pramana, NyayaInference, TypeEvidence};
+use super::philosophy::nyaya::{NyayaInference, Pramana, TypeEvidence};
 
 /// Extended pramāṇas (Mīmāṃsā system)
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -122,7 +125,9 @@ impl MimamsaInference {
     /// Example: "No error type is declared" → "Function cannot fail"
     pub fn anupalabdhi(&self, expression: &str, available_info: &[&str]) -> Option<TypeEvidence> {
         for rule in &self.absence_rules {
-            let sought_present = available_info.iter().any(|info| info.contains(&rule.sought));
+            let sought_present = available_info
+                .iter()
+                .any(|info| info.contains(&rule.sought));
             if !sought_present {
                 return Some(TypeEvidence {
                     type_name: rule.proves.clone(),

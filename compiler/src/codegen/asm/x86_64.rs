@@ -162,7 +162,9 @@ impl AsmEmitter for X86_64Emitter {
 
     fn emit_epilogue(&mut self, func: &MirFunction) {
         // Restore callee-saved registers (reverse order)
-        for reg in self.reg_alloc.used_callee_saved.iter().rev() {
+        // Clone the list to avoid borrowing self.reg_alloc while calling emit()
+        let callee_saved: Vec<_> = self.reg_alloc.used_callee_saved.iter().rev().copied().collect();
+        for reg in callee_saved {
             self.emit(&format!("pop {}", reg.name()));
         }
 

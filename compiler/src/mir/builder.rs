@@ -48,7 +48,7 @@ impl MirBuilder {
                         module.types.push(mir_type);
                     }
                 }
-                ast::Item::Const(const_def) => {
+                ast::Item::Constant(const_def) => {
                     if let Some(global) = self.build_const(const_def) {
                         module.globals.push(global);
                     }
@@ -117,13 +117,22 @@ impl MirBuilder {
                 let mir_variants: Vec<(String, Option<MirType>)> = variants
                     .iter()
                     .map(|v| {
-                        (
-                            v.name.name.clone(),
-                            v.ty.as_ref().map(|t| self.convert_type(t)),
-                        )
+                        // If variant has fields, create a tuple type
+                        let ty = v.fields.as_ref().map(|fields| {
+                            if fields.len() == 1 {
+                                self.convert_type(&fields[0].ty)
+                            } else {
+                                MirType::Tuple(
+                                    fields.iter().map(|f| self.convert_type(&f.ty)).collect(),
+                                )
+                            }
+                        });
+                        (v.name.name.clone(), ty)
                     })
                     .collect();
-                MirTypeDefKind::Enum { variants: mir_variants }
+                MirTypeDefKind::Enum {
+                    variants: mir_variants,
+                }
             }
             _ => return None,
         };
@@ -135,10 +144,14 @@ impl MirBuilder {
     }
 
     /// Build MIR for constant
-    fn build_const(&mut self, const_def: &ast::ConstDef) -> Option<MirGlobal> {
+    fn build_const(&mut self, const_def: &ast::ConstantDef) -> Option<MirGlobal> {
+        let ty = const_def.ty.as_ref()
+            .map(|t| self.convert_type(t))
+            .unwrap_or(MirType::Unit); // Infer type from value if not specified
+
         Some(MirGlobal {
             name: const_def.name.name.clone(),
-            ty: self.convert_type(&const_def.ty),
+            ty,
             init: None, // TODO: evaluate constant expression
             mutable: false,
         })
@@ -147,9 +160,9 @@ impl MirBuilder {
     /// Convert AST type to MIR type
     fn convert_type(&self, ty: &ast::Type) -> MirType {
         match ty {
-            ast::Type::Named { path, generics } => {
-                let name = &path.segments.last().unwrap().name;
-                match name.as_str() {
+            ast::Type::Named { name, generics, .. } => {
+                let type_name = &name.name;
+                match type_name.as_str() {
                     "i8" => MirType::Int(IntSize::I8),
                     "i16" => MirType::Int(IntSize::I16),
                     "i32" => MirType::Int(IntSize::I32),
@@ -162,27 +175,28 @@ impl MirBuilder {
                     "f64" => MirType::Float(FloatSize::F64),
                     "bool" => MirType::Bool,
                     "()" => MirType::Unit,
-                    _ => MirType::Named(name.clone()),
+                    _ => MirType::Named(type_name.clone()),
                 }
             }
-            ast::Type::Reference { mutable, ty } => MirType::Ref {
+            ast::Type::Reference { inner, mutable, .. } => MirType::Ref {
                 mutable: *mutable,
-                ty: Box::new(self.convert_type(ty)),
+                ty: Box::new(self.convert_type(inner)),
             },
-            ast::Type::Pointer { mutable, ty } => MirType::Ptr(Box::new(self.convert_type(ty))),
             ast::Type::Array { element, size } => MirType::Array {
                 element: Box::new(self.convert_type(element)),
-                size: *size,
+                size: size.unwrap_or(0),
             },
-            ast::Type::Slice { element } => MirType::Slice(Box::new(self.convert_type(element))),
             ast::Type::Tuple(elements) => {
                 MirType::Tuple(elements.iter().map(|t| self.convert_type(t)).collect())
             }
-            ast::Type::Function { params, return_type } => MirType::Function {
+            ast::Type::Function {
+                params,
+                return_type,
+            } => MirType::Function {
                 params: params.iter().map(|t| self.convert_type(t)).collect(),
                 ret: Box::new(self.convert_type(return_type)),
             },
-            ast::Type::Infer => MirType::Unit, // Should be resolved before MIR
+            ast::Type::Inferred => MirType::Unit, // Should be resolved before MIR
         }
     }
 

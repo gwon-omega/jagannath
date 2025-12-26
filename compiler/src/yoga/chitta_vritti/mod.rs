@@ -10,7 +10,7 @@ use std::sync::atomic::{AtomicU64, Ordering};
 
 /// Chitta Vṛttis (mental modifications/fluctuations)
 /// Maps to thread states
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum ChittaVritti {
     /// Pramāṇa (valid cognition) - Active execution
     Pramana,

@@ -13,9 +13,9 @@ pub mod determinism;
 
 // Re-exports
 pub use ashtanga::{
-    asana::AsanaAnalyzer, dharana::DharanaAnalyzer, dhyana::DhyanaReviewer, niyama::NiyamaAnalyzer,
+    asana::AsanaAnalyzer, dharana::DharanaAnalyzer, dhyana::DhyanaReviewer, niyama::NiyamaChecker,
     pranayama::PranayamaManager, pratyahara::PratyaharaAnalyzer, samadhi::SamadhiDeployment,
-    yama::YamaAnalyzer, Anga, AshtangaLifecycle,
+    yama::YamaChecker, Anga, AshtangaLifecycle,
 };
 pub use chakra::{Chakra, ChakraArchitecture, ChakraOptimizer, OptimizationPass, OptimizerConfig};
 pub use chitta_vritti::{ChittaVritti, VrittiNirodha};

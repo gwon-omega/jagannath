@@ -2,11 +2,11 @@
 //!
 //! Implements recursive descent parsing for the Jagannath grammar.
 
-use crate::lexer::{Token, TokenKind, Lexer};
+use crate::lexer::{Token, TokenKind};
 use super::ast::*;
 
 /// Main parser structure
-pub struct Parser<'src> {
+pub struct Parser {
     /// Token stream
     tokens: Vec<Token>,
     /// Current position
@@ -22,7 +22,7 @@ pub struct ParseError {
     pub span: crate::lexer::Span,
 }
 
-impl<'src> Parser<'src> {
+impl Parser {
     /// Create a new parser from tokens
     pub fn new(tokens: Vec<Token>) -> Self {
         Self {
