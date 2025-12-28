@@ -5,7 +5,8 @@ use jagannath_compiler::driver::CompilerSession;
 
 /// Helper function to compile source to assembly
 fn compile_to_asm(source: &str) -> String {
-    let options = CompilerOptions::new();
+    let mut options = CompilerOptions::new();
+    options.emit_asm = true; // Request assembly output
     let mut session = CompilerSession::new(options);
     let result = session.compile(source);
     match result {

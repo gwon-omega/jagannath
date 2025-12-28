@@ -219,6 +219,7 @@ fn compile_file(input: &PathBuf, cli: &Cli) -> Result<(), String> {
         library_paths: Vec::new(),
         libraries: Vec::new(),
         deterministic: true,
+        emit_asm: false,
     };
 
     info!(

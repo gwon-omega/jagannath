@@ -5,6 +5,17 @@
 #[cfg(feature = "alloc")]
 use alloc::vec::Vec as AllocVec;
 
+// Sub-modules
+#[cfg(feature = "alloc")]
+pub mod srinkhala;
+#[cfg(feature = "alloc")]
+pub mod pradhanyata;
+
+#[cfg(feature = "alloc")]
+pub use srinkhala::*;
+#[cfg(feature = "alloc")]
+pub use pradhanyata::*;
+
 /// Vector/List (Sūcī - सूची)
 #[cfg(feature = "alloc")]
 pub type Suci<T> = AllocVec<T>;

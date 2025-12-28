@@ -74,8 +74,51 @@ impl DhatuDictionary {
     }
 
     /// Load from custom dictionary file
+    /// File format: root|devanagari|meanings|gana|padi|category
     pub fn from_file(path: &str) -> Result<Self, std::io::Error> {
-        todo!("Implement dictionary loading from file")
+        use std::io::{BufRead, BufReader};
+        use std::fs::File;
+
+        let mut dict = Self {
+            entries: HashMap::new(),
+            trie: DhatuTrie::new(),
+        };
+
+        let file = File::open(path)?;
+        let reader = BufReader::new(file);
+
+        for line in reader.lines() {
+            let line = line?;
+            if line.is_empty() || line.starts_with('#') { continue; }
+
+            let parts: Vec<&str> = line.split('|').collect();
+            if parts.len() < 6 { continue; }
+
+            let entry = DhatuEntry {
+                root: parts[0].to_string(),
+                devanagari: parts[1].to_string(),
+                meanings: parts[2].split(',').map(|s| s.trim().to_string()).collect(),
+                gana: parts[3].parse().unwrap_or(1),
+                padi: match parts[4] {
+                    "P" => Padi::Parasmaipada,
+                    "A" => Padi::Atmanepada,
+                    _ => Padi::Ubhayapadi,
+                },
+                category: match parts[5] {
+                    "motion" => DhatuCategory::Motion,
+                    "action" => DhatuCategory::Action,
+                    "perception" => DhatuCategory::Perception,
+                    "communication" => DhatuCategory::Communication,
+                    "creation" => DhatuCategory::Creation,
+                    "destruction" => DhatuCategory::Destruction,
+                    "transformation" => DhatuCategory::Transformation,
+                    _ => DhatuCategory::State,
+                },
+            };
+            dict.add_dhatu(entry);
+        }
+
+        Ok(dict)
     }
 
     /// Look up a dhātu by root
@@ -85,7 +128,10 @@ impl DhatuDictionary {
 
     /// Find all dhātus matching a prefix
     pub fn find_by_prefix(&self, prefix: &str) -> Vec<&DhatuEntry> {
-        todo!("Implement prefix search using trie")
+        let words = self.trie.find_prefix(prefix);
+        words.iter()
+            .filter_map(|w| self.entries.get(w))
+            .collect()
     }
 
     /// Load default dhātus essential for core language
@@ -247,6 +293,30 @@ impl DhatuTrie {
     }
 
     fn find_prefix(&self, prefix: &str) -> Vec<String> {
-        todo!("Implement prefix finding")
+        let mut results = Vec::new();
+
+        // Navigate to prefix node
+        let mut current = &self.root;
+        for ch in prefix.chars() {
+            match current.children.get(&ch) {
+                Some(node) => current = node,
+                None => return results, // No matches
+            }
+        }
+
+        // Collect all words from this node
+        self.collect_words(current, prefix.to_string(), &mut results);
+        results
+    }
+
+    fn collect_words(&self, node: &TrieNode, prefix: String, results: &mut Vec<String>) {
+        if node.is_end {
+            results.push(prefix.clone());
+        }
+        for (ch, child) in &node.children {
+            let mut new_prefix = prefix.clone();
+            new_prefix.push(*ch);
+            self.collect_words(child, new_prefix, results);
+        }
     }
 }

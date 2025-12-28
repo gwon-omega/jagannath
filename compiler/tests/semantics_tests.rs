@@ -5,7 +5,8 @@ use jagannath_compiler::driver::CompilerSession;
 
 /// Helper to check if source compiles without errors
 fn compiles_ok(source: &str) -> bool {
-    let options = CompilerOptions::new();
+    let mut options = CompilerOptions::new();
+    options.emit_asm = true; // Only generate assembly, don't try to link
     let mut session = CompilerSession::new(options);
     session.compile(source).is_ok()
 }

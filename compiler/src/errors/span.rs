@@ -74,6 +74,17 @@ impl fmt::Display for Span {
     }
 }
 
+/// Convert from token::Span to errors::Span
+impl From<crate::lexer::token::Span> for Span {
+    fn from(token_span: crate::lexer::token::Span) -> Self {
+        Self {
+            source: SourceId(0), // Default source, can be refined later
+            start: token_span.start as u32,
+            end: token_span.end as u32,
+        }
+    }
+}
+
 /// Detailed source location with line/column
 #[derive(Debug, Clone, Copy)]
 pub struct Location {

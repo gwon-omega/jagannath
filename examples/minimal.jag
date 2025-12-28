@@ -1,0 +1,8 @@
+//! Minimal Jagannath Program
+//!
+//! The simplest possible program that returns exit code 42.
+//! Used to test end-to-end compilation.
+
+kāryakrama mukhya() -> saṅkhyā-a-k-t32 {
+    phera 42
+}

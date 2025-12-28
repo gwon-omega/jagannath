@@ -6,7 +6,8 @@ use jagannath_compiler::philosophy::guna::Guna;
 
 /// Helper to check if source compiles without errors
 fn compiles_ok(source: &str) -> bool {
-    let options = CompilerOptions::new();
+    let mut options = CompilerOptions::new();
+    options.emit_asm = true; // Only generate assembly, don't try to link
     let mut session = CompilerSession::new(options);
     session.compile(source).is_ok()
 }
@@ -17,6 +18,7 @@ fn test_guna_sattva_mode() {
     let mut options = CompilerOptions::new();
     options.guna = Guna::Sattva;
     options.debug_info = true;
+    options.emit_asm = true; // Only generate assembly
     let mut session = CompilerSession::new(options);
     let source = r#"
 kāryakrama test() -> saṅkhyā-a-k-t32 {
@@ -33,6 +35,7 @@ fn test_guna_rajas_mode() {
     let mut options = CompilerOptions::new();
     options.guna = Guna::Rajas;
     options.opt_level = 3;
+    options.emit_asm = true; // Only generate assembly
     let mut session = CompilerSession::new(options);
     let source = r#"
 kāryakrama fast_add(a: saṅkhyā-a-k-t32, b: saṅkhyā-a-k-t32) -> saṅkhyā-a-k-t32 {
@@ -48,6 +51,7 @@ kāryakrama fast_add(a: saṅkhyā-a-k-t32, b: saṅkhyā-a-k-t32) -> saṅkhyā
 fn test_guna_tamas_mode() {
     let mut options = CompilerOptions::new();
     options.guna = Guna::Tamas;
+    options.emit_asm = true; // Only generate assembly
     let mut session = CompilerSession::new(options);
     let source = r#"
 kāryakrama low_level() -> saṅkhyā-a-k-t32 {

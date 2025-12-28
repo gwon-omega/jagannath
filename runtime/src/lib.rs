@@ -36,10 +36,14 @@ use std::alloc::{GlobalAlloc, Layout};
 pub mod allocator;
 pub mod io;
 pub mod panic;
+pub mod async_runtime;
+pub mod simd;
 
 // Re-exports for convenience
 pub use allocator::{AllocatorStats, Kosha, PanchaKoshaAllocator, PretaState};
 pub use panic::{Naraka, YamaJudgment};
+pub use async_runtime::{KalaChakra, Karya, KaryaId, KaryaSthiti, Yield, ChakraStats};
+pub use simd::{Shakti, CaturF32, CaturI32, AshtaF32, Mandala4x4};
 
 #[cfg(feature = "std")]
 pub use allocator::{ankare_prapt_karem, preta_pata_lagana, smriti_avantana};

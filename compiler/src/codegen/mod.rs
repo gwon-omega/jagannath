@@ -9,10 +9,12 @@
 
 pub mod asm;
 pub mod calling_conv;
+pub mod entry;
 pub mod linker;
 pub mod regalloc;
 
 // Re-exports
 pub use asm::{AsmEmitter, Instruction};
-pub use linker::{Assembler, BuildError, BuildPipeline, LinkOutput, Linker};
+pub use entry::{Platform, RuntimeEntry};
+pub use linker::{Assembler, BuildError, BuildInfo, BuildPipeline, LinkOutput, Linker};
 pub use regalloc::RegisterAllocator;

@@ -239,7 +239,7 @@ impl Affix {
 }
 
 /// Sequence of affixes attached to a word
-#[derive(Debug, Clone, Default)]
+#[derive(Debug, Clone, Default, PartialEq)]
 pub struct AffixSequence {
     pub affixes: Vec<Affix>,
 }

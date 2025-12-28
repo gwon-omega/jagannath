@@ -4,12 +4,14 @@
 //! Optimizations based on Sāṃkhya tattvas (stages of manifestation)
 //! are applied at this level.
 
-pub mod types;
 pub mod builder;
+pub mod nll;
 pub mod optimizer;
 pub mod passes;
+pub mod types;
 
 // Re-exports
-pub use types::{MirFunction, MirBasicBlock, MirInstruction, MirType};
 pub use builder::MirBuilder;
+pub use nll::{compute_liveness, LivenessInfo, NllChecker};
 pub use optimizer::MirOptimizer;
+pub use types::{MirBasicBlock, MirFunction, MirInstruction, MirType};

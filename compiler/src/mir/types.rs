@@ -68,15 +68,10 @@ pub struct MirBasicBlock {
 #[derive(Debug, Clone)]
 pub enum MirInstruction {
     /// Assign to a local: dest = value
-    Assign {
-        dest: MirPlace,
-        value: MirRvalue,
-    },
+    Assign { dest: MirPlace, value: MirRvalue },
 
     /// Drop/free a value
-    Drop {
-        place: MirPlace,
-    },
+    Drop { place: MirPlace },
 
     /// No operation
     Nop,
@@ -84,6 +79,22 @@ pub enum MirInstruction {
     /// Debug/assertion
     Assert {
         condition: MirOperand,
+        message: String,
+    },
+
+    /// Store to memory (for field/array writes)
+    Store { ptr: MirOperand, value: MirOperand },
+
+    /// Load from memory (for field/array reads)
+    Load { dest: MirPlace, ptr: MirOperand },
+
+    /// Set discriminant for enum initialization
+    SetDiscriminant { place: MirPlace, variant: usize },
+
+    /// Bounds check for array access (Naraka: Asipatravana prevention)
+    BoundsCheck {
+        index: MirOperand,
+        len: MirOperand,
         message: String,
     },
 }
@@ -131,12 +142,22 @@ pub struct MirPlace {
 pub enum PlaceProjection {
     /// Dereference
     Deref,
-    /// Field access
+    /// Field access by index
     Field { index: usize },
-    /// Array/slice index
+    /// Field access by name (for struct field lookup)
+    FieldNamed {
+        name: String,
+        offset: usize,
+        size: usize,
+    },
+    /// Array/slice index (compile-time known)
     Index { index: MirOperand },
+    /// Array/slice index (constant)
+    ConstIndex { offset: usize },
     /// Downcast to variant
     Downcast { variant: usize },
+    /// Subslice extraction
+    Subslice { from: usize, to: usize },
 }
 
 /// MIR Operand
@@ -157,10 +178,7 @@ pub enum MirRvalue {
     Use(MirOperand),
 
     /// Take reference
-    Ref {
-        mutable: bool,
-        place: MirPlace,
-    },
+    Ref { mutable: bool, place: MirPlace },
 
     /// Binary operation
     BinaryOp {
@@ -170,10 +188,7 @@ pub enum MirRvalue {
     },
 
     /// Unary operation
-    UnaryOp {
-        op: UnaryOp,
-        operand: MirOperand,
-    },
+    UnaryOp { op: UnaryOp, operand: MirOperand },
 
     /// Aggregate construction (tuple, struct, array)
     Aggregate {
@@ -193,15 +208,100 @@ pub enum MirRvalue {
 
     /// Array length
     Len(MirPlace),
+
+    /// Address of (compute effective address for field/index)
+    AddressOf { mutable: bool, place: MirPlace },
+
+    /// Read field from aggregate
+    Field { base: MirOperand, index: usize },
+
+    /// Read element from array/tuple
+    Index { base: MirOperand, index: MirOperand },
+
+    /// Floating-point operation (SSE)
+    FloatOp {
+        op: FloatBinaryOp,
+        left: MirOperand,
+        right: MirOperand,
+    },
+
+    /// SIMD operation (Tantra yantra)
+    SimdOp {
+        op: SimdOp,
+        operands: Vec<MirOperand>,
+        width: SimdWidth,
+    },
+}
+
+/// Floating-point binary operations
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum FloatBinaryOp {
+    Add,
+    Sub,
+    Mul,
+    Div,
+    Min,
+    Max,
+    Cmp(FloatCmp),
+}
+
+/// Float comparison kinds
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum FloatCmp {
+    Eq,
+    Ne,
+    Lt,
+    Le,
+    Gt,
+    Ge,
+    Ord,
+    Unord, // Ordered/Unordered (NaN handling)
+}
+
+/// SIMD operation kinds
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum SimdOp {
+    Add,
+    Sub,
+    Mul,
+    Div,
+    And,
+    Or,
+    Xor,
+    Shuffle,
+    Blend,
+    Load,
+    Store,
+    Broadcast,
+}
+
+/// SIMD width (vector size)
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum SimdWidth {
+    W128, // XMM (SSE)
+    W256, // YMM (AVX)
+    W512, // ZMM (AVX-512)
 }
 
 /// Binary operations
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum BinaryOp {
-    Add, Sub, Mul, Div, Rem,
-    BitAnd, BitOr, BitXor,
-    Shl, Shr,
-    Eq, Ne, Lt, Le, Gt, Ge,
+    Add,
+    Sub,
+    Mul,
+    Div,
+    Rem,
+    BitAnd,
+    BitOr,
+    BitXor,
+    Shl,
+    Shr,
+    Eq,
+    Ne,
+    Lt,
+    Le,
+    Gt,
+    Ge,
 }
 
 /// Unary operations
@@ -232,7 +332,7 @@ pub enum CastKind {
 }
 
 /// MIR Constant
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub enum MirConstant {
     Int(i64, IntSize),
     Float(f64, FloatSize),
@@ -244,14 +344,21 @@ pub enum MirConstant {
 /// Integer sizes
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum IntSize {
-    I8, I16, I32, I64,
-    U8, U16, U32, U64,
+    I8,
+    I16,
+    I32,
+    I64,
+    U8,
+    U16,
+    U32,
+    U64,
 }
 
 /// Float sizes
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum FloatSize {
-    F32, F64,
+    F32,
+    F64,
 }
 
 /// MIR Type
@@ -262,12 +369,21 @@ pub enum MirType {
     Bool,
     Unit,
     Ptr(Box<MirType>),
-    Ref { mutable: bool, ty: Box<MirType> },
-    Array { element: Box<MirType>, size: usize },
+    Ref {
+        mutable: bool,
+        ty: Box<MirType>,
+    },
+    Array {
+        element: Box<MirType>,
+        size: usize,
+    },
     Slice(Box<MirType>),
     Tuple(Vec<MirType>),
     Named(String),
-    Function { params: Vec<MirType>, ret: Box<MirType> },
+    Function {
+        params: Vec<MirType>,
+        ret: Box<MirType>,
+    },
 }
 
 /// MIR Global
@@ -289,6 +405,10 @@ pub struct MirTypeDef {
 /// MIR Type definition kind
 #[derive(Debug, Clone)]
 pub enum MirTypeDefKind {
-    Struct { fields: Vec<(String, MirType)> },
-    Enum { variants: Vec<(String, Option<MirType>)> },
+    Struct {
+        fields: Vec<(String, MirType)>,
+    },
+    Enum {
+        variants: Vec<(String, Option<MirType>)>,
+    },
 }

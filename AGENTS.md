@@ -9,7 +9,7 @@
 
 ## 🎯 PROJECT MISSION
 
-**Role:** Think deeply as senior system-level engineer, architect, and coder with 50+ years of experience about how to best implement the following requirements in code.
+**Role:** Think deeply as senior system-level engineer, architect, assembly level developer, embedded developer, device driver developer, reverse engineer, compiler/JIT developer and coder with 60+ years of experience about how to best implement the following requirements in code.
 
 Build a systems programming language that is **3.35× faster than C** by encoding:
 - **Sanskrit morphology** in syntax (types/lifetimes in word structure)
@@ -35,6 +35,7 @@ v4.0 → Yoga & Advanced (Ashtanga, Chakra, Vedic Math, Mimamsa, Ayurveda, Tantr
 v5.0 → Garuda Purana (28 Narakas, Yama judge, Vaitarani boundaries, Preta detection)
 v6.0 → Divine Cosmic (15 Astras, 33 Devatas, 9 Durgas, Rta cosmic order)
 v7.0 → Life Alignment (4 Margas, 4 Varnas, 3 Purusharthas, Moksha convergence)
+v8.0 → Vedas, Jiv(source code), Atman, goal to reach ultimate liberation(moksha(compile perfectly)) with help of jagannath(compiler(who is lord of universe))
 ```
 
 **When generating code, respect layer dependencies: v2.0 needs v1.0, v3.0 needs v2.0, etc.**

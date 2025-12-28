@@ -12,8 +12,12 @@ use tower_lsp::lsp_types::*;
 use tower_lsp::{Client, LanguageServer, LspService, Server};
 
 mod capabilities;
+mod code_actions;
 mod diagnostics;
 mod handlers;
+mod semantic_tokens;
+
+use semantic_tokens::{semantic_tokens_legend, VarnaBuilder};
 
 #[derive(Debug)]
 pub struct JagannathLsp {
@@ -35,33 +39,41 @@ impl LanguageServer for JagannathLsp {
                     TextDocumentSyncKind::INCREMENTAL,
                 )),
                 completion_provider: Some(CompletionOptions {
-                    trigger_characters: Some(vec![".".to_string(), ":".to_string()]),
+                    trigger_characters: Some(vec![".".to_string(), ":".to_string(), "-".to_string()]),
+                    resolve_provider: Some(true),
                     ..Default::default()
                 }),
                 hover_provider: Some(HoverProviderCapability::Simple(true)),
                 definition_provider: Some(OneOf::Left(true)),
                 references_provider: Some(OneOf::Left(true)),
                 document_formatting_provider: Some(OneOf::Left(true)),
+                code_action_provider: Some(CodeActionProviderCapability::Options(
+                    CodeActionOptions {
+                        code_action_kinds: Some(vec![
+                            CodeActionKind::QUICKFIX,
+                            CodeActionKind::REFACTOR,
+                            CodeActionKind::REFACTOR_EXTRACT,
+                            CodeActionKind::REFACTOR_INLINE,
+                            CodeActionKind::SOURCE_ORGANIZE_IMPORTS,
+                        ]),
+                        ..Default::default()
+                    }
+                )),
                 semantic_tokens_provider: Some(
                     SemanticTokensServerCapabilities::SemanticTokensOptions(
                         SemanticTokensOptions {
-                            legend: SemanticTokensLegend {
-                                token_types: vec![
-                                    SemanticTokenType::KEYWORD,
-                                    SemanticTokenType::TYPE,
-                                    SemanticTokenType::FUNCTION,
-                                    SemanticTokenType::VARIABLE,
-                                    SemanticTokenType::STRING,
-                                    SemanticTokenType::NUMBER,
-                                    SemanticTokenType::COMMENT,
-                                ],
-                                token_modifiers: vec![],
-                            },
+                            legend: semantic_tokens_legend(),
                             full: Some(SemanticTokensFullOptions::Bool(true)),
+                            range: Some(true),
                             ..Default::default()
                         },
                     ),
                 ),
+                inlay_hint_provider: Some(OneOf::Left(true)),
+                rename_provider: Some(OneOf::Right(RenameOptions {
+                    prepare_provider: Some(true),
+                    work_done_progress_options: Default::default(),
+                })),
                 ..Default::default()
             },
             server_info: Some(ServerInfo {

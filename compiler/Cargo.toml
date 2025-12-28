@@ -24,6 +24,7 @@ dashmap.workspace = true
 [dev-dependencies]
 proptest.workspace = true
 criterion.workspace = true
+tempfile = "3.10"
 
 [[bench]]
 name = "compile_bench"

@@ -1,9 +1,14 @@
 //! Compiler Session
+//!
+//! Saṃkalana Satra (Compilation Session) - orchestrates the complete
+//! compilation pipeline from source to executable.
 
 use super::{CompileError, CompileResult, CompileTiming, CompilerOptions};
 use crate::codegen::asm::AsmEmitter;
+use crate::codegen::linker::{BuildPipeline, LinkOutput};
 use crate::philosophy::kala::Kala;
 use crate::philosophy::samkhya::{SamkhyaPipeline, Tattva};
+use std::path::{Path, PathBuf};
 use std::time::{Duration, Instant};
 
 /// Compiler session state
@@ -16,6 +21,8 @@ pub struct CompilerSession {
     kala: Kala,
     /// Timing information
     timing: CompileTiming,
+    /// Input file path (for deriving output path)
+    input_path: Option<PathBuf>,
 }
 
 impl CompilerSession {
@@ -25,11 +32,15 @@ impl CompilerSession {
             .map(Duration::from_millis)
             .unwrap_or(Duration::from_secs(60));
 
+        // Extract input path if available
+        let input_path = options.inputs.first().map(|s| PathBuf::from(s));
+
         Self {
             options,
             pipeline: SamkhyaPipeline::new(),
             kala: Kala::new(time_budget),
             timing: CompileTiming::default(),
+            input_path,
         }
     }
 
@@ -65,8 +76,19 @@ impl CompilerSession {
 
         // Stage 6: Code Generation
         let codegen_timer = self.kala.begin_phase("codegen");
-        let output = self.generate_code(&optimized_mir)?;
+        let asm_output = self.generate_code(&optimized_mir)?;
         self.kala.end_phase(codegen_timer);
+
+        // Stage 7: Assembly & Linking (Kriyā - action)
+        // If emit_asm is set, just write the assembly file
+        let output = if self.options.emit_asm {
+            self.emit_assembly_only(&asm_output)?
+        } else {
+            let linking_timer = self.kala.begin_phase("linking");
+            let result = self.assemble_and_link(&asm_output)?;
+            self.kala.end_phase(linking_timer);
+            result
+        };
 
         self.timing.total_us = start.elapsed().as_micros() as u64;
 
@@ -184,5 +206,114 @@ impl CompilerSession {
 
         self.timing.codegen_us = start.elapsed().as_micros() as u64;
         Ok(output)
+    }
+
+    /// Assemble and link to produce executable
+    ///
+    /// Kriyā (Action) - The final manifestation stage where assembly
+    /// becomes executable through the BuildPipeline.
+    fn assemble_and_link(&mut self, asm_output: &[u8]) -> Result<Vec<u8>, CompileError> {
+        let start = Instant::now();
+
+        // Create build directory
+        let build_dir = std::env::temp_dir().join("jagannath_build");
+        std::fs::create_dir_all(&build_dir).map_err(|e| CompileError {
+            message: format!("Failed to create build directory: {}", e),
+            location: None,
+            notes: Vec::new(),
+        })?;
+
+        // Determine output path
+        let exe_name = if let Some(ref out) = self.options.output {
+            PathBuf::from(out)
+        } else if let Some(ref input) = self.input_path {
+            // Derive from input: foo.jag -> foo (or foo.exe on Windows)
+            let stem = input.file_stem().unwrap_or_default();
+            let mut exe_path = PathBuf::from(stem);
+            if cfg!(windows) {
+                exe_path.set_extension("exe");
+            }
+            exe_path
+        } else {
+            // Default output name
+            let mut exe_path = PathBuf::from("a.out");
+            if cfg!(windows) {
+                exe_path.set_extension("exe");
+            }
+            exe_path
+        };
+
+        // Write assembly to temp file
+        let asm_path = build_dir.join("output.s");
+        std::fs::write(&asm_path, asm_output).map_err(|e| CompileError {
+            message: format!("Failed to write assembly: {}", e),
+            location: None,
+            notes: Vec::new(),
+        })?;
+
+        if self.options.verbose {
+            eprintln!("🔧 Assembly written to: {}", asm_path.display());
+        }
+
+        // Use BuildPipeline to assemble and link
+        let pipeline = BuildPipeline::new();
+        pipeline
+            .build_executable(&asm_path, &exe_name)
+            .map_err(|e| CompileError {
+                message: format!("Build failed: {}", e),
+                location: None,
+                notes: vec![
+                    "Ensure GCC or Clang is installed and in PATH".to_string(),
+                    "On Windows, install MinGW-w64 or WSL".to_string(),
+                ],
+            })?;
+
+        if self.options.verbose {
+            eprintln!("✨ Executable created: {}", exe_name.display());
+        }
+
+        // Read the executable back as bytes for CompileResult
+        let exe_bytes = std::fs::read(&exe_name).map_err(|e| CompileError {
+            message: format!("Failed to read executable: {}", e),
+            location: None,
+            notes: Vec::new(),
+        })?;
+
+        // Cleanup temp assembly file
+        let _ = std::fs::remove_file(&asm_path);
+
+        Ok(exe_bytes)
+    }
+
+    /// Emit assembly file only (no linking)
+    ///
+    /// Vāk (Speech) - The assembly is the linguistic expression of the program,
+    /// written to file for inspection or external assembly.
+    fn emit_assembly_only(&self, asm_output: &[u8]) -> Result<Vec<u8>, CompileError> {
+        // Determine output path
+        let asm_name = if let Some(ref out) = self.options.output {
+            PathBuf::from(out)
+        } else if let Some(ref input) = self.input_path {
+            // Derive from input: foo.jag -> foo.s
+            let mut asm_path = input.clone();
+            asm_path.set_extension("s");
+            asm_path
+        } else {
+            PathBuf::from("a.s")
+        };
+
+        // Write assembly to file
+        std::fs::write(&asm_name, asm_output).map_err(|e| CompileError {
+            message: format!("Failed to write assembly: {}", e),
+            location: None,
+            notes: Vec::new(),
+        })?;
+
+        if self.options.verbose {
+            eprintln!("📝 Assembly written to: {}", asm_name.display());
+        }
+
+        // Return the assembly as bytes
+        Ok(asm_output.to_vec())
     }
 }

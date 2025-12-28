@@ -76,6 +76,11 @@ pub mod purusharthas; // 3 Life Goals (optimization triangle)
 pub mod varnas; // 4 Privilege Rings (security levels) // Cosmic Compiler coordination
 
 // ============================================================================
+// Module System (Phase 4)
+// ============================================================================
+pub mod modules; // Khaṇḍa - Module graph, resolver, symbol tables
+
+// ============================================================================
 // Compiler Driver
 // ============================================================================
 pub mod driver;

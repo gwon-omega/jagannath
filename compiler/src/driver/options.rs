@@ -1,7 +1,7 @@
 //! Compiler Options
 
-use crate::philosophy::guna::Guna;
 use crate::codegen::asm::Target;
+use crate::philosophy::guna::Guna;
 
 /// Compiler options
 #[derive(Debug, Clone)]
@@ -30,6 +30,8 @@ pub struct CompilerOptions {
     pub verbose: bool,
     /// Enable deterministic builds
     pub deterministic: bool,
+    /// Emit assembly only (no linking)
+    pub emit_asm: bool,
 }
 
 impl CompilerOptions {
@@ -47,6 +49,7 @@ impl CompilerOptions {
             time_budget_ms: None,
             verbose: false,
             deterministic: true,
+            emit_asm: false,
         }
     }
 
@@ -76,6 +79,7 @@ impl CompilerOptions {
             opt_level: 2,
             guna: Guna::Tamas,
             debug_info: false,
+            emit_asm: false,
             ..Self::new()
         }
     }
@@ -95,6 +99,7 @@ impl CompilerOptions {
                 "-g" => options.debug_info = true,
                 "-v" | "--verbose" => options.verbose = true,
                 "--deterministic" => options.deterministic = true,
+                "--emit-asm" | "-S" => options.emit_asm = true,
                 "--sattva" => options.guna = Guna::Sattva,
                 "--rajas" => options.guna = Guna::Rajas,
                 "--tamas" => options.guna = Guna::Tamas,
@@ -143,9 +148,8 @@ impl CompilerOptions {
                     if i >= args.len() {
                         return Err("Missing time budget".to_string());
                     }
-                    options.time_budget_ms = Some(
-                        args[i].parse().map_err(|_| "Invalid time budget")?
-                    );
+                    options.time_budget_ms =
+                        Some(args[i].parse().map_err(|_| "Invalid time budget")?);
                 }
                 arg if arg.starts_with('-') => {
                     return Err(format!("Unknown option: {}", arg));

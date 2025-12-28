@@ -11,14 +11,16 @@
 //!
 //! ## ABI
 //! Uses System V AMD64 ABI:
-//! - Args: RDI, RSI, RDX, RCX, R8, R9
-//! - Return: RAX
+//! - Integer args: RDI, RSI, RDX, RCX, R8, R9
+//! - Float args: XMM0-XMM7
+//! - Return: RAX (int), XMM0 (float)
 //! - Callee-saved: RBX, RBP, R12-R15
 
 use super::{AsmEmitter, Instruction, MemoryRef, Operand, Register, RegisterKind};
 use crate::mir::types::{
-    BinaryOp, IntSize, MirConstant, MirFunction, MirInstruction, MirOperand, MirPlace, MirRvalue,
-    MirTerminator, RegisterClass, UnaryOp,
+    BinaryOp, FloatBinaryOp, FloatCmp, FloatSize, IntSize, MirConstant, MirFunction,
+    MirInstruction, MirOperand, MirPlace, MirRvalue, MirTerminator, MirType, PlaceProjection,
+    RegisterClass, SimdOp, SimdWidth, UnaryOp,
 };
 
 /// x86-64 assembly emitter
@@ -60,6 +62,92 @@ pub enum X86Reg {
 
     // Stack pointer (special)
     RSP = 4,
+}
+
+/// XMM registers for SSE/floating-point operations
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[repr(u8)]
+pub enum XmmReg {
+    XMM0 = 0,
+    XMM1 = 1,
+    XMM2 = 2,
+    XMM3 = 3,
+    XMM4 = 4,
+    XMM5 = 5,
+    XMM6 = 6,
+    XMM7 = 7,
+    XMM8 = 8,
+    XMM9 = 9,
+    XMM10 = 10,
+    XMM11 = 11,
+    XMM12 = 12,
+    XMM13 = 13,
+    XMM14 = 14,
+    XMM15 = 15,
+}
+
+impl XmmReg {
+    pub fn name(&self) -> &'static str {
+        match self {
+            Self::XMM0 => "xmm0",
+            Self::XMM1 => "xmm1",
+            Self::XMM2 => "xmm2",
+            Self::XMM3 => "xmm3",
+            Self::XMM4 => "xmm4",
+            Self::XMM5 => "xmm5",
+            Self::XMM6 => "xmm6",
+            Self::XMM7 => "xmm7",
+            Self::XMM8 => "xmm8",
+            Self::XMM9 => "xmm9",
+            Self::XMM10 => "xmm10",
+            Self::XMM11 => "xmm11",
+            Self::XMM12 => "xmm12",
+            Self::XMM13 => "xmm13",
+            Self::XMM14 => "xmm14",
+            Self::XMM15 => "xmm15",
+        }
+    }
+
+    /// Get float argument register by index (System V AMD64 ABI)
+    pub fn float_arg_register(index: usize) -> Option<Self> {
+        match index {
+            0 => Some(Self::XMM0),
+            1 => Some(Self::XMM1),
+            2 => Some(Self::XMM2),
+            3 => Some(Self::XMM3),
+            4 => Some(Self::XMM4),
+            5 => Some(Self::XMM5),
+            6 => Some(Self::XMM6),
+            7 => Some(Self::XMM7),
+            _ => None, // Stack argument
+        }
+    }
+
+    /// Is this a callee-saved XMM register? (None in System V, all in Windows)
+    pub fn is_callee_saved(&self) -> bool {
+        // System V AMD64: XMM registers are NOT callee-saved
+        // Windows x64: XMM6-XMM15 ARE callee-saved
+        #[cfg(target_os = "windows")]
+        {
+            matches!(
+                self,
+                Self::XMM6
+                    | Self::XMM7
+                    | Self::XMM8
+                    | Self::XMM9
+                    | Self::XMM10
+                    | Self::XMM11
+                    | Self::XMM12
+                    | Self::XMM13
+                    | Self::XMM14
+                    | Self::XMM15
+            )
+        }
+        #[cfg(not(target_os = "windows"))]
+        {
+            false
+        }
+    }
 }
 
 impl X86Reg {
@@ -150,6 +238,15 @@ impl X86Reg {
     }
 }
 
+/// Spill decision from register allocation
+#[derive(Debug, Clone)]
+struct SpillDecision {
+    /// Which local/variable was spilled
+    local: usize,
+    /// Stack slot offset for the spill
+    slot: i64,
+}
+
 /// Register allocator for x86-64
 struct X86RegAlloc {
     /// Available caller-saved registers
@@ -160,6 +257,33 @@ struct X86RegAlloc {
     used_callee_saved: Vec<X86Reg>,
     /// Local variable to stack offset mapping
     local_offsets: std::collections::HashMap<usize, i64>,
+    /// Available XMM registers for floats
+    xmm_available: Vec<XmmReg>,
+    /// Used XMM registers
+    xmm_used: Vec<XmmReg>,
+    /// Live intervals for linear scan register allocation
+    live_intervals: Vec<LiveInterval>,
+    /// Next available spill slot offset
+    next_spill_slot: i64,
+}
+
+/// Live interval for register allocation (Linear Scan - Poletto & Sarkar 1999)
+#[derive(Debug, Clone)]
+struct LiveInterval {
+    /// Variable/local index
+    local: usize,
+    /// Start instruction index
+    start: usize,
+    /// End instruction index
+    end: usize,
+    /// Assigned register (None if spilled)
+    assigned_reg: Option<X86Reg>,
+    /// Is this a float?
+    is_float: bool,
+    /// Assigned XMM register if float
+    assigned_xmm: Option<XmmReg>,
+    /// Spill slot offset if spilled
+    spill_slot: Option<i64>,
 }
 
 impl X86RegAlloc {
@@ -185,7 +309,177 @@ impl X86RegAlloc {
             ],
             used_callee_saved: Vec::new(),
             local_offsets: std::collections::HashMap::new(),
+            xmm_available: vec![
+                XmmReg::XMM0,
+                XmmReg::XMM1,
+                XmmReg::XMM2,
+                XmmReg::XMM3,
+                XmmReg::XMM4,
+                XmmReg::XMM5,
+                XmmReg::XMM6,
+                XmmReg::XMM7,
+                XmmReg::XMM8,
+                XmmReg::XMM9,
+                XmmReg::XMM10,
+                XmmReg::XMM11,
+                XmmReg::XMM12,
+                XmmReg::XMM13,
+                XmmReg::XMM14,
+                XmmReg::XMM15,
+            ],
+            xmm_used: Vec::new(),
+            live_intervals: Vec::new(),
+            next_spill_slot: 8, // Start after saved registers
         }
+    }
+
+    /// Allocate XMM register for floating-point
+    fn allocate_xmm(&mut self) -> Option<XmmReg> {
+        let reg = self.xmm_available.pop()?;
+        self.xmm_used.push(reg);
+        Some(reg)
+    }
+
+    /// Free XMM register
+    fn free_xmm(&mut self, reg: XmmReg) {
+        if let Some(pos) = self.xmm_used.iter().position(|&r| r == reg) {
+            self.xmm_used.remove(pos);
+            self.xmm_available.push(reg);
+        }
+    }
+
+    /// Linear scan register allocation (Poletto & Sarkar 1999)
+    ///
+    /// This implements the classic linear scan algorithm:
+    /// 1. Sort intervals by start point
+    /// 2. For each interval, expire old intervals and free their registers
+    /// 3. Allocate register if available, otherwise spill
+    fn linear_scan_allocate(
+        &mut self,
+        intervals: &mut [LiveInterval],
+        num_regs: usize,
+    ) -> Vec<SpillDecision> {
+        let mut spills = Vec::new();
+
+        // Sort intervals by start position (live range beginning)
+        intervals.sort_by_key(|i| i.start);
+
+        // Active intervals (currently live), sorted by end point
+        let mut active: Vec<usize> = Vec::new();
+
+        // Available registers for allocation
+        let mut free_regs: Vec<X86Reg> = self.caller_saved.clone();
+        let mut free_xmm: Vec<XmmReg> = self.xmm_available.clone();
+
+        for i in 0..intervals.len() {
+            let interval_start = intervals[i].start;
+            let interval_end = intervals[i].end;
+            let is_float = intervals[i].is_float;
+
+            // === Expire old intervals ===
+            // Remove intervals that have ended before current starts
+            let mut expired = Vec::new();
+            for (idx, &j) in active.iter().enumerate() {
+                if intervals[j].end <= interval_start {
+                    // Interval j has expired, free its register
+                    if let Some(reg) = intervals[j].assigned_reg {
+                        free_regs.push(reg);
+                    }
+                    if let Some(xmm) = intervals[j].assigned_xmm {
+                        free_xmm.push(xmm);
+                    }
+                    expired.push(idx);
+                }
+            }
+            // Remove expired (in reverse order to preserve indices)
+            for idx in expired.into_iter().rev() {
+                active.remove(idx);
+            }
+
+            // === Allocate register ===
+            if is_float {
+                // Floating-point uses XMM registers
+                if let Some(xmm) = free_xmm.pop() {
+                    intervals[i].assigned_xmm = Some(xmm);
+                    active.push(i);
+                    // Keep active sorted by end point for efficient spilling
+                    active.sort_by_key(|&j| intervals[j].end);
+                } else if !active.is_empty() {
+                    // Spill: choose interval with furthest end point
+                    let spill_idx = active
+                        .iter()
+                        .filter(|&&j| intervals[j].is_float)
+                        .max_by_key(|&&j| intervals[j].end)
+                        .copied();
+
+                    if let Some(spill_j) = spill_idx {
+                        if intervals[spill_j].end > interval_end {
+                            // Spill the interval with later end
+                            let xmm = intervals[spill_j].assigned_xmm.take();
+                            intervals[spill_j].spill_slot = Some(self.next_spill_slot);
+                            spills.push(SpillDecision {
+                                local: intervals[spill_j].local,
+                                slot: self.next_spill_slot,
+                            });
+                            self.next_spill_slot += 8;
+
+                            // Assign freed register to current interval
+                            intervals[i].assigned_xmm = xmm;
+                            active.push(i);
+                        } else {
+                            // Spill current interval
+                            intervals[i].spill_slot = Some(self.next_spill_slot);
+                            spills.push(SpillDecision {
+                                local: intervals[i].local,
+                                slot: self.next_spill_slot,
+                            });
+                            self.next_spill_slot += 8;
+                        }
+                    }
+                }
+            } else {
+                // Integer uses general-purpose registers
+                if let Some(reg) = free_regs.pop() {
+                    intervals[i].assigned_reg = Some(reg);
+                    active.push(i);
+                    active.sort_by_key(|&j| intervals[j].end);
+                } else if active.len() >= num_regs {
+                    // Spill: choose interval with furthest end point (greedy heuristic)
+                    let spill_idx = active
+                        .iter()
+                        .filter(|&&j| !intervals[j].is_float)
+                        .max_by_key(|&&j| intervals[j].end)
+                        .copied();
+
+                    if let Some(spill_j) = spill_idx {
+                        if intervals[spill_j].end > interval_end {
+                            // Spill the interval with later end
+                            let reg = intervals[spill_j].assigned_reg.take();
+                            intervals[spill_j].spill_slot = Some(self.next_spill_slot);
+                            spills.push(SpillDecision {
+                                local: intervals[spill_j].local,
+                                slot: self.next_spill_slot,
+                            });
+                            self.next_spill_slot += 8;
+
+                            // Assign freed register to current interval
+                            intervals[i].assigned_reg = reg;
+                            active.push(i);
+                        } else {
+                            // Spill current interval (shorter live range)
+                            intervals[i].spill_slot = Some(self.next_spill_slot);
+                            spills.push(SpillDecision {
+                                local: intervals[i].local,
+                                slot: self.next_spill_slot,
+                            });
+                            self.next_spill_slot += 8;
+                        }
+                    }
+                }
+            }
+        }
+
+        spills
     }
 
     /// Allocate register based on kāraka hint
@@ -395,6 +689,159 @@ impl X86_64Emitter {
             }
         }
     }
+
+    /// Emit floating-point binary operation (SSE)
+    fn emit_float_binary_op(
+        &mut self,
+        op: FloatBinaryOp,
+        dest: XmmReg,
+        left: XmmReg,
+        right: XmmReg,
+        is_double: bool,
+    ) {
+        let suffix = if is_double { "sd" } else { "ss" };
+
+        match op {
+            FloatBinaryOp::Add => {
+                if dest != left {
+                    self.emit(&format!("movap{} {}, {}", suffix, dest.name(), left.name()));
+                }
+                self.emit(&format!("add{} {}, {}", suffix, dest.name(), right.name()));
+            }
+            FloatBinaryOp::Sub => {
+                if dest != left {
+                    self.emit(&format!("movap{} {}, {}", suffix, dest.name(), left.name()));
+                }
+                self.emit(&format!("sub{} {}, {}", suffix, dest.name(), right.name()));
+            }
+            FloatBinaryOp::Mul => {
+                if dest != left {
+                    self.emit(&format!("movap{} {}, {}", suffix, dest.name(), left.name()));
+                }
+                self.emit(&format!("mul{} {}, {}", suffix, dest.name(), right.name()));
+            }
+            FloatBinaryOp::Div => {
+                if dest != left {
+                    self.emit(&format!("movap{} {}, {}", suffix, dest.name(), left.name()));
+                }
+                self.emit(&format!("div{} {}, {}", suffix, dest.name(), right.name()));
+            }
+            FloatBinaryOp::Min => {
+                self.emit(&format!("min{} {}, {}", suffix, left.name(), right.name()));
+                if dest != left {
+                    self.emit(&format!("movap{} {}, {}", suffix, dest.name(), left.name()));
+                }
+            }
+            FloatBinaryOp::Max => {
+                self.emit(&format!("max{} {}, {}", suffix, left.name(), right.name()));
+                if dest != left {
+                    self.emit(&format!("movap{} {}, {}", suffix, dest.name(), left.name()));
+                }
+            }
+            FloatBinaryOp::Cmp(cmp) => {
+                // Use ucomisd/ucomiss for unordered comparison (handles NaN)
+                self.emit(&format!(
+                    "ucomi{} {}, {}",
+                    suffix,
+                    left.name(),
+                    right.name()
+                ));
+                // Set flags based on comparison type
+                let set_instr = match cmp {
+                    FloatCmp::Eq => "sete",
+                    FloatCmp::Ne => "setne",
+                    FloatCmp::Lt => "setb", // Below (unsigned for floats)
+                    FloatCmp::Le => "setbe",
+                    FloatCmp::Gt => "seta", // Above
+                    FloatCmp::Ge => "setae",
+                    FloatCmp::Ord => "setnp",  // Not parity (ordered)
+                    FloatCmp::Unord => "setp", // Parity (unordered/NaN)
+                };
+                self.emit(&format!("{} al", set_instr));
+                self.emit("movzx rax, al");
+            }
+        }
+    }
+
+    /// Load float operand into XMM register
+    fn load_float_operand(&mut self, operand: &MirOperand, reg: XmmReg, is_double: bool) {
+        let suffix = if is_double { "sd" } else { "ss" };
+        match operand {
+            MirOperand::Constant(MirConstant::Float(val, size)) => {
+                // Load float constant - would need constant pool in real implementation
+                // For now, use a workaround via integer register
+                let bits = if is_double {
+                    val.to_bits()
+                } else {
+                    (*val as f32).to_bits() as u64
+                };
+                self.emit(&format!("mov rax, {}", bits));
+                self.emit(&format!("movq {}, rax", reg.name()));
+            }
+            MirOperand::Copy(place) | MirOperand::Move(place) => {
+                let src = self.place_to_str(place);
+                self.emit(&format!("mov{} {}, {}", suffix, reg.name(), src));
+            }
+            _ => {}
+        }
+    }
+
+    /// Store XMM register to place
+    fn store_float_to_place(&mut self, reg: XmmReg, place: &MirPlace, is_double: bool) {
+        let suffix = if is_double { "sd" } else { "ss" };
+        let dest = self.place_to_str(place);
+        self.emit(&format!("mov{} {}, {}", suffix, dest, reg.name()));
+    }
+
+    /// Emit SIMD operation (Tantra yantra - divine instrument)
+    fn emit_simd_op(
+        &mut self,
+        op: SimdOp,
+        operands: &[MirOperand],
+        width: SimdWidth,
+        dest: XmmReg,
+    ) {
+        let suffix = match width {
+            SimdWidth::W128 => "ps", // Packed single or packed double
+            SimdWidth::W256 => "ps", // Would use ymm registers for AVX
+            SimdWidth::W512 => "ps", // Would use zmm registers for AVX-512
+        };
+
+        self.emit_comment("Tantra SIMD operation");
+
+        match op {
+            SimdOp::Add => {
+                if operands.len() >= 2 {
+                    self.load_float_operand(&operands[0], XmmReg::XMM0, false);
+                    self.load_float_operand(&operands[1], XmmReg::XMM1, false);
+                    self.emit(&format!("addps xmm0, xmm1"));
+                    if dest != XmmReg::XMM0 {
+                        self.emit(&format!("movaps {}, xmm0", dest.name()));
+                    }
+                }
+            }
+            SimdOp::Mul => {
+                if operands.len() >= 2 {
+                    self.load_float_operand(&operands[0], XmmReg::XMM0, false);
+                    self.load_float_operand(&operands[1], XmmReg::XMM1, false);
+                    self.emit(&format!("mulps xmm0, xmm1"));
+                    if dest != XmmReg::XMM0 {
+                        self.emit(&format!("movaps {}, xmm0", dest.name()));
+                    }
+                }
+            }
+            SimdOp::Broadcast => {
+                if !operands.is_empty() {
+                    self.load_float_operand(&operands[0], dest, false);
+                    // Broadcast to all lanes using shuffle
+                    self.emit(&format!("shufps {}, {}, 0", dest.name(), dest.name()));
+                }
+            }
+            _ => {
+                self.emit_comment(&format!("SIMD {:?} not yet implemented", op));
+            }
+        }
+    }
 }
 
 impl AsmEmitter for X86_64Emitter {
@@ -517,6 +964,59 @@ impl X86_64Emitter {
                 self.emit_comment("Assignment");
                 self.emit_rvalue(value, dest);
             }
+            MirInstruction::Store { ptr, value } => {
+                // Store value through pointer (ptr is a pointer operand)
+                self.emit_comment("Store through pointer");
+                // Load the value to store
+                self.load_operand(value, X86Reg::RAX);
+                // Load the destination address
+                self.load_operand(ptr, X86Reg::RCX);
+                // Store through pointer
+                self.emit("mov QWORD PTR [rcx], rax");
+            }
+            MirInstruction::Load { dest, ptr } => {
+                // Load value through pointer (ptr is a pointer operand)
+                self.emit_comment("Load through pointer");
+                // Load the source address
+                self.load_operand(ptr, X86Reg::RCX);
+                // Load through pointer
+                self.emit("mov rax, QWORD PTR [rcx]");
+                // Store to destination
+                self.store_to_place(X86Reg::RAX, dest);
+            }
+            MirInstruction::SetDiscriminant { place, variant } => {
+                // Set enum discriminant (first field of enum)
+                self.emit_comment(&format!("Set discriminant to {}", variant));
+                let dest = self.place_to_str(place);
+                self.emit(&format!("mov QWORD PTR {}, {}", dest, variant));
+            }
+            MirInstruction::BoundsCheck {
+                index,
+                len,
+                message,
+            } => {
+                // Bounds check to prevent Asipatravana (buffer overflow)
+                self.emit_comment(&format!(
+                    "BoundsCheck - Asipatravana prevention: {}",
+                    message
+                ));
+
+                // Load index and length
+                self.load_operand(index, X86Reg::RAX);
+                self.load_operand(len, X86Reg::RCX);
+
+                // Compare index < length
+                self.emit("cmp rax, rcx");
+                let pass_label = self.new_label("bounds_ok");
+                self.emit(&format!("jb {}", pass_label)); // Jump if below (unsigned)
+
+                // Bounds check failed - trigger panic
+                // In a real implementation, would call panic with location info
+                self.emit_comment("Bounds check failed - Asipatravana!");
+                self.emit("ud2"); // Undefined instruction trap
+
+                self.emit_label(&pass_label);
+            }
             MirInstruction::Drop { place } => {
                 self.emit_comment(&format!("Drop local {}", place.local));
                 // For primitive types, drop is a no-op
@@ -563,6 +1063,102 @@ impl X86_64Emitter {
                 let src = self.place_to_str(place);
                 self.emit(&format!("lea rax, {}", src));
                 self.store_to_place(X86Reg::RAX, dest);
+            }
+            MirRvalue::AddressOf { mutable: _, place } => {
+                // Similar to Ref but for raw pointers (no borrowing semantics)
+                self.emit_comment("AddressOf - raw pointer creation");
+                let src = self.place_to_str(place);
+                self.emit(&format!("lea rax, {}", src));
+                self.store_to_place(X86Reg::RAX, dest);
+            }
+            MirRvalue::Field { base, index } => {
+                // Access struct field with calculated offset
+                self.emit_comment(&format!("Field access at index {}", index));
+
+                // Load base operand address
+                match base {
+                    MirOperand::Copy(place) | MirOperand::Move(place) => {
+                        let base_offset = self.reg_alloc.get_local_offset(place.local).unwrap_or(0);
+                        let field_offset = (index * 8) as i64; // Assume 8-byte fields
+
+                        // Apply projections from base place
+                        let mut proj_offset = 0i64;
+                        for proj in &place.projection {
+                            match proj {
+                                PlaceProjection::Deref => {
+                                    // Load pointer first, then access field
+                                    self.emit(&format!("mov rax, QWORD PTR [rbp{}]", -base_offset));
+                                    self.emit(&format!(
+                                        "mov rax, QWORD PTR [rax+{}]",
+                                        proj_offset + field_offset
+                                    ));
+                                    self.store_to_place(X86Reg::RAX, dest);
+                                    return;
+                                }
+                                PlaceProjection::Field { index: fidx } => {
+                                    proj_offset += (*fidx as i64) * 8;
+                                }
+                                PlaceProjection::FieldNamed { offset, .. } => {
+                                    proj_offset += *offset as i64;
+                                }
+                                _ => {}
+                            }
+                        }
+
+                        let total_offset = base_offset + proj_offset + field_offset;
+                        self.emit(&format!("mov rax, QWORD PTR [rbp{}]", -total_offset));
+                        self.store_to_place(X86Reg::RAX, dest);
+                    }
+                    _ => {
+                        self.emit_comment("Field access on non-place operand");
+                    }
+                }
+            }
+            MirRvalue::Index { base, index } => {
+                // Array/slice indexing
+                self.emit_comment("Array index access");
+                let elem_size = 8; // Assume 8-byte elements
+
+                // Load base address
+                match base {
+                    MirOperand::Copy(place) | MirOperand::Move(place) => {
+                        let base_str = self.place_to_str(place);
+                        self.emit(&format!("lea rcx, {}", base_str));
+                    }
+                    _ => {
+                        self.load_operand(base, X86Reg::RCX);
+                    }
+                }
+
+                // Load index and compute offset
+                self.load_operand(index, X86Reg::RDX);
+                self.emit(&format!("imul rdx, {}", elem_size));
+
+                // Add base + index*size
+                self.emit("add rcx, rdx");
+
+                // Load the element
+                self.emit("mov rax, QWORD PTR [rcx]");
+                self.store_to_place(X86Reg::RAX, dest);
+            }
+            MirRvalue::FloatOp { op, left, right } => {
+                // Floating-point operation using SSE (assume double precision)
+                let is_double = true;
+                self.emit_comment("FloatOp - SSE operation");
+                self.load_float_operand(left, XmmReg::XMM0, is_double);
+                self.load_float_operand(right, XmmReg::XMM1, is_double);
+                self.emit_float_binary_op(*op, XmmReg::XMM0, XmmReg::XMM0, XmmReg::XMM1, is_double);
+                self.store_float_to_place(XmmReg::XMM0, dest, is_double);
+            }
+            MirRvalue::SimdOp {
+                op,
+                operands,
+                width,
+            } => {
+                // SIMD operation (Tantra yantra)
+                self.emit_comment("SimdOp - Tantra SIMD operation");
+                self.emit_simd_op(*op, operands, *width, XmmReg::XMM0);
+                self.store_float_to_place(XmmReg::XMM0, dest, false);
             }
             MirRvalue::Cast {
                 kind: _,

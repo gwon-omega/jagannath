@@ -160,7 +160,7 @@ pub struct ModuleDef {
 }
 
 /// Type representation
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub enum Type {
     /// Named type with affixes
     Named {
@@ -191,7 +191,7 @@ pub enum Type {
 }
 
 /// Identifier with optional affixes
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct Identifier {
     /// Base name
     pub name: String,
@@ -471,6 +471,29 @@ impl Expr {
         match self {
             Expr::Identifier(id) => vec![id.name.clone()],
             _ => Vec::new(),
+        }
+    }
+
+    /// Get the span of an expression
+    pub fn span(&self) -> Span {
+        match self {
+            Expr::Literal(_) => Span::dummy(), // Literals don't store span
+            Expr::Identifier(id) => id.span,
+            Expr::Binary { span, .. } => *span,
+            Expr::Unary { span, .. } => *span,
+            Expr::Call { span, .. } => *span,
+            Expr::MethodCall { span, .. } => *span,
+            Expr::FieldAccess { span, .. } => *span,
+            Expr::Index { span, .. } => *span,
+            Expr::StructConstruct { span, .. } => *span,
+            Expr::Array { span, .. } => *span,
+            Expr::Tuple { span, .. } => *span,
+            Expr::Lambda { span, .. } => *span,
+            Expr::Block(block) => block.span,
+            Expr::If { span, .. } => *span,
+            Expr::Try { span, .. } => *span,
+            Expr::Await { span, .. } => *span,
+            Expr::Cast { span, .. } => *span,
         }
     }
 }
