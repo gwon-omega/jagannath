@@ -3,8 +3,10 @@
 //! Organizes compilation stages according to the 25 tattvas
 //! (principles of manifestation) from Sāṃkhya philosophy.
 
+use crate::traits::{PhilosophicalEnum, SanskritDescribed, SanskritNamed};
+
 /// The 25 Sāṃkhya tattvas as compilation stages
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[repr(u8)]
 pub enum Tattva {
     // === Puruṣa (Pure Consciousness) ===
@@ -73,6 +75,79 @@ pub enum Tattva {
 }
 
 impl Tattva {
+    /// Get all 25 Tattvas in order
+    pub fn all() -> [Tattva; 25] {
+        [
+            Tattva::Purusha, Tattva::Prakriti, Tattva::Buddhi, Tattva::Ahamkara, Tattva::Manas,
+            Tattva::Shrotra, Tattva::Tvak, Tattva::Cakshu, Tattva::Rasana, Tattva::Ghrana,
+            Tattva::Vak, Tattva::Pani, Tattva::Pada, Tattva::Payu, Tattva::Upastha,
+            Tattva::ShabdaTanmatra, Tattva::Sparsha, Tattva::Rupa, Tattva::Rasa, Tattva::Gandha,
+            Tattva::Akasha, Tattva::Vayu, Tattva::Tejas, Tattva::Apas, Tattva::Prithvi,
+        ]
+    }
+
+    /// Get IAST transliteration
+    pub fn iast(&self) -> &'static str {
+        match self {
+            Self::Purusha => "Puruṣa",
+            Self::Prakriti => "Prakṛti",
+            Self::Buddhi => "Buddhi",
+            Self::Ahamkara => "Ahaṃkāra",
+            Self::Manas => "Manas",
+            Self::Shrotra => "Śrotra",
+            Self::Tvak => "Tvak",
+            Self::Cakshu => "Cakṣu",
+            Self::Rasana => "Rasanā",
+            Self::Ghrana => "Ghrāṇa",
+            Self::Vak => "Vāk",
+            Self::Pani => "Pāṇi",
+            Self::Pada => "Pāda",
+            Self::Payu => "Pāyu",
+            Self::Upastha => "Upastha",
+            Self::ShabdaTanmatra => "Śabda",
+            Self::Sparsha => "Sparśa",
+            Self::Rupa => "Rūpa",
+            Self::Rasa => "Rasa",
+            Self::Gandha => "Gandha",
+            Self::Akasha => "Ākāśa",
+            Self::Vayu => "Vāyu",
+            Self::Tejas => "Tejas",
+            Self::Apas => "Āpas",
+            Self::Prithvi => "Pṛthvī",
+        }
+    }
+
+    /// Get English name
+    pub fn english(&self) -> &'static str {
+        match self {
+            Self::Purusha => "Pure Consciousness",
+            Self::Prakriti => "Primordial Nature",
+            Self::Buddhi => "Intellect",
+            Self::Ahamkara => "Ego-Sense",
+            Self::Manas => "Mind",
+            Self::Shrotra => "Hearing",
+            Self::Tvak => "Touch",
+            Self::Cakshu => "Sight",
+            Self::Rasana => "Taste",
+            Self::Ghrana => "Smell",
+            Self::Vak => "Speech",
+            Self::Pani => "Hands",
+            Self::Pada => "Feet",
+            Self::Payu => "Excretion",
+            Self::Upastha => "Generation",
+            Self::ShabdaTanmatra => "Sound-Essence",
+            Self::Sparsha => "Touch-Essence",
+            Self::Rupa => "Form-Essence",
+            Self::Rasa => "Taste-Essence",
+            Self::Gandha => "Smell-Essence",
+            Self::Akasha => "Space/Ether",
+            Self::Vayu => "Air/Wind",
+            Self::Tejas => "Fire/Light",
+            Self::Apas => "Water",
+            Self::Prithvi => "Earth",
+        }
+    }
+
     /// Get Sanskrit name
     pub fn sanskrit_name(&self) -> &'static str {
         match self {
@@ -144,6 +219,136 @@ impl Tattva {
             Self::Vak | Self::Pani | Self::Pada | Self::Payu | Self::Upastha => CompilationPhase::Backend,
             Self::ShabdaTanmatra | Self::Sparsha | Self::Rupa | Self::Rasa | Self::Gandha => CompilationPhase::Representation,
             Self::Akasha | Self::Vayu | Self::Tejas | Self::Apas | Self::Prithvi => CompilationPhase::Output,
+        }
+    }
+
+    /// Get tattva group
+    pub fn group(&self) -> TattvaGroup {
+        match self {
+            Self::Purusha => TattvaGroup::Purusha,
+            Self::Prakriti => TattvaGroup::Prakriti,
+            Self::Buddhi | Self::Ahamkara | Self::Manas => TattvaGroup::Antahkarana,
+            Self::Shrotra | Self::Tvak | Self::Cakshu | Self::Rasana | Self::Ghrana => TattvaGroup::Jnanendriya,
+            Self::Vak | Self::Pani | Self::Pada | Self::Payu | Self::Upastha => TattvaGroup::Karmendriya,
+            Self::ShabdaTanmatra | Self::Sparsha | Self::Rupa | Self::Rasa | Self::Gandha => TattvaGroup::Tanmatra,
+            Self::Akasha | Self::Vayu | Self::Tejas | Self::Apas | Self::Prithvi => TattvaGroup::Mahabhuta,
+        }
+    }
+}
+
+/// Tattva groupings in Sāṃkhya
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum TattvaGroup {
+    /// Puruṣa - Pure consciousness (1)
+    Purusha,
+    /// Prakṛti - Primordial nature (1)
+    Prakriti,
+    /// Antaḥkaraṇa - Internal organs (3)
+    Antahkarana,
+    /// Jñānendriyas - Knowledge senses (5)
+    Jnanendriya,
+    /// Karmendriyas - Action organs (5)
+    Karmendriya,
+    /// Tanmātras - Subtle elements (5)
+    Tanmatra,
+    /// Mahābhūtas - Gross elements (5)
+    Mahabhuta,
+}
+
+// ============================================================================
+// v10.0 Trait Implementations
+// ============================================================================
+
+impl SanskritNamed for Tattva {
+    fn sanskrit(&self) -> &'static str {
+        self.sanskrit_name()
+    }
+
+    fn iast(&self) -> &'static str {
+        self.iast()
+    }
+
+    fn english(&self) -> &'static str {
+        self.english()
+    }
+}
+
+impl SanskritDescribed for Tattva {
+    fn meaning(&self) -> &'static str {
+        self.description()
+    }
+
+    fn explanation(&self) -> &'static str {
+        match self.group() {
+            TattvaGroup::Purusha => "The unchanging witness consciousness - source code before compilation",
+            TattvaGroup::Prakriti => "The creative matrix - raw source material to be transformed",
+            TattvaGroup::Antahkarana => "Internal instruments of cognition - analysis and understanding",
+            TattvaGroup::Jnanendriya => "Sense organs that perceive - compiler frontend stages",
+            TattvaGroup::Karmendriya => "Action organs that transform - compiler backend stages",
+            TattvaGroup::Tanmatra => "Subtle essences - intermediate representations",
+            TattvaGroup::Mahabhuta => "Gross elements - final manifestation as executable",
+        }
+    }
+
+    fn mantra(&self) -> Option<&'static str> {
+        Some(match self.group() {
+            TattvaGroup::Purusha => "पुरुषः सन्निधिमात्रेण (By mere presence of Puruṣa)",
+            TattvaGroup::Prakriti => "प्रकृतेः क्रियमाणानि (Actions done by Prakṛti)",
+            TattvaGroup::Antahkarana => "बुद्धिर्ज्ञानं असंमोहः (Intellect, knowledge, clarity)",
+            TattvaGroup::Jnanendriya => "इन्द्रियाणां पृथग्भावम् (Distinctness of senses)",
+            TattvaGroup::Karmendriya => "कर्मण्येवाधिकारस्ते (Your right is to action alone)",
+            TattvaGroup::Tanmatra => "सूक्ष्मं च तद्विज्ञेयम् (That subtle is to be known)",
+            TattvaGroup::Mahabhuta => "पृथिव्यप्तेजोवायुः (Earth, water, fire, air)",
+        })
+    }
+
+    fn category(&self) -> &'static str {
+        "Sāṃkhya Philosophy (सांख्य तत्त्व)"
+    }
+}
+
+impl PhilosophicalEnum for Tattva {
+    fn all_variants() -> &'static [Self] {
+        const TATTVAS: [Tattva; 25] = [
+            Tattva::Purusha, Tattva::Prakriti, Tattva::Buddhi, Tattva::Ahamkara, Tattva::Manas,
+            Tattva::Shrotra, Tattva::Tvak, Tattva::Cakshu, Tattva::Rasana, Tattva::Ghrana,
+            Tattva::Vak, Tattva::Pani, Tattva::Pada, Tattva::Payu, Tattva::Upastha,
+            Tattva::ShabdaTanmatra, Tattva::Sparsha, Tattva::Rupa, Tattva::Rasa, Tattva::Gandha,
+            Tattva::Akasha, Tattva::Vayu, Tattva::Tejas, Tattva::Apas, Tattva::Prithvi,
+        ];
+        &TATTVAS
+    }
+
+    fn count() -> usize {
+        25
+    }
+
+    fn index(&self) -> usize {
+        *self as usize - 1
+    }
+
+    fn ordinal(&self) -> usize {
+        *self as usize
+    }
+
+    fn next(&self) -> Self {
+        let next_val = (*self as u8) % 25 + 1;
+        // Safety: values 1-25 are all valid
+        unsafe { std::mem::transmute(next_val) }
+    }
+
+    fn prev(&self) -> Self {
+        let prev_val = if *self as u8 == 1 { 25 } else { *self as u8 - 1 };
+        // Safety: values 1-25 are all valid
+        unsafe { std::mem::transmute(prev_val) }
+    }
+
+    fn from_index(index: usize) -> Option<Self> {
+        if index < 25 {
+            // Safety: index 0-24 maps to values 1-25
+            Some(unsafe { std::mem::transmute((index + 1) as u8) })
+        } else {
+            None
         }
     }
 }

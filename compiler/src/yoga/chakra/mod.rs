@@ -15,6 +15,8 @@ pub mod optimizer;
 // Re-exports
 pub use optimizer::{ChakraOptimizer, Optimizable, OptimizationPass, OptimizerConfig};
 
+use crate::traits::{PhilosophicalEnum, SanskritDescribed, SanskritNamed};
+
 /// The 7 Chakras as software layers
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum Chakra {
@@ -41,6 +43,40 @@ pub enum Chakra {
 }
 
 impl Chakra {
+    /// Get all 7 Chakras in order (root to crown)
+    pub fn all() -> [Chakra; 7] {
+        [
+            Chakra::Muladhara, Chakra::Svadhisthana, Chakra::Manipura,
+            Chakra::Anahata, Chakra::Vishuddha, Chakra::Ajna, Chakra::Sahasrara,
+        ]
+    }
+
+    /// Get IAST transliteration
+    pub fn iast(&self) -> &'static str {
+        match self {
+            Self::Muladhara => "Mūlādhāra",
+            Self::Svadhisthana => "Svādhiṣṭhāna",
+            Self::Manipura => "Maṇipūra",
+            Self::Anahata => "Anāhata",
+            Self::Vishuddha => "Viśuddha",
+            Self::Ajna => "Ājñā",
+            Self::Sahasrara => "Sahasrāra",
+        }
+    }
+
+    /// Get English meaning
+    pub fn english(&self) -> &'static str {
+        match self {
+            Self::Muladhara => "Root Support",
+            Self::Svadhisthana => "Own Place",
+            Self::Manipura => "Jewel City",
+            Self::Anahata => "Unstruck",
+            Self::Vishuddha => "Purification",
+            Self::Ajna => "Command",
+            Self::Sahasrara => "Thousand-Petaled",
+        }
+    }
+
     /// Get Sanskrit name
     pub fn sanskrit_name(&self) -> &'static str {
         match self {
@@ -90,6 +126,129 @@ impl Chakra {
             Self::Vishuddha => "Ether",
             Self::Ajna => "Light",
             Self::Sahasrara => "Thought",
+        }
+    }
+
+    /// Get bīja (seed) mantra
+    pub fn bija_mantra(&self) -> &'static str {
+        match self {
+            Self::Muladhara => "लं (LAM)",
+            Self::Svadhisthana => "वं (VAM)",
+            Self::Manipura => "रं (RAM)",
+            Self::Anahata => "यं (YAM)",
+            Self::Vishuddha => "हं (HAM)",
+            Self::Ajna => "ॐ (OM)",
+            Self::Sahasrara => "अः (AH)",
+        }
+    }
+}
+
+// ============================================================================
+// v10.0 Trait Implementations
+// ============================================================================
+
+impl SanskritNamed for Chakra {
+    fn sanskrit(&self) -> &'static str {
+        self.sanskrit_name()
+    }
+
+    fn iast(&self) -> &'static str {
+        self.iast()
+    }
+
+    fn english(&self) -> &'static str {
+        self.english()
+    }
+}
+
+impl SanskritDescribed for Chakra {
+    fn meaning(&self) -> &'static str {
+        match self {
+            Self::Muladhara => "The root foundation, base of the spine, survival instincts",
+            Self::Svadhisthana => "One's own dwelling, creativity and emotional flow",
+            Self::Manipura => "City of jewels, personal power and transformation",
+            Self::Anahata => "The unstruck sound, love and compassion",
+            Self::Vishuddha => "Purification center, communication and truth",
+            Self::Ajna => "Command center, intuition and wisdom",
+            Self::Sahasrara => "Thousand-petaled lotus, pure consciousness",
+        }
+    }
+
+    fn explanation(&self) -> &'static str {
+        match self {
+            Self::Muladhara => "Maps to hardware/OS layer - the foundation everything builds upon",
+            Self::Svadhisthana => "Maps to memory management - fluid allocation and deallocation",
+            Self::Manipura => "Maps to CPU/processing - transformative computation power",
+            Self::Anahata => "Maps to business logic - the heart of application functionality",
+            Self::Vishuddha => "Maps to APIs - pure communication between components",
+            Self::Ajna => "Maps to monitoring - observing and directing the system",
+            Self::Sahasrara => "Maps to UI - the crown of user experience",
+        }
+    }
+
+    fn mantra(&self) -> Option<&'static str> {
+        Some(self.bija_mantra())
+    }
+
+    fn category(&self) -> &'static str {
+        "Chakra System (चक्र)"
+    }
+}
+
+impl PhilosophicalEnum for Chakra {
+    fn all_variants() -> &'static [Self] {
+        &[
+            Chakra::Muladhara, Chakra::Svadhisthana, Chakra::Manipura,
+            Chakra::Anahata, Chakra::Vishuddha, Chakra::Ajna, Chakra::Sahasrara,
+        ]
+    }
+
+    fn count() -> usize {
+        7
+    }
+
+    fn index(&self) -> usize {
+        *self as usize - 1
+    }
+
+    fn ordinal(&self) -> usize {
+        *self as usize
+    }
+
+    fn next(&self) -> Self {
+        match self {
+            Self::Muladhara => Self::Svadhisthana,
+            Self::Svadhisthana => Self::Manipura,
+            Self::Manipura => Self::Anahata,
+            Self::Anahata => Self::Vishuddha,
+            Self::Vishuddha => Self::Ajna,
+            Self::Ajna => Self::Sahasrara,
+            Self::Sahasrara => Self::Muladhara, // Cycle back (kundalini rises and descends)
+        }
+    }
+
+    fn prev(&self) -> Self {
+        match self {
+            Self::Muladhara => Self::Sahasrara, // Cycle back
+            Self::Svadhisthana => Self::Muladhara,
+            Self::Manipura => Self::Svadhisthana,
+            Self::Anahata => Self::Manipura,
+            Self::Vishuddha => Self::Anahata,
+            Self::Ajna => Self::Vishuddha,
+            Self::Sahasrara => Self::Ajna,
+        }
+    }
+
+    fn from_index(index: usize) -> Option<Self> {
+        match index {
+            0 => Some(Self::Muladhara),
+            1 => Some(Self::Svadhisthana),
+            2 => Some(Self::Manipura),
+            3 => Some(Self::Anahata),
+            4 => Some(Self::Vishuddha),
+            5 => Some(Self::Ajna),
+            6 => Some(Self::Sahasrara),
+            _ => None,
         }
     }
 }

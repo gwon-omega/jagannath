@@ -332,3 +332,82 @@ impl Default for PanchaKoshaAllocator {
         Self::new()
     }
 }
+
+// ============================================================================
+// Tests
+// ============================================================================
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::traits::{PhilosophicalEnum, SanskritDescribed, SanskritNamed};
+
+    #[test]
+    fn test_kosha_sanskrit_named_trait() {
+        let kosha = Kosha::Annamaya;
+        assert_eq!(kosha.sanskrit(), "अन्नमय");
+        assert_eq!(kosha.iast(), "Annamaya");
+        assert_eq!(kosha.english(), "Food Sheath");
+    }
+
+    #[test]
+    fn test_kosha_sanskrit_described_trait() {
+        let kosha = Kosha::Vijnanamaya;
+        assert!(kosha.meaning().contains("wisdom"));
+        assert!(kosha.explanation().contains("SSD"));
+        assert!(kosha.mantra().is_some());
+        assert_eq!(kosha.category(), "Pancha Kosha (पञ्चकोश)");
+    }
+
+    #[test]
+    fn test_kosha_philosophical_enum_trait() {
+        assert_eq!(Kosha::count(), 5);
+        assert_eq!(Kosha::all_variants().len(), 5);
+        assert_eq!(Kosha::Annamaya.index(), 0);
+        assert_eq!(Kosha::Anandamaya.ordinal(), 5);
+    }
+
+    #[test]
+    fn test_kosha_navigation_cycle() {
+        // Forward cycle
+        assert_eq!(Kosha::Annamaya.next(), Kosha::Pranamaya);
+        assert_eq!(Kosha::Anandamaya.next(), Kosha::Annamaya); // Wrap
+
+        // Backward cycle
+        assert_eq!(Kosha::Pranamaya.prev(), Kosha::Annamaya);
+        assert_eq!(Kosha::Annamaya.prev(), Kosha::Anandamaya); // Wrap
+    }
+
+    #[test]
+    fn test_kosha_from_index() {
+        assert_eq!(Kosha::from_index(0), Some(Kosha::Annamaya));
+        assert_eq!(Kosha::from_index(4), Some(Kosha::Anandamaya));
+        assert_eq!(Kosha::from_index(5), None);
+    }
+
+    #[test]
+    fn test_kosha_all_have_mantras() {
+        for kosha in Kosha::all() {
+            assert!(kosha.mantra().is_some(), "{:?} should have mantra", kosha);
+        }
+    }
+
+    #[test]
+    fn test_kosha_latency_ordering() {
+        // Latency should increase as we go from inner to outer
+        assert!(Kosha::Annamaya.latency_ns() < Kosha::Pranamaya.latency_ns());
+        assert!(Kosha::Pranamaya.latency_ns() < Kosha::Manomaya.latency_ns());
+        assert!(Kosha::Manomaya.latency_ns() < Kosha::Vijnanamaya.latency_ns());
+        assert!(Kosha::Vijnanamaya.latency_ns() < Kosha::Anandamaya.latency_ns());
+    }
+
+    #[test]
+    fn test_kosha_capacity_ordering() {
+        // Capacity should increase as we go from inner to outer
+        assert!(Kosha::Annamaya.capacity_order() < Kosha::Pranamaya.capacity_order());
+        assert!(Kosha::Pranamaya.capacity_order() < Kosha::Manomaya.capacity_order());
+        assert!(Kosha::Manomaya.capacity_order() < Kosha::Vijnanamaya.capacity_order());
+        assert!(Kosha::Vijnanamaya.capacity_order() < Kosha::Anandamaya.capacity_order());
+    }
+}
+
