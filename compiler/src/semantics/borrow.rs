@@ -14,7 +14,7 @@
 //! Reference: Walker (2002) "Substructural Type Systems" in ATTAPL
 //! Reference: Rust Reference on Ownership and Borrowing
 
-use crate::lexer::{Affix, AffixSequence, Span};
+use crate::lexer::{Affix, Span};
 use crate::parser::ast::*;
 use std::collections::{HashMap, HashSet};
 
@@ -716,6 +716,100 @@ impl BorrowChecker {
                 for p in fields {
                     self.check_pattern(p, span.clone())?;
                 }
+            }
+            Pattern::Binding {
+                name,
+                mutable: _,
+                subpattern,
+            } => {
+                // Named binding - record the name as owned
+                self.record_owned(
+                    name.name.clone(),
+                    "unknown".to_string(),
+                    OwnershipKind::Affine,
+                    span.clone(),
+                );
+                // Check subpattern if present
+                if let Some(sub) = subpattern {
+                    self.check_pattern(sub, span)?;
+                }
+            }
+            Pattern::Tuple(patterns) => {
+                for p in patterns {
+                    self.check_pattern(p, span.clone())?;
+                }
+            }
+            Pattern::Struct {
+                name: _,
+                fields,
+                rest: _,
+            } => {
+                for (_, p) in fields {
+                    self.check_pattern(p, span.clone())?;
+                }
+            }
+            Pattern::Variant {
+                enum_name: _,
+                variant: _,
+                fields,
+            } => match fields {
+                crate::parser::ast::VariantFields::Unit => {}
+                crate::parser::ast::VariantFields::Tuple(patterns) => {
+                    for p in patterns {
+                        self.check_pattern(p, span.clone())?;
+                    }
+                }
+                crate::parser::ast::VariantFields::Struct(field_patterns) => {
+                    for (_, p) in field_patterns {
+                        self.check_pattern(p, span.clone())?;
+                    }
+                }
+            },
+            Pattern::Array(patterns) => {
+                for p in patterns {
+                    self.check_pattern(p, span.clone())?;
+                }
+            }
+            Pattern::Slice {
+                before,
+                middle,
+                after,
+            } => {
+                for p in before {
+                    self.check_pattern(p, span.clone())?;
+                }
+                if let Some(mid) = middle {
+                    self.check_pattern(mid, span.clone())?;
+                }
+                for p in after {
+                    self.check_pattern(p, span.clone())?;
+                }
+            }
+            Pattern::Range { start, end, .. } => {
+                if let Some(p) = start {
+                    self.check_pattern(p, span.clone())?;
+                }
+                if let Some(p) = end {
+                    self.check_pattern(p, span.clone())?;
+                }
+            }
+            Pattern::Or(patterns) => {
+                // All branches must bind same names
+                for p in patterns {
+                    self.check_pattern(p, span.clone())?;
+                }
+            }
+            Pattern::Guard {
+                pattern,
+                condition: _,
+            } => {
+                self.check_pattern(pattern, span)?;
+            }
+            Pattern::Ref {
+                mutable: _,
+                pattern: inner,
+            } => {
+                self.check_pattern(inner, span)?;
             }
             Pattern::Literal(_) => {}
             Pattern::Wildcard => {}

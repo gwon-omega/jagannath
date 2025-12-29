@@ -13,18 +13,19 @@
 //! - **v7.0**: Life Alignment (4 Margas, 4 Varnas, 3 Purusharthas)
 
 // =============================================================================
-// Allow directives for work-in-progress code
-// These will be removed as modules are fully implemented
+// NOTE: Blanket allow directives removed per OPTIMIZATION_PLAN.md Phase 1.3
+// Targeted #[allow] should be used only where justified
 // =============================================================================
-#![allow(unused_imports)]
-#![allow(unused_variables)]
-#![allow(dead_code)]
-#![allow(unused_mut)]
 
 // ============================================================================
 // Core Infrastructure
 // ============================================================================
 pub mod errors;
+
+// ============================================================================
+// Unified Diagnostics (Nidāna - Guṇa-based severity)
+// ============================================================================
+pub mod diagnostics; // Unified diagnostic trait with Sattva/Rajas/Tamas levels
 
 // ============================================================================
 // v1.0 - Sanskrit Morphology Layer
@@ -76,9 +77,34 @@ pub mod purusharthas; // 3 Life Goals (optimization triangle)
 pub mod varnas; // 4 Privilege Rings (security levels) // Cosmic Compiler coordination
 
 // ============================================================================
+// v8.0 - Moksha Journey (Unified Liberation Framework)
+// ============================================================================
+pub mod moksha; // Jīva→Ātman transformation (source→binary liberation)
+
+// ============================================================================
+// v9.0 - Jyotiṣa Śāstra (Temporal Optimization)
+// ============================================================================
+pub mod jyotisha; // 9 Grahas, 27 Nakṣatras, 12 Rāśis, Muhūrta timing
+
+// ============================================================================
+// Shared Traits (Lakṣaṇa - Unified Abstractions)
+// ============================================================================
+pub mod traits; // SanskritNamed, PhilosophicalEnum, CosmicPattern, Optimization
+
+// ============================================================================
 // Module System (Phase 4)
 // ============================================================================
 pub mod modules; // Khaṇḍa - Module graph, resolver, symbol tables
+
+// ============================================================================
+// Query System - Karma-Driven Incremental Computation
+// ============================================================================
+pub mod queries; // Memoization and incremental compilation (Karma Kosha)
+
+// ============================================================================
+// Visitor Pattern - Extensible AST/MIR Traversal (Yātrā)
+// ============================================================================
+pub mod visitor; // Pilgrimage through code structures
 
 // ============================================================================
 // Compiler Driver

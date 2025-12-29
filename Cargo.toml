@@ -32,6 +32,7 @@ logos = "0.14"                    # Lexer generation
 chumsky = "0.9"                   # Parser combinators
 ariadne = "0.4"                   # Error reporting
 typed-arena = "2.0"               # Arena allocation
+regex = "1.10"                    # Regular expressions for macro expansion
 
 # Code generation
 cranelift = "0.111"               # Native codegen

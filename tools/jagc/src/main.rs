@@ -206,6 +206,7 @@ fn compile_file(input: &PathBuf, cli: &Cli) -> Result<(), String> {
     };
 
     // Create compiler options
+    // When building exe, we want assembly output first, then link separately
     let options = jagannath_compiler::driver::CompilerOptions {
         target,
         guna,
@@ -219,7 +220,8 @@ fn compile_file(input: &PathBuf, cli: &Cli) -> Result<(), String> {
         library_paths: Vec::new(),
         libraries: Vec::new(),
         deterministic: true,
-        emit_asm: false,
+        emit_asm: cli.emit_asm || cli.emit_exe, // Always emit asm when building exe
+        security_check: true,                   // Nava Durga protection enabled by default
     };
 
     info!(

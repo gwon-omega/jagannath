@@ -26,8 +26,6 @@
 //! 3. Visual code snippet with annotations
 //! 4. Suggested fixes with before/after
 
-use std::fmt;
-
 use super::error::{CompilerError, ErrorCode, Severity};
 use super::span::{SourceCache, SourceId, Span};
 

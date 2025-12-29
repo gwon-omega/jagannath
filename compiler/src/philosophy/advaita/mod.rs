@@ -132,7 +132,7 @@ impl AdvaitaMemory {
     }
 
     /// Select optimal region for allocation
-    fn select_region(&self, size: usize, alignment: usize) -> Option<String> {
+    fn select_region(&self, size: usize, _alignment: usize) -> Option<String> {
         // Try in order of speed: register > stack > arena > heap
 
         // Small values might fit in registers

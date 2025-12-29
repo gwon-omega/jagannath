@@ -4,7 +4,6 @@
 //! Code: Memory corruption, data worms
 
 use crate::parser::ast::{Ast, Expr, Item, Stmt, Block, LoopKind, BinaryOp, UnaryOp};
-use crate::errors::Span;
 use super::super::yama::{Violation, ViolationKind};
 use std::collections::HashSet;
 

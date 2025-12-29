@@ -232,7 +232,7 @@ impl AnumanaEngine {
                     || expression.contains("<=")
                     || expression.contains(">=")
             }
-            HetuPattern::BinaryOp { op, types } => expression.contains(op),
+            HetuPattern::BinaryOp { op, types: _types } => expression.contains(op),
             HetuPattern::Assignment { target_type } => {
                 context.expected_type.as_deref() == Some(target_type)
             }

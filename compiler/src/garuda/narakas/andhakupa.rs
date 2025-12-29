@@ -206,7 +206,7 @@ impl AndhakupaChecker {
     fn extract_null_check(&self, expr: &Expr) -> Option<String> {
         // Pattern: x != null, x != nil, x.is_some()
         if let Expr::Binary {
-            left, right, op, ..
+            left, right, op: _op, ..
         } = expr
         {
             if let Expr::Identifier(id) = left.as_ref() {

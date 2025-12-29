@@ -199,7 +199,7 @@ impl PranayamaManager {
         let now = Instant::now();
         let mut leaks = Vec::new();
 
-        for (id, (prana, amount, allocated_at)) in &self.allocations {
+        for (_id, (prana, amount, allocated_at)) in &self.allocations {
             let elapsed = now.duration_since(*allocated_at);
             if elapsed > self.leak_threshold {
                 leaks.push(PranaError::ResourceLeak {

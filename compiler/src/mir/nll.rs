@@ -18,7 +18,7 @@
 //! 5. Check for violations
 
 use super::types::*;
-use std::collections::{HashMap, HashSet, VecDeque};
+use std::collections::{HashMap, HashSet};
 
 // ============================================================================
 // Region Variables and Constraints
@@ -515,7 +515,7 @@ impl NllChecker {
     }
 
     /// Propagate constraints to compute final regions
-    fn propagate_constraints(&mut self, func: &MirFunction) {
+    fn propagate_constraints(&mut self, _func: &MirFunction) {
         let mut changed = true;
         let mut iterations = 0;
         const MAX_ITERATIONS: usize = 1000;

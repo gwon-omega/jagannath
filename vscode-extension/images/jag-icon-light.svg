@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="128" height="128" viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="gradLight" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#7C3AED;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#2563EB;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+
+  <!-- Background circle -->
+  <circle cx="64" cy="64" r="60" fill="#FFFFFF" stroke="url(#gradLight)" stroke-width="2"/>
+
+  <!-- Om symbol (simplified) -->
+  <g transform="translate(64, 64)" fill="url(#gradLight)">
+    <!-- Main Om body -->
+    <path d="M-25 10 Q-30 -10 -15 -20 Q0 -30 15 -20 Q25 -10 20 5 Q15 20 0 25 Q-15 25 -25 10 Z"
+          fill="none" stroke="url(#gradLight)" stroke-width="4" stroke-linecap="round"/>
+    <!-- Upper curl -->
+    <path d="M20 -5 Q35 -15 30 -30 Q25 -40 10 -35"
+          fill="none" stroke="url(#gradLight)" stroke-width="4" stroke-linecap="round"/>
+    <!-- Dot (bindu) -->
+    <circle cx="25" cy="-40" r="4" fill="url(#gradLight)"/>
+    <!-- Crescent -->
+    <path d="M15 -45 Q30 -50 35 -40"
+          fill="none" stroke="url(#gradLight)" stroke-width="3" stroke-linecap="round"/>
+  </g>
+
+  <!-- JAG text -->
+  <text x="64" y="105" text-anchor="middle" font-family="Consolas, monospace" font-size="12" font-weight="bold" fill="#1F2937">
+    JAG
+  </text>
+</svg>

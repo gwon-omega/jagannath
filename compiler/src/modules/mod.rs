@@ -33,8 +33,7 @@ pub use symbol::{Symbol, SymbolKind, SymbolTable};
 pub use typeck_integration::{CrossModuleTypeEnv, ResolvedTypeInfo, TypeReference};
 pub use visibility::{Visibility, VisibilityScope};
 
-use crate::parser::ast::{Ast, Identifier, ImportStmt, Item};
-use std::collections::HashMap;
+use crate::parser::ast::{Ast, ImportStmt, Item};
 use std::path::{Path, PathBuf};
 
 /// A compiled module in the module graph
@@ -115,7 +114,7 @@ impl ModuleContext {
     /// Uses Kahn's algorithm for topological sort
     pub fn compile_all(&mut self, entry_file: &Path) -> Result<Vec<ModuleId>, ModuleError> {
         // 1. Build module graph by parsing all imports
-        let entry_id = self.discover_modules(entry_file)?;
+        let _entry_id = self.discover_modules(entry_file)?;
 
         // 2. Check for circular dependencies (Cakravyūha)
         if let Some(cycle) = self.graph.find_cycle() {
@@ -186,7 +185,7 @@ impl ModuleContext {
     /// Resolve an import statement to a module
     fn resolve_import(
         &mut self,
-        from: ModuleId,
+        _from: ModuleId,
         import: &ImportStmt,
     ) -> Result<ModuleId, ModuleError> {
         let path: Vec<String> = import.path.iter().map(|i| i.name.clone()).collect();

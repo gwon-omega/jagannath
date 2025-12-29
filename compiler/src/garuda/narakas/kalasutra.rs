@@ -5,7 +5,7 @@
 
 use super::super::yama::{Violation, ViolationKind};
 use crate::errors::Span;
-use crate::parser::ast::{Ast, Block, Expr, Item, LoopKind, Stmt};
+use crate::parser::ast::{Ast, Block, Expr, Item, Stmt};
 use std::collections::{HashMap, HashSet};
 
 /// Checker for Kalasutra violations (thread safety)
@@ -99,7 +99,11 @@ impl KalasutraChecker {
                     }
                 }
             }
-            Stmt::Loop { body, span, kind } => {
+            Stmt::Loop {
+                body,
+                span,
+                kind: _kind,
+            } => {
                 let locks_before = self.current_locks.len();
                 self.check_block(body, violations);
                 if self.current_locks.len() > locks_before {

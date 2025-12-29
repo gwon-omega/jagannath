@@ -10,11 +10,19 @@ use alloc::vec::Vec as AllocVec;
 pub mod srinkhala;
 #[cfg(feature = "alloc")]
 pub mod pradhanyata;
+#[cfg(feature = "std")]
+pub mod sarani_vidhi;
+#[cfg(feature = "std")]
+pub mod samuccaya_vidhi;
 
 #[cfg(feature = "alloc")]
 pub use srinkhala::*;
 #[cfg(feature = "alloc")]
 pub use pradhanyata::*;
+#[cfg(feature = "std")]
+pub use sarani_vidhi::*;
+#[cfg(feature = "std")]
+pub use samuccaya_vidhi::*;
 
 /// Vector/List (Sūcī - सूची)
 #[cfg(feature = "alloc")]

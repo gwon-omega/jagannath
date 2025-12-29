@@ -48,7 +48,7 @@ pub struct KarakaHint {
 }
 
 /// Register class for allocation
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum RegisterClass {
     CalleeSaved,
     CallerSaved,

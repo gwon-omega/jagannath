@@ -474,8 +474,11 @@ impl BuildPipeline {
 
         linker.add_object(&obj_path);
 
+        // On Windows with MinGW, GCC automatically links the C runtime
+        // On Linux/Unix, we need to explicitly request libc
+        #[cfg(not(target_os = "windows"))]
         if self.use_crt {
-            linker.add_library("c"); // C runtime
+            linker.add_library("c"); // C runtime (Linux/Unix)
         }
 
         linker

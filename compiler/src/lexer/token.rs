@@ -19,16 +19,31 @@ pub struct Span {
 
 impl Span {
     pub fn new(start: usize, end: usize) -> Self {
-        Self { start, end, line: 1, column: 1 }
+        Self {
+            start,
+            end,
+            line: 1,
+            column: 1,
+        }
     }
 
     pub fn with_location(start: usize, end: usize, line: usize, column: usize) -> Self {
-        Self { start, end, line, column }
+        Self {
+            start,
+            end,
+            line,
+            column,
+        }
     }
 
     /// Create a dummy span (for generated code/tests)
     pub fn dummy() -> Self {
-        Self { start: 0, end: 0, line: 1, column: 1 }
+        Self {
+            start: 0,
+            end: 0,
+            line: 1,
+            column: 1,
+        }
     }
 
     pub fn to_range(self) -> Range<usize> {
@@ -307,6 +322,8 @@ pub enum TokenKind {
     Comment(String),
     /// Error token
     Error(String),
+    /// Underscore (_) for wildcards
+    Underscore,
 
     // ========================================================================
     // Legacy Aliases / Kāraka Markers

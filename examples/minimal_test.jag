@@ -1,0 +1,14 @@
+//! Minimal Test
+//!
+//! A minimal program that returns a value without I/O.
+
+// Main function - just return a value
+kāryakrama mukhya() -> saṅkhyā-a-k-t32 {
+    // Calculate something simple
+    māna a: saṅkhyā-a-k-t32 = 5;
+    māna b: saṅkhyā-a-k-t32 = 7;
+    māna result: saṅkhyā-a-k-t32 = a + b;
+
+    // Return 0 for success (the actual result is 12)
+    phera 0
+}

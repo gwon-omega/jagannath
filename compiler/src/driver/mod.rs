@@ -16,14 +16,6 @@ pub mod options;
 pub mod philosophy_integration;
 pub mod session;
 
-use crate::lexer::Lexer;
-use crate::mir::{MirBuilder, MirOptimizer};
-use crate::parser::Parser;
-use crate::philosophy::guna::GunaOptimizer;
-use crate::philosophy::kala::Kala;
-use crate::philosophy::samkhya::SamkhyaPipeline;
-use crate::semantics::{BorrowChecker, KarakaAnalyzer, LifetimeChecker, TypeChecker};
-
 pub use options::CompilerOptions;
 pub use philosophy_integration::PhilosophyEngine;
 pub use session::CompilerSession;

@@ -4,8 +4,7 @@
 //! Code: Buffer overflow, out-of-bounds access
 
 use super::super::yama::{Violation, ViolationKind};
-use crate::lexer::token::Span;
-use crate::parser::ast::{Ast, Expr, Item, Stmt, Block, Literal, LoopKind, BinaryOp};
+use crate::parser::ast::{Ast, Block, Expr, Item, Literal, LoopKind, Stmt};
 use std::collections::HashMap;
 
 /// Checker for Asipatravana violations (buffer overflow)
@@ -15,7 +14,9 @@ pub struct AsipatravanaChecker {
 
 impl AsipatravanaChecker {
     pub fn new() -> Self {
-        Self { array_sizes: HashMap::new() }
+        Self {
+            array_sizes: HashMap::new(),
+        }
     }
 
     pub fn check(&mut self, ast: &Ast) -> Vec<Violation> {
@@ -34,7 +35,8 @@ impl AsipatravanaChecker {
         for stmt in &block.stmts {
             if let Stmt::Let { name, value, .. } = stmt {
                 if let Some(Expr::Array { elements, .. }) = value {
-                    self.array_sizes.insert(name.name.clone(), Some(elements.len()));
+                    self.array_sizes
+                        .insert(name.name.clone(), Some(elements.len()));
                 }
             }
         }
@@ -50,10 +52,17 @@ impl AsipatravanaChecker {
         match stmt {
             Stmt::Expr(expr) => self.check_expr(expr, violations),
             Stmt::Let { value: Some(v), .. } => self.check_expr(v, violations),
-            Stmt::If { condition, then_block, else_block, .. } => {
+            Stmt::If {
+                condition,
+                then_block,
+                else_block,
+                ..
+            } => {
                 self.check_expr(condition, violations);
                 self.check_block(then_block, violations);
-                if let Some(eb) = else_block { self.check_block(eb, violations); }
+                if let Some(eb) = else_block {
+                    self.check_block(eb, violations);
+                }
             }
             Stmt::Loop { body, kind, .. } => {
                 if let LoopKind::While { condition } = kind {
@@ -68,14 +77,23 @@ impl AsipatravanaChecker {
 
     fn check_expr(&self, expr: &Expr, violations: &mut Vec<Violation>) {
         match expr {
-            Expr::Index { object, index, span } => {
-                if let (Expr::Identifier(id), Expr::Literal(Literal::Int(idx))) = (object.as_ref(), index.as_ref()) {
+            Expr::Index {
+                object,
+                index,
+                span,
+            } => {
+                if let (Expr::Identifier(id), Expr::Literal(Literal::Int(idx))) =
+                    (object.as_ref(), index.as_ref())
+                {
                     if let Some(Some(size)) = self.array_sizes.get(&id.name) {
                         if *idx < 0 || (*idx as usize) >= *size {
                             violations.push(Violation::full(
                                 ViolationKind::BufferOverflow,
                                 span.clone().into(),
-                                format!("Index {} out of bounds for array '{}' (size {})", idx, id.name, size),
+                                format!(
+                                    "Index {} out of bounds for array '{}' (size {})",
+                                    idx, id.name, size
+                                ),
                                 "Abandoning dharma: Crossing sacred boundaries",
                                 "Entry to Asipatravana blocked",
                                 "Ensure index < array size".to_string(),
@@ -86,7 +104,12 @@ impl AsipatravanaChecker {
                 self.check_expr(object, violations);
                 self.check_expr(index, violations);
             }
-            Expr::Binary { left, right, op, span } => {
+            Expr::Binary {
+                left,
+                right,
+                op: _op,
+                span: _span,
+            } => {
                 self.check_expr(left, violations);
                 self.check_expr(right, violations);
             }
@@ -103,10 +126,14 @@ impl AsipatravanaChecker {
                         ));
                     }
                 }
-                for arg in args { self.check_expr(arg, violations); }
+                for arg in args {
+                    self.check_expr(arg, violations);
+                }
             }
             Expr::Array { elements, .. } => {
-                for e in elements { self.check_expr(e, violations); }
+                for e in elements {
+                    self.check_expr(e, violations);
+                }
             }
             _ => {}
         }
@@ -114,5 +141,7 @@ impl AsipatravanaChecker {
 }
 
 impl Default for AsipatravanaChecker {
-    fn default() -> Self { Self::new() }
+    fn default() -> Self {
+        Self::new()
+    }
 }

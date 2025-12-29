@@ -21,7 +21,7 @@
 //! - Harper & Stone (2000): "A Type-Theoretic Interpretation of Standard ML"
 
 use super::graph::{ModuleGraph, ModuleId};
-use super::symbol::{Symbol, SymbolKind, SymbolTable, FunctionSymbol, TypeSymbol, TypeKind};
+use super::symbol::{SymbolKind, SymbolTable, FunctionSymbol, TypeKind};
 use super::visibility::Visibility;
 use super::{ImportDecl, ImportKind, ModuleContext};
 use crate::lexer::Span;

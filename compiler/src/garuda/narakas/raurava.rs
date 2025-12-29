@@ -156,7 +156,7 @@ impl RauravaChecker {
             Expr::Index {
                 object,
                 index,
-                span,
+                span: _span,
             } => {
                 // Unchecked array access may panic
                 self.check_expr(object, violations);

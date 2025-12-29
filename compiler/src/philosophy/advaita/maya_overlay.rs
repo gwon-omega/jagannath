@@ -12,7 +12,6 @@
 //! - Unsafe operations acknowledge the underlying unity
 
 use std::collections::HashMap;
-use std::any::TypeId;
 
 /// Māyā - The type overlay system
 pub struct MayaOverlay {

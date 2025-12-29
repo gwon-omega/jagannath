@@ -236,3 +236,170 @@ impl Default for AstraArsenal {
         Self::new()
     }
 }
+
+// =============================================================================
+// Rajpopat Rule - Right-Hand Priority Optimization Ordering
+// =============================================================================
+
+/// Rajpopat's Discovery (Cambridge, 2022):
+///
+/// "When rules conflict, apply the rule to the RIGHT-HAND SIDE first."
+///
+/// This 2,500-year-old principle from Pāṇini's Aṣṭādhyāyī applies to
+/// optimization pass ordering. When two astras could both apply,
+/// we prioritize the one affecting the "rightmost" (innermost/latest) code.
+///
+/// ## Application to Compiler Optimization
+///
+/// 1. **Innermost-first**: Process leaf nodes before parents
+/// 2. **Right-operand priority**: In `a + b`, optimize `b` first
+/// 3. **Later-defined priority**: Newer definitions take precedence
+/// 4. **Exit-block priority**: Optimize return paths first
+///
+/// This matches modern data-flow analysis where backward passes
+/// (from exits to entries) often reveal more optimization opportunities.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum RajpopatPriority {
+    /// Process rightmost/innermost first (Pāṇini's rule)
+    RightHandFirst,
+    /// Process leftmost/outermost first (inverse)
+    LeftHandFirst,
+    /// Process both simultaneously (parallel safe)
+    Simultaneous,
+}
+
+/// Astra conflict resolution using Rajpopat's rule
+pub struct RajpopatResolver {
+    /// Default priority direction
+    priority: RajpopatPriority,
+}
+
+impl RajpopatResolver {
+    pub fn new() -> Self {
+        Self {
+            priority: RajpopatPriority::RightHandFirst,
+        }
+    }
+
+    /// Resolve conflict between two astras
+    ///
+    /// Returns: (first_to_apply, second_to_apply) based on Rajpopat's rule
+    pub fn resolve_conflict<'a>(
+        &self,
+        astra_a: &'a dyn DivyaAstra,
+        astra_b: &'a dyn DivyaAstra,
+    ) -> (&'a dyn DivyaAstra, &'a dyn DivyaAstra) {
+        match self.priority {
+            RajpopatPriority::RightHandFirst => {
+                // Higher power level = more specific = apply first
+                // Like Pāṇini's sūtras, specific rules override general
+                if astra_a.power_level() > astra_b.power_level() {
+                    (astra_a, astra_b)
+                } else {
+                    (astra_b, astra_a)
+                }
+            }
+            RajpopatPriority::LeftHandFirst => {
+                if astra_a.power_level() < astra_b.power_level() {
+                    (astra_a, astra_b)
+                } else {
+                    (astra_b, astra_a)
+                }
+            }
+            RajpopatPriority::Simultaneous => (astra_a, astra_b),
+        }
+    }
+
+    /// Order astras by Rajpopat priority
+    ///
+    /// Groups by deity (phase) then orders by power level (right-hand = specific first)
+    pub fn order_astras<'a>(&self, astras: Vec<&'a dyn DivyaAstra>) -> Vec<&'a dyn DivyaAstra> {
+        let mut ordered = astras;
+
+        // Sort by: 1) Deity phase, 2) Power level (descending for RightHandFirst)
+        ordered.sort_by(|a, b| {
+            let phase_a = deity_to_phase(a.deity());
+            let phase_b = deity_to_phase(b.deity());
+
+            match phase_a.cmp(&phase_b) {
+                std::cmp::Ordering::Equal => {
+                    // Within same phase, apply Rajpopat's rule
+                    match self.priority {
+                        RajpopatPriority::RightHandFirst => {
+                            // Higher power (more specific) first
+                            b.power_level().cmp(&a.power_level())
+                        }
+                        RajpopatPriority::LeftHandFirst => {
+                            // Lower power (more general) first
+                            a.power_level().cmp(&b.power_level())
+                        }
+                        RajpopatPriority::Simultaneous => std::cmp::Ordering::Equal,
+                    }
+                }
+                other => other,
+            }
+        });
+
+        ordered
+    }
+}
+
+impl Default for RajpopatResolver {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+/// Map deity to optimization phase (for ordering)
+///
+/// Phases follow Sāṃkhya evolution: analysis → transformation → preservation
+fn deity_to_phase(deity: AstraDeity) -> u8 {
+    match deity {
+        // Phase 1: Analysis (Buddhi - intelligence)
+        AstraDeity::Nagas => 1,  // Pointer analysis
+        AstraDeity::Varuna => 1, // Flow analysis
+        AstraDeity::Surya => 1,  // Profiling
+
+        // Phase 2: Transformation (Ahaṃkāra - ego/change)
+        AstraDeity::Agni => 2,   // CPU optimization
+        AstraDeity::Vayu => 2,   // Control flow
+        AstraDeity::Garuda => 2, // Escape analysis
+
+        // Phase 3: Refinement (Manas - mind)
+        AstraDeity::Indra => 3, // Orchestration
+        AstraDeity::Shiva => 3, // Destructive refactor
+
+        // Phase 4: Preservation (Prakṛti - nature)
+        AstraDeity::Brahma => 4, // Final cleanup (DCE)
+        AstraDeity::Vishnu => 5, // Preservation (last)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_rajpopat_resolver_creation() {
+        let resolver = RajpopatResolver::new();
+        assert_eq!(resolver.priority, RajpopatPriority::RightHandFirst);
+    }
+
+    #[test]
+    fn test_deity_phase_ordering() {
+        // Analysis before transformation
+        assert!(deity_to_phase(AstraDeity::Nagas) < deity_to_phase(AstraDeity::Agni));
+        // Transformation before preservation
+        assert!(deity_to_phase(AstraDeity::Agni) < deity_to_phase(AstraDeity::Brahma));
+        // Brahma (cleanup) before Vishnu (preserve)
+        assert!(deity_to_phase(AstraDeity::Brahma) < deity_to_phase(AstraDeity::Vishnu));
+    }
+
+    #[test]
+    fn test_arsenal_creation() {
+        let arsenal = AstraArsenal::new();
+        // Verify astras exist by checking their names
+        assert_eq!(arsenal.brahmastra.name(), "Brahmastra");
+        assert_eq!(arsenal.agneyastra.name(), "Agneyastra");
+    }
+}

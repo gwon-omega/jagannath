@@ -101,12 +101,12 @@
     "Jagannath Print": {
         "prefix": ["mudrana", "print"],
         "description": "Print to console (mudraṇa)",
-        "body": "mudraṇa(\"${1:sandēśa}\");"
+        "body": "mudraṇa!(\"${1:sandēśa}\");"
     },
     "Jagannath Print Format": {
         "prefix": ["mudrana-f", "printf", "format"],
         "description": "Formatted print (mudraṇa with placeholders)",
-        "body": "mudraṇa(\"${1:sandēśa}: {}\", ${2:mūlya});"
+        "body": "mudraṇa!(\"${1:sandēśa}: {}\", ${2:mūlya});"
     },
     "Jagannath Async Function": {
         "prefix": ["samakalika", "async"],
@@ -189,9 +189,9 @@
         "prefix": ["drdha", "assert"],
         "description": "Assertion with Nyāya evidence",
         "body": [
-            "dṛḍha ${1:śarta} : ",
+            "dṛḍha!(${1:śarta}, ",
             "    hetu: \"${2:reason}\",",
-            "    pramāṇa: Pramana::${3|Pratyaksha,Anumana,Upamana,Shabda|};"
+            "    pramāṇa: Pramana::${3|Pratyaksha,Anumana,Upamana,Shabda|});"
         ]
     },
     "Jagannath Error Handling": {
@@ -242,9 +242,9 @@
         "body": [
             "/// ${1:Description}",
             "///",
-            "/// # Examples",
+            "/// # उदाहरण (Examples)",
             "///",
-            "/// ```",
+            "/// ```jagannath",
             "/// ${2:code}",
             "/// ```"
         ]
@@ -264,6 +264,347 @@
             "    ${3:kṣetra2}: Saṅkhyā-t16,",
             "    ${4:kṣetra3}: Saṅkhyā-t32,",
             "    $0",
+            "}"
+        ]
+    },
+
+    "Astra Brahmastra Optimization": {
+        "prefix": ["brahmastra", "dce", "dead-code"],
+        "description": "Brahmastra divine weapon - Dead code elimination",
+        "body": [
+            "#[astra(brahmastra)]",
+            "// 🕉️ Om Brahmāstrāya Phaṭ - Ultimate destruction of unused code",
+            "kāryakrama ${1:nāma}() {",
+            "    $0",
+            "}"
+        ]
+    },
+    "Astra Agneyastra CPU": {
+        "prefix": ["agneyastra", "cpu", "fire"],
+        "description": "Agneyastra fire weapon - CPU-intensive optimization",
+        "body": [
+            "#[astra(agneyastra)]",
+            "// 🔥 Om Agneyāstrāya Phaṭ - Fire optimization for CPU hotspots",
+            "kāryakrama ${1:nāma}() {",
+            "    $0",
+            "}"
+        ]
+    },
+    "Astra Varunastra Memory": {
+        "prefix": ["varunastra", "memory", "water"],
+        "description": "Varunastra water weapon - Memory flow optimization",
+        "body": [
+            "#[astra(varunastra)]",
+            "// 💧 Om Vāruṇāstrāya Phaṭ - Water optimization for memory flow",
+            "kāryakrama ${1:nāma}() {",
+            "    $0",
+            "}"
+        ]
+    },
+    "Astra Pashupatastra Refactor": {
+        "prefix": ["pashupatastra", "refactor", "shiva"],
+        "description": "Pashupatastra Shiva's weapon - Destructive refactoring",
+        "body": [
+            "#[astra(pashupatastra)]",
+            "// ⚡ Om Pāśupatāstrāya Namaḥ - Shiva's destructive transformation",
+            "// WARNING: This will radically restructure the code",
+            "kāryakrama ${1:nāma}() {",
+            "    $0",
+            "}"
+        ]
+    },
+    "Astra Sudarshana Iterative": {
+        "prefix": ["sudarshana", "chakra", "iterative"],
+        "description": "Sudarshana Chakra - Iterative refinement optimization",
+        "body": [
+            "#[astra(sudarshana_chakra, iterations = ${1:3})]",
+            "// 🔄 Om Sudarśanāya Namaḥ - Vishnu's disc for cyclic refinement",
+            "kāryakrama ${1:nāma}() {",
+            "    $0",
+            "}"
+        ]
+    },
+
+    "Naraka Error Use After Free": {
+        "prefix": ["tamisram", "use-after-free"],
+        "description": "Tamisram hell - Use after free error pattern",
+        "body": [
+            "// ⚠️ Naraka::Tamisram - तामिस्रम् (Darkness)",
+            "// Use-after-free is like theft in the dark",
+            "// Penance: Ensure reference validity before use",
+            "yad ${1:reference}.mukta() {",
+            "    phera Doṣa::Tamisram(\"Use after free detected\");",
+            "}",
+            "$0"
+        ]
+    },
+    "Naraka Error Memory Leak": {
+        "prefix": ["suchimukha", "memory-leak"],
+        "description": "Suchimukha hell - Memory leak detection pattern",
+        "body": [
+            "// ⚠️ Naraka::Suchimukha - सूचीमुख (Needle-faced)",
+            "// Memory leaked, trapped like souls in needle torture",
+            "// Penance: Call mukta() or use linear types",
+            "māna ${1:resource}-l = ${2:allocate}();",
+            "// Resource MUST be consumed or freed",
+            "defer! { ${1:resource}.mukta(); }",
+            "$0"
+        ]
+    },
+    "Naraka Error Null Pointer": {
+        "prefix": ["andhakupa", "null-pointer"],
+        "description": "Andhakupa hell - Null pointer dereference",
+        "body": [
+            "// ⚠️ Naraka::Andhakupa - अन्धकूप (Blind well)",
+            "// Falling into void by dereferencing null",
+            "// Penance: Use Option/Kiñcit and explicit handling",
+            "milāna ${1:value} {",
+            "    Kiñcit::Kiñcit(v) => v,",
+            "    Kiñcit::Śūnya => phera Doṣa::Andhakupa(\"Null pointer\"),",
+            "}",
+            "$0"
+        ]
+    },
+    "Naraka Error Buffer Overflow": {
+        "prefix": ["asipatravana", "buffer-overflow"],
+        "description": "Asipatravana hell - Buffer overflow protection",
+        "body": [
+            "// ⚠️ Naraka::Asipatravana - असिपत्रवन (Sword-leaf forest)",
+            "// Buffer overflow cuts like swords",
+            "// Penance: Bounds check before access",
+            "yad ${1:index} >= ${2:buffer}.āyāma() {",
+            "    phera Doṣa::Asipatravana(\"Index out of bounds\");",
+            "}",
+            "māna ${3:value} = ${2:buffer}[${1:index}];",
+            "$0"
+        ]
+    },
+    "Naraka Error Tainted Data": {
+        "prefix": ["vaitarani", "tainted", "security"],
+        "description": "Vaitarani hell - Tainted data crossing security boundary",
+        "body": [
+            "// ⚠️ Naraka::Vaitarani - वैतरणी (Filthy river)",
+            "// Tainted data crossing security boundary",
+            "// Penance: Sanitize with śuddhi-kṛ() before crossing",
+            "#[vaitaraṇī]",
+            "kāryakrama ${1:secure_operation}(data: Sūtra-vaitaraṇī) -> Pariṇāma<(), Doṣa> {",
+            "    māna śuddha = śuddhi_kṛ(data)?;  // Purify the data",
+            "    $0",
+            "    phera Samṛddha(());",
+            "}"
+        ]
+    },
+
+    "Varna Brahmin Ring 0": {
+        "prefix": ["brahmin", "ring0", "kernel"],
+        "description": "Brahmin privilege - Ring 0 kernel mode",
+        "body": [
+            "#[varṇa(brāhmaṇa)]",
+            "// 🔐 Ring 0 - Full hardware access, kernel mode",
+            "// Only for trusted system-critical code",
+            "kāryakrama ${1:kernel_operation}() {",
+            "    $0",
+            "}"
+        ]
+    },
+    "Varna Kshatriya Ring 1-2": {
+        "prefix": ["kshatriya", "ring1", "driver"],
+        "description": "Kshatriya privilege - Ring 1-2 driver/service mode",
+        "body": [
+            "#[varṇa(kṣatriya)]",
+            "// 🛡️ Ring 1-2 - Driver and system service level",
+            "kāryakrama ${1:driver_operation}() {",
+            "    $0",
+            "}"
+        ]
+    },
+    "Varna Vaishya Ring 3": {
+        "prefix": ["vaishya", "ring3", "user"],
+        "description": "Vaishya privilege - Ring 3 user mode",
+        "body": [
+            "#[varṇa(vaiśya)]",
+            "// 👤 Ring 3 - Standard user mode application",
+            "kāryakrama ${1:user_operation}() {",
+            "    $0",
+            "}"
+        ]
+    },
+    "Varna Shudra Sandboxed": {
+        "prefix": ["shudra", "sandbox", "restricted"],
+        "description": "Shudra privilege - Sandboxed restricted mode",
+        "body": [
+            "#[varṇa(śūdra)]",
+            "// 🔒 Sandboxed - Maximum isolation, untrusted code",
+            "// Cannot access filesystem, network, or system calls",
+            "kāryakrama ${1:sandboxed_operation}() {",
+            "    $0",
+            "}"
+        ]
+    },
+
+    "Marga Karma Imperative": {
+        "prefix": ["karma-marga", "imperative"],
+        "description": "Karma Marga - Imperative optimization path",
+        "body": [
+            "#[mārga(karma)]",
+            "// 🏃 Karma Marga - Optimize for action/mutation",
+            "// Best for: loops, state machines, side effects",
+            "kāryakrama ${1:nāma}() {",
+            "    $0",
+            "}"
+        ]
+    },
+    "Marga Jnana Functional": {
+        "prefix": ["jnana-marga", "functional"],
+        "description": "Jnana Marga - Functional optimization path",
+        "body": [
+            "#[mārga(jñāna)]",
+            "// 📚 Jñāna Marga - Optimize for knowledge/purity",
+            "// Best for: pure functions, immutability, memoization",
+            "kāryakrama ${1:nāma}() {",
+            "    $0",
+            "}"
+        ]
+    },
+    "Marga Bhakti Domain": {
+        "prefix": ["bhakti-marga", "domain"],
+        "description": "Bhakti Marga - Domain-specific optimization path",
+        "body": [
+            "#[mārga(bhakti, domain = \"${1:domain}\")]",
+            "// 🙏 Bhakti Marga - Optimize for domain devotion",
+            "// Domain: ${1:domain}",
+            "kāryakrama ${2:nāma}() {",
+            "    $0",
+            "}"
+        ]
+    },
+    "Marga Raja Balanced": {
+        "prefix": ["raja-marga", "balanced"],
+        "description": "Raja Marga - Balanced hybrid optimization path",
+        "body": [
+            "#[mārga(rāja)]",
+            "// 👑 Rāja Marga - Royal balanced optimization",
+            "// Best for: mixed paradigm code, general purpose",
+            "kāryakrama ${1:nāma}() {",
+            "    $0",
+            "}"
+        ]
+    },
+
+    "Durga Security Layer": {
+        "prefix": ["durga", "security-layer"],
+        "description": "Nava Durga security layer attribute",
+        "body": [
+            "#[durgā(${1|śailaputrī,brahmacāriṇī,candraghaṇṭā,kūṣmāṇḍā,skandamātā,kātyāyanī,kālarātrī,mahāgaurī,siddhidātrī|})]",
+            "// 🛡️ Durga security layer: ${1:śailaputrī}",
+            "kāryakrama ${2:nāma}() {",
+            "    $0",
+            "}"
+        ]
+    },
+
+    "Purushartha Artha Resources": {
+        "prefix": ["artha", "resources", "minimize"],
+        "description": "Artha optimization - Minimize resource usage",
+        "body": [
+            "#[puruṣārtha(artha, weight = ${1:0.8})]",
+            "// 💰 Artha - Wealth optimization (resource minimization)",
+            "// Prioritize: memory usage, binary size, cache efficiency",
+            "kāryakrama ${2:nāma}() {",
+            "    $0",
+            "}"
+        ]
+    },
+    "Purushartha Kama Speed": {
+        "prefix": ["kama", "speed", "maximize"],
+        "description": "Kama optimization - Maximize speed",
+        "body": [
+            "#[puruṣārtha(kāma, weight = ${1:0.8})]",
+            "// 🚀 Kāma - Desire optimization (speed maximization)",
+            "// Prioritize: execution speed, throughput, latency",
+            "kāryakrama ${2:nāma}() {",
+            "    $0",
+            "}"
+        ]
+    },
+    "Purushartha Dharma Safety": {
+        "prefix": ["dharma", "safety", "correctness"],
+        "description": "Dharma optimization - Maximum safety/correctness",
+        "body": [
+            "#[puruṣārtha(dharma, weight = ${1:1.0})]",
+            "// ⚖️ Dharma - Righteousness optimization (safety/correctness)",
+            "// Prioritize: memory safety, thread safety, error handling",
+            "kāryakrama ${2:nāma}() {",
+            "    $0",
+            "}"
+        ]
+    },
+    "Purushartha Moksha Balanced": {
+        "prefix": ["moksha", "liberation", "balanced"],
+        "description": "Moksha - Perfect balance of all optimizations",
+        "body": [
+            "#[puruṣārtha(mokṣa)]",
+            "// 🕉️ Mokṣa - Liberation (perfect optimization balance)",
+            "// All three goals (artha, kāma, dharma) optimally balanced",
+            "// Achieved when: safety > 100%, speed > 90%, resources > 90%",
+            "kāryakrama ${1:nāma}() {",
+            "    $0",
+            "}"
+        ]
+    },
+
+    "Mantra Invocation": {
+        "prefix": ["mantra", "invoke"],
+        "description": "Mantra invocation for divine operations",
+        "body": [
+            "// 🕉️ ${1:mantra} invocation",
+            "mantra!(\"${1:Om Namaḥ Śivāya}\");",
+            "$0"
+        ]
+    },
+
+    "Complete Hello World": {
+        "prefix": ["hello", "namaste", "starter"],
+        "description": "Complete hello world program",
+        "body": [
+            "/// Jagannath Hello World - नमस्ते विश्व",
+            "/// ",
+            "/// A simple greeting program demonstrating basic syntax.",
+            "",
+            "āyāta std::io;",
+            "",
+            "kāryakrama pradhāna() -> Pariṇāma<()> {",
+            "    // Print greeting",
+            "    mudraṇa!(\"नमस्ते, विश्व! (Namaste, World!)\");",
+            "    mudraṇa!(\"🕉️ Om Tat Sat\");",
+            "    ",
+            "    phera Samṛddha(());",
+            "}"
+        ]
+    },
+
+    "Complete Fibonacci": {
+        "prefix": ["fibonacci", "fib"],
+        "description": "Fibonacci sequence with memoization",
+        "body": [
+            "/// Fibonacci with Jñāna Marga optimization",
+            "/// Uses memoization for pure functional style",
+            "",
+            "#[mārga(jñāna)]",
+            "#[kosha(manas)]  // Cache results in RAM",
+            "kāryakrama fibonacci(n: Saṅkhyā-a) -> Saṅkhyā {",
+            "    milāna n {",
+            "        0 => 0,",
+            "        1 => 1,",
+            "        _ => fibonacci(n - 1) + fibonacci(n - 2),",
+            "    }",
+            "}",
+            "",
+            "kāryakrama pradhāna() -> Pariṇāma<()> {",
+            "    cala i antarāle 0..${1:20} {",
+            "        mudraṇa!(\"fib({}) = {}\", i, fibonacci(i));",
+            "    }",
+            "    phera Samṛddha(());",
             "}"
         ]
     }

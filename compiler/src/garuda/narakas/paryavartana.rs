@@ -4,7 +4,6 @@
 //! Code: Refusing allocation, resource hoarding
 
 use super::super::yama::{Violation, ViolationKind};
-use crate::errors::Span;
 use crate::parser::ast::{Ast, BinaryOp, Block, Expr, Item, Literal, LoopKind, Stmt};
 use std::collections::{HashMap, HashSet};
 

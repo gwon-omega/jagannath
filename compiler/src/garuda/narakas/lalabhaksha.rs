@@ -4,7 +4,6 @@
 //! Code: Inappropriate data exposure
 
 use super::super::yama::{Violation, ViolationKind};
-use crate::errors::Span;
 use crate::parser::ast::{Ast, Block, Expr, Item, LoopKind, Stmt};
 use std::collections::HashSet;
 

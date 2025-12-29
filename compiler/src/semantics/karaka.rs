@@ -5,7 +5,7 @@
 //! - Memory layout optimization
 //! - Aliasing analysis
 
-use crate::parser::ast::{self, Karaka, Parameter, FunctionDef};
+use crate::parser::ast::{FunctionDef, Karaka, Parameter};
 use std::collections::HashMap;
 
 /// Kāraka analyzer
@@ -64,7 +64,8 @@ impl KarakaAnalyzer {
 
         for param in &func.params {
             let role = self.analyze_parameter(param);
-            self.role_assignments.insert(param.name.name.clone(), role.clone());
+            self.role_assignments
+                .insert(param.name.name.clone(), role.clone());
             roles.push(role);
         }
 

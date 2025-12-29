@@ -211,8 +211,8 @@ impl VarnaChecker {
     }
 
     /// Check function body for violations
-    fn check_function_body(&self, func: &MirFunction, _varna: Varna) -> Vec<VarnaViolation> {
-        let mut violations = Vec::new();
+    fn check_function_body(&self, _func: &MirFunction, _varna: Varna) -> Vec<VarnaViolation> {
+        let violations = Vec::new();
 
         // Placeholder - in real implementation, analyze MIR instructions
         // for privileged operations
@@ -222,9 +222,6 @@ impl VarnaChecker {
         // - Interrupt handling (Brahmin only)
         // - Process management (Kshatriya+)
         // - File system access (Vaishya+)
-
-        // Debug: Checking function for Varna violations
-        let _ = &func.name; // Suppress unused warning
 
         violations
     }

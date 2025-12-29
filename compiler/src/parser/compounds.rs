@@ -6,8 +6,6 @@
 //! - Bahuvrīhi (having A) → type constraint
 //! - Karmadhāraya (A which is B) → modifier chain
 
-use crate::parser::ast::Identifier;
-
 /// Types of Sanskrit compounds
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum SamasaKind {

@@ -120,7 +120,7 @@ impl RudraPass {
     }
 
     /// Execute this transformation pass
-    pub fn transform(&self, mut state: CompilationState) -> CompilationState {
+    pub fn transform(&self, state: CompilationState) -> CompilationState {
         if !self.enabled {
             return state;
         }

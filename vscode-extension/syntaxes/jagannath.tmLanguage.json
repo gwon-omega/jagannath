@@ -1,15 +1,29 @@
 {
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
   "name": "Jagannath",
   "scopeName": "source.jagannath",
+  "fileTypes": ["jag", "jagannath"],
   "patterns": [
     { "include": "#comments" },
+    { "include": "#mantras" },
+    { "include": "#astras" },
+    { "include": "#narakas" },
+    { "include": "#gunas" },
     { "include": "#keywords" },
     { "include": "#strings" },
     { "include": "#numbers" },
     { "include": "#types" },
     { "include": "#functions" },
     { "include": "#karakas" },
-    { "include": "#affixes" }
+    { "include": "#affixes" },
+    { "include": "#operators" },
+    { "include": "#punctuation" },
+    { "include": "#attributes" },
+    { "include": "#lifetimes" },
+    { "include": "#koshas" },
+    { "include": "#chakras" },
+    { "include": "#varnas" },
+    { "include": "#margas" }
   ],
   "repository": {
     "comments": {
@@ -21,36 +35,220 @@
         {
           "name": "comment.block.jagannath",
           "begin": "/\\*",
-          "end": "\\*/"
+          "end": "\\*/",
+          "captures": {
+            "0": { "name": "punctuation.definition.comment.jagannath" }
+          }
         },
         {
           "name": "comment.block.documentation.jagannath",
           "begin": "///",
-          "end": "$"
+          "end": "$",
+          "patterns": [
+            {
+              "name": "storage.type.class.jagannath",
+              "match": "@(param|return|throws|example|see|since|deprecated|author)\\b"
+            },
+            {
+              "name": "variable.parameter.jagannath",
+              "match": "\\$\\w+"
+            }
+          ]
+        },
+        {
+          "name": "comment.block.documentation.block.jagannath",
+          "begin": "/\\*\\*(?!/)",
+          "end": "\\*/",
+          "patterns": [
+            {
+              "name": "storage.type.class.jagannath",
+              "match": "@(param|return|throws|example|see|since|deprecated|author|naraka|astra|kosha|guna|chakra)\\b"
+            }
+          ]
+        }
+      ]
+    },
+    "mantras": {
+      "comment": "Sacred mantras and invocations",
+      "patterns": [
+        {
+          "name": "constant.language.mantra.jagannath",
+          "match": "\\b(oṁ|om|namaḥ|svāhā|svaha|phaṭ|phat|huṁ|hum)\\b"
+        },
+        {
+          "name": "entity.name.tag.mantra.invocation.jagannath",
+          "match": "\"Om [^\"]*(?:āya|aya) (?:Phaṭ|Phat|Namaḥ|Svāhā|Svaha)\""
+        }
+      ]
+    },
+    "astras": {
+      "comment": "Divine weapons (optimization passes) - v6.0",
+      "patterns": [
+        {
+          "name": "entity.name.class.astra.primary.jagannath",
+          "match": "\\b(Brahmastra|Pashupatastra|Pāśupatastra|Narayanastra|Nārāyaṇastra|SudarshanaChakra|Sudarśanacakra)\\b"
+        },
+        {
+          "name": "entity.name.class.astra.elemental.jagannath",
+          "match": "\\b(Agneyastra|Āgneyastra|Varunastra|Vāruṇastra|Vayavyastra|Vāyavyastra|Parvataastra|Parvatāstra)\\b"
+        },
+        {
+          "name": "entity.name.class.astra.special.jagannath",
+          "match": "\\b(Nagastra|Nāgastra|Garudastra|Garuḍastra|Mohiniastra|Mohinīastra|Sammohanastra|Saṃmohanāstra)\\b"
+        },
+        {
+          "name": "entity.name.class.astra.divine.jagannath",
+          "match": "\\b(Vajra|Trishula|Triśūla|Gandiva|Gāṇḍīva|Vijaya)\\b"
+        }
+      ]
+    },
+    "narakas": {
+      "comment": "28 Hells (error types) - v5.0 Garuda Purana",
+      "patterns": [
+        {
+          "name": "invalid.illegal.naraka.severe.jagannath",
+          "match": "\\b(Tamisram|Tāmisram|Andhakupa|Andhakūpa|Raurava|Asipatravana|Asipattravana|Suchimukha|Sūcīmukha)\\b"
+        },
+        {
+          "name": "invalid.deprecated.naraka.medium.jagannath",
+          "match": "\\b(Vaitarani|Vaitaraṇī|Kalasutra|Kālasūtra|Kumbhipaka|Kumbhīpāka|Lalabhaksha|Lālābhakṣa)\\b"
+        },
+        {
+          "name": "markup.deleted.naraka.memory.jagannath",
+          "match": "\\b(Preta|Pūyavaha|Puyavaha|Pranarodha|Prāṇarodha|Visasana|Viśasana)\\b"
+        }
+      ]
+    },
+    "gunas": {
+      "comment": "Three qualities (optimization/severity levels)",
+      "patterns": [
+        {
+          "name": "string.quoted.guna.sattva.jagannath",
+          "match": "\\b(sattva|sāttvika|sāttvic|śuddha|shuddha)\\b"
+        },
+        {
+          "name": "keyword.control.guna.rajas.jagannath",
+          "match": "\\b(rajas|rājasika|rājasic|kriyā|kriya)\\b"
+        },
+        {
+          "name": "invalid.deprecated.guna.tamas.jagannath",
+          "match": "\\b(tamas|tāmasika|tāmasic|moha)\\b"
+        }
+      ]
+    },
+    "koshas": {
+      "comment": "Five sheaths (memory allocation regions) - v3.0",
+      "patterns": [
+        {
+          "name": "support.class.kosha.anna.jagannath",
+          "match": "\\b(anna|annamaya|Annamaya)\\b"
+        },
+        {
+          "name": "support.class.kosha.prana.jagannath",
+          "match": "\\b(prāṇa|prana|prāṇamaya|pranamaya|Prāṇamaya|Pranamaya)\\b"
+        },
+        {
+          "name": "support.class.kosha.mano.jagannath",
+          "match": "\\b(manas|manomaya|Manomaya)\\b"
+        },
+        {
+          "name": "support.class.kosha.vijnana.jagannath",
+          "match": "\\b(vijñāna|vijnana|vijñānamaya|vijnanamaya|Vijñānamaya|Vijnanamaya)\\b"
+        },
+        {
+          "name": "support.class.kosha.ananda.jagannath",
+          "match": "\\b(ānanda|ananda|ānandamaya|anandamaya|Ānandamaya|Anandamaya)\\b"
+        }
+      ]
+    },
+    "chakras": {
+      "comment": "Seven energy centers (software layers) - v4.0",
+      "patterns": [
+        {
+          "name": "markup.heading.chakra.lower.jagannath",
+          "match": "\\b(mūlādhāra|muladhara|svādhiṣṭhāna|svadhisthana|maṇipūra|manipura)\\b"
+        },
+        {
+          "name": "markup.heading.chakra.middle.jagannath",
+          "match": "\\b(anāhata|anahata|viśuddha|vishuddha)\\b"
+        },
+        {
+          "name": "markup.heading.chakra.upper.jagannath",
+          "match": "\\b(ājñā|ajna|sahasrāra|sahasrara)\\b"
+        }
+      ]
+    },
+    "varnas": {
+      "comment": "Four privilege rings - v7.0",
+      "patterns": [
+        {
+          "name": "storage.modifier.varna.brahmin.jagannath",
+          "match": "\\b(brāhmaṇa|brahmana|brahmin)\\b"
+        },
+        {
+          "name": "storage.modifier.varna.kshatriya.jagannath",
+          "match": "\\b(kṣatriya|kshatriya)\\b"
+        },
+        {
+          "name": "storage.modifier.varna.vaishya.jagannath",
+          "match": "\\b(vaiśya|vaishya)\\b"
+        },
+        {
+          "name": "storage.modifier.varna.shudra.jagannath",
+          "match": "\\b(śūdra|shudra)\\b"
+        }
+      ]
+    },
+    "margas": {
+      "comment": "Four spiritual paths (optimization strategies) - v7.0",
+      "patterns": [
+        {
+          "name": "entity.name.namespace.marga.jagannath",
+          "match": "\\b(karma|karmayoga|jñāna|jnana|jñānayoga|jnanayoga|bhakti|bhaktiyoga|rājayoga|rajayoga)\\b"
         }
       ]
     },
     "keywords": {
       "patterns": [
         {
-          "name": "keyword.control.jagannath",
-          "match": "\\b(kāryakrama|karyakrama|yad|anyathā|anyatha|cala|phera|virāma|virama|svīkṛ|svikr|madhye)\\b"
+          "name": "keyword.control.flow.jagannath",
+          "match": "\\b(kāryakrama|karyakrama|yad|anyathā|anyatha|cala|phera|virāma|virama|svīkṛ|svikr|madhye|yāvat|yavat)\\b"
         },
         {
           "name": "keyword.declaration.jagannath",
-          "match": "\\b(māna|mana|nirūpaṇa|nirupana|gaṇa|gana|guṇa|guna|karmadhāraya|karmadhāraya)\\b"
+          "match": "\\b(māna|mana|nirūpaṇa|nirupana|prakāra|prakara)\\b"
         },
         {
-          "name": "keyword.import.jagannath",
-          "match": "\\b(āyāti|ayati)\\b"
+          "name": "keyword.declaration.struct.jagannath",
+          "match": "\\b(gaṇa|gana|guṇa|guna|karmadhāraya|karmadharaya|saṃghaṭanā|sanghatana)\\b"
         },
         {
-          "name": "keyword.modifier.jagannath",
-          "match": "\\b(sārvajanika|sarvajanika|guhya|sthira)\\b"
+          "name": "keyword.control.import.jagannath",
+          "match": "\\b(āyāta|ayata|āyāti|ayati|prayukta|nirmā|nirma)\\b"
         },
         {
-          "name": "constant.language.jagannath",
-          "match": "\\b(satya|asatya|śūnya|shunya)\\b"
+          "name": "keyword.other.modifier.jagannath",
+          "match": "\\b(sārvajanika|sarvajanika|guhya|sthira|mut|parivartya)\\b"
+        },
+        {
+          "name": "constant.language.boolean.jagannath",
+          "match": "\\b(satya|asatya|sat|asat)\\b"
+        },
+        {
+          "name": "constant.language.null.jagannath",
+          "match": "\\b(śūnya|shunya)\\b"
+        },
+        {
+          "name": "keyword.control.match.jagannath",
+          "match": "\\b(chāyā|chaya|milāna|milana)\\b"
+        },
+        {
+          "name": "keyword.control.exception.jagannath",
+          "match": "\\b(prayatna|doṣa|dosha|nirīkṣā|niriksha)\\b"
+        },
+        {
+          "name": "keyword.operator.logical.jagannath",
+          "match": "\\b(ca|vā|va|na)\\b"
         }
       ]
     },
@@ -60,17 +258,34 @@
           "name": "string.quoted.double.jagannath",
           "begin": "\"",
           "end": "\"",
+          "beginCaptures": { "0": { "name": "punctuation.definition.string.begin.jagannath" } },
+          "endCaptures": { "0": { "name": "punctuation.definition.string.end.jagannath" } },
           "patterns": [
             {
               "name": "constant.character.escape.jagannath",
-              "match": "\\\\."
+              "match": "\\\\(?:[nrtv0\\\\\"']|x[0-9a-fA-F]{2}|u\\{[0-9a-fA-F]+\\})"
+            },
+            {
+              "name": "constant.other.placeholder.jagannath",
+              "match": "\\{[^}]*\\}"
             }
           ]
         },
         {
-          "name": "string.quoted.single.jagannath",
+          "name": "string.quoted.single.character.jagannath",
           "begin": "'",
-          "end": "'"
+          "end": "'",
+          "patterns": [
+            {
+              "name": "constant.character.escape.jagannath",
+              "match": "\\\\(?:[nrtv0\\\\\"']|x[0-9a-fA-F]{2}|u\\{[0-9a-fA-F]+\\})"
+            }
+          ]
+        },
+        {
+          "name": "string.quoted.raw.jagannath",
+          "begin": "r#*\"",
+          "end": "\"#*"
         }
       ]
     },
@@ -78,75 +293,266 @@
       "patterns": [
         {
           "name": "constant.numeric.hex.jagannath",
-          "match": "\\b0x[0-9a-fA-F]+\\b"
+          "match": "\\b0x[0-9a-fA-F][0-9a-fA-F_]*\\b"
         },
         {
           "name": "constant.numeric.binary.jagannath",
-          "match": "\\b0b[01]+\\b"
+          "match": "\\b0b[01][01_]*\\b"
+        },
+        {
+          "name": "constant.numeric.octal.jagannath",
+          "match": "\\b0o[0-7][0-7_]*\\b"
         },
         {
           "name": "constant.numeric.float.jagannath",
-          "match": "\\b[0-9]+\\.[0-9]+\\b"
+          "match": "\\b[0-9][0-9_]*\\.(?:[0-9][0-9_]*)?(?:[eE][+-]?[0-9_]+)?\\b"
         },
         {
           "name": "constant.numeric.integer.jagannath",
-          "match": "\\b[0-9]+\\b"
+          "match": "\\b[0-9][0-9_]*(?:i8|i16|i32|i64|i128|u8|u16|u32|u64|u128|f32|f64)?\\b"
+        },
+        {
+          "comment": "Vedic numerals (optional)",
+          "name": "constant.numeric.vedic.jagannath",
+          "match": "\\b(śūnya|eka|dvi|tri|catur|pañca|ṣaṭ|sapta|aṣṭa|nava|daśa)\\b"
         }
       ]
     },
     "types": {
       "patterns": [
         {
-          "name": "storage.type.primitive.jagannath",
-          "match": "\\b(saṅkhyā|sankhya|bhinna|tarka|sūtra|sutra|akṣara|akshara)\\b"
+          "name": "support.type.primitive.numeric.jagannath",
+          "match": "\\b(saṅkhyā|sankhya|i8|i16|i32|i64|i128|u8|u16|u32|u64|u128|f32|f64|usize|isize)\\b"
         },
         {
-          "name": "storage.type.collection.jagannath",
-          "match": "\\b(sūcī|suci|sāraṇī|sarani|Vikalpa|Pariṇāma|Parinama)\\b"
+          "name": "support.type.primitive.string.jagannath",
+          "match": "\\b(sūtra|sutra|akṣara|akshara|str|String|char)\\b"
         },
         {
-          "name": "entity.name.type.jagannath",
-          "match": "\\b[A-ZĀ-Ṛ][a-zA-Zā-ṛ0-9]*\\b"
+          "name": "support.type.primitive.boolean.jagannath",
+          "match": "\\b(tarka|bool)\\b"
+        },
+        {
+          "name": "support.type.primitive.fraction.jagannath",
+          "match": "\\b(bhinna|bhāga|bhaga)\\b"
+        },
+        {
+          "name": "support.type.collection.jagannath",
+          "match": "\\b(sūcī|suci|sāraṇī|sarani|Vec|Array|Map|Set|HashMap|TreeMap)\\b"
+        },
+        {
+          "name": "support.type.wrapper.jagannath",
+          "match": "\\b(Vikalpa|Option|Pariṇāma|Parinama|Result|Box|Rc|Arc|RefCell|Mutex)\\b"
+        },
+        {
+          "name": "entity.name.type.class.jagannath",
+          "match": "\\b[A-ZĀ-Ṛ][a-zA-Zā-ṛ0-9_]*\\b"
         }
       ]
     },
     "functions": {
       "patterns": [
         {
-          "name": "entity.name.function.jagannath",
-          "match": "\\b([a-zā-ṛ][a-zA-Zā-ṛ0-9_]*)\\s*\\("
+          "name": "entity.name.function.definition.jagannath",
+          "match": "(?<=kāryakrama\\s+|karyakrama\\s+)([a-zā-ṛ][a-zA-Zā-ṛ0-9_]*)"
+        },
+        {
+          "name": "entity.name.function.call.jagannath",
+          "match": "\\b([a-zā-ṛ][a-zA-Zā-ṛ0-9_]*)(?=\\s*\\()"
+        },
+        {
+          "name": "entity.name.function.method.jagannath",
+          "match": "(?<=\\.)([a-zā-ṛ][a-zA-Zā-ṛ0-9_]*)(?=\\s*\\()"
         },
         {
           "name": "support.function.macro.jagannath",
-          "match": "\\b(mudraṇa|mudrana|oṁ|om|parikṣā|pariksha)!"
+          "match": "\\b(mudraṇa|mudrana|oṁ|om|parikṣā|pariksha|debug|assert|panic|todo|unreachable)!"
+        },
+        {
+          "name": "support.function.builtin.jagannath",
+          "match": "\\b(nirmā|nirma|mukta|paṭha|patha|lekhana|lekh|āyāma|ayama|sankhyita)\\b"
         }
       ]
     },
     "karakas": {
+      "comment": "Sanskrit semantic cases - v1.0",
       "patterns": [
         {
-          "name": "support.type.karaka.jagannath",
-          "match": "\\[(kartṛ|kartr|karman|karaṇa|karana|sampradāna|sampradana|apādāna|apadana|adhikaraṇa|adhikarana|sambandha|hetu)\\]"
+          "name": "support.type.karaka.agent.jagannath",
+          "match": "\\[(kartṛ|kartr)\\]"
+        },
+        {
+          "name": "support.type.karaka.patient.jagannath",
+          "match": "\\[(karman)\\]"
+        },
+        {
+          "name": "support.type.karaka.instrument.jagannath",
+          "match": "\\[(karaṇa|karana)\\]"
+        },
+        {
+          "name": "support.type.karaka.recipient.jagannath",
+          "match": "\\[(sampradāna|sampradana)\\]"
+        },
+        {
+          "name": "support.type.karaka.source.jagannath",
+          "match": "\\[(apādāna|apadana)\\]"
+        },
+        {
+          "name": "support.type.karaka.location.jagannath",
+          "match": "\\[(adhikaraṇa|adhikarana)\\]"
+        },
+        {
+          "name": "support.type.karaka.relation.jagannath",
+          "match": "\\[(sambandha)\\]"
+        },
+        {
+          "name": "support.type.karaka.cause.jagannath",
+          "match": "\\[(hetu)\\]"
         }
       ]
     },
     "affixes": {
+      "comment": "Sanskrit morphological affixes encode type properties - v1.0",
       "patterns": [
         {
-          "name": "storage.modifier.affix.jagannath",
-          "match": "-[abāglkhp]\\b"
+          "name": "storage.modifier.affix.mutability.jagannath",
+          "match": "-[aā](?=[-\\s\\{\\(]|$)",
+          "comment": "a=immutable, ā=mutable"
         },
         {
-          "name": "storage.modifier.size.jagannath",
+          "name": "storage.modifier.affix.ownership.jagannath",
+          "match": "-[lbgs](?=[-\\s\\{\\(]|$)",
+          "comment": "l=linear, b=borrowed, g=global, s=shared"
+        },
+        {
+          "name": "storage.modifier.affix.allocation.jagannath",
+          "match": "-[khrap](?=[-\\s\\{\\(]|$)",
+          "comment": "k=stack, h=heap, r=register, a=arena, p=packed"
+        },
+        {
+          "name": "storage.modifier.affix.size.jagannath",
           "match": "-t(8|16|32|64|128|256)\\b"
         },
+        {
+          "name": "storage.modifier.affix.thread.jagannath",
+          "match": "-(sūtra|sutra)\\b",
+          "comment": "thread-safe marker"
+        },
+        {
+          "name": "storage.modifier.affix.security.jagannath",
+          "match": "-(vaitaraṇī|vaitarani)\\b",
+          "comment": "security boundary"
+        },
+        {
+          "name": "storage.modifier.affix.astra.jagannath",
+          "match": "-(brahmastra|agneyastra|varunastra|pashupatastra)\\b"
+        }
+      ]
+    },
+    "lifetimes": {
+      "comment": "Region-based lifetime annotations",
+      "patterns": [
         {
           "name": "storage.modifier.lifetime.jagannath",
           "match": "\\^[0-9]+\\b"
         },
         {
-          "name": "storage.modifier.thread.jagannath",
-          "match": "-sūtra\\b"
+          "name": "storage.modifier.lifetime.named.jagannath",
+          "match": "'[a-zā-ṛ][a-zA-Zā-ṛ0-9_]*"
+        }
+      ]
+    },
+    "operators": {
+      "patterns": [
+        {
+          "name": "keyword.operator.arithmetic.jagannath",
+          "match": "[+\\-*/%]"
+        },
+        {
+          "name": "keyword.operator.comparison.jagannath",
+          "match": "==|!=|<=|>=|<|>"
+        },
+        {
+          "name": "keyword.operator.logical.jagannath",
+          "match": "&&|\\|\\||!"
+        },
+        {
+          "name": "keyword.operator.bitwise.jagannath",
+          "match": "&|\\||\\^|<<|>>"
+        },
+        {
+          "name": "keyword.operator.assignment.jagannath",
+          "match": "=|\\+=|-=|\\*=|/=|%=|&=|\\|=|\\^=|<<=|>>="
+        },
+        {
+          "name": "keyword.operator.arrow.jagannath",
+          "match": "->|=>"
+        },
+        {
+          "name": "keyword.operator.range.jagannath",
+          "match": "\\.\\.|\\.\\.="
+        },
+        {
+          "name": "keyword.operator.access.jagannath",
+          "match": "::|\\."
+        },
+        {
+          "name": "keyword.operator.question.jagannath",
+          "match": "\\?"
+        }
+      ]
+    },
+    "punctuation": {
+      "patterns": [
+        {
+          "name": "punctuation.brackets.round.jagannath",
+          "match": "[\\(\\)]"
+        },
+        {
+          "name": "punctuation.brackets.square.jagannath",
+          "match": "[\\[\\]]"
+        },
+        {
+          "name": "punctuation.brackets.curly.jagannath",
+          "match": "[\\{\\}]"
+        },
+        {
+          "name": "punctuation.brackets.angle.jagannath",
+          "match": "[<>]"
+        },
+        {
+          "name": "punctuation.comma.jagannath",
+          "match": ","
+        },
+        {
+          "name": "punctuation.semicolon.jagannath",
+          "match": ";"
+        },
+        {
+          "name": "punctuation.colon.jagannath",
+          "match": ":"
+        }
+      ]
+    },
+    "attributes": {
+      "comment": "Attributes and annotations",
+      "patterns": [
+        {
+          "name": "meta.attribute.jagannath",
+          "begin": "#\\[",
+          "end": "\\]",
+          "beginCaptures": { "0": { "name": "punctuation.definition.attribute.begin.jagannath" } },
+          "endCaptures": { "0": { "name": "punctuation.definition.attribute.end.jagannath" } },
+          "patterns": [
+            {
+              "name": "entity.name.function.attribute.jagannath",
+              "match": "\\b(derive|cfg|test|bench|inline|cold|hot|repr|allow|warn|deny|forbid|deprecated|must_use|no_mangle)\\b"
+            },
+            {
+              "name": "entity.name.function.attribute.philosophy.jagannath",
+              "match": "\\b(kosha|guna|astra|chakra|varna|marga|naraka|durga|devata|rta)\\b"
+            }
+          ]
         }
       ]
     }

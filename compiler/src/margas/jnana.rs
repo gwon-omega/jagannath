@@ -11,7 +11,7 @@
 //! pure functions, leveraging immutability, and compile-time computation.
 
 use super::{Marga, MargaOptimizer, MargaResult};
-use crate::mir::types::{MirFunction, MirInstruction, MirTerminator, MirRvalue, MirOperand, MirConstant, BinaryOp, UnaryOp, IntSize};
+use crate::mir::types::{MirFunction, MirInstruction, MirTerminator, MirRvalue, MirOperand, MirConstant, BinaryOp, UnaryOp};
 use std::collections::{HashMap, HashSet};
 
 /// Jñāna Marga optimizer for functional/knowledge-based code

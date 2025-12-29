@@ -11,7 +11,7 @@
 //! loops, mutations, state machines, and side effects.
 
 use super::{Marga, MargaOptimizer, MargaResult};
-use crate::mir::types::{MirFunction, MirInstruction, MirTerminator, MirRvalue, MirOperand, MirPlace, BinaryOp, MirBasicBlock};
+use crate::mir::types::{MirFunction, MirInstruction, MirTerminator, MirRvalue, MirOperand, BinaryOp};
 use std::collections::{HashMap, HashSet};
 
 /// Karma Marga optimizer for imperative/action-oriented code
@@ -104,7 +104,7 @@ impl KarmaMarga {
     /// Collect blocks that belong to a loop body
     fn collect_loop_body(
         &self,
-        func: &MirFunction,
+        _func: &MirFunction,
         header: usize,
         back_edge_src: usize,
         preds: &HashMap<usize, Vec<usize>>,
@@ -127,7 +127,7 @@ impl KarmaMarga {
     }
 
     /// Detect induction variable in loop
-    fn detect_induction_var(&self, func: &MirFunction, body: &HashSet<usize>, header: usize) -> Option<usize> {
+    fn detect_induction_var(&self, func: &MirFunction, body: &HashSet<usize>, _header: usize) -> Option<usize> {
         // Look for pattern: i = i + 1 or i = i - 1 in loop body
         for block in &func.blocks {
             if !body.contains(&block.id) {

@@ -12,8 +12,10 @@
 //! - **Preta**: Resource leak detection (hungry ghost state)
 //! - **Taint**: Sin propagation tracking through data flow
 //! - **Moksha**: Redemption paths and fix suggestions
+//! - **Dataflow**: Generic dataflow analysis framework (prāṇa-vāha)
 
 pub mod chitragupta;
+pub mod dataflow;
 pub mod moksha;
 pub mod narakas;
 pub mod preta;
@@ -29,7 +31,6 @@ pub use taint::{TaintAnalyzer, TaintSource};
 pub use vaitarani::{TaintLevel, VaitaraniBoundary};
 pub use yama::{Violation, ViolationKind, YamaDharmaraja, Yamaduta};
 
-use crate::errors::Span;
 use crate::parser::ast::Ast;
 
 /// Main Garuda analyzer - integrates all subsystems

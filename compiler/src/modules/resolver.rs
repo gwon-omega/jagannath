@@ -356,8 +356,6 @@ fn is_valid_identifier(s: &str) -> bool {
 
 /// Module path manipulation utilities
 pub mod path_utils {
-    use super::*;
-
     /// Join path components with ::
     pub fn join(components: &[String]) -> String {
         components.join("::")

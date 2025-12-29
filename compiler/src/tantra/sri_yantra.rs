@@ -9,8 +9,6 @@
 //! - Memory prefetching
 //! - Fused multiply-accumulate
 
-use std::collections::HashMap;
-
 /// Śrī Yantra matrix optimizer
 pub struct ShriYantra {
     /// Cache line size (bytes)
@@ -234,7 +232,7 @@ for i in (0..{m}).step_by({tile_m}) {{
     }
 
     /// Check if operation can use SIMD
-    pub fn can_simd(&self, m: usize, n: usize, k: usize) -> bool {
+    pub fn can_simd(&self, m: usize, n: usize, _k: usize) -> bool {
         // Need at least one dimension >= SIMD width
         m >= self.simd_width || n >= self.simd_width
     }

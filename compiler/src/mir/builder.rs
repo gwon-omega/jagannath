@@ -351,7 +351,7 @@ impl MirBuilder {
                             },
                         });
                     }
-                    ast::LoopKind::ForIn { binding, iterable } => {
+                    ast::LoopKind::ForIn { binding: _binding, iterable: _iterable } => {
                         // Simplified: treat like infinite loop for now
                         self.blocks.push(MirBasicBlock {
                             id: loop_header_id,
@@ -480,7 +480,7 @@ impl MirBuilder {
 
                     // Evaluate guard if present
                     if let Some(guard) = &arm.guard {
-                        let guard_op = self.lower_expr_to_operand(guard);
+                        let _guard_op = self.lower_expr_to_operand(guard);
                         // If guard fails, jump to next arm or otherwise
                         // Simplified: always proceed
                     }
@@ -571,7 +571,7 @@ impl MirBuilder {
                 }
             }
 
-            ast::Expr::Call { callee, args, span } => {
+            ast::Expr::Call { callee, args, span: _span } => {
                 let func_op = self.lower_expr_to_operand(callee);
                 let arg_ops: Vec<_> = args.iter().map(|a| self.lower_expr_to_operand(a)).collect();
 
@@ -854,7 +854,7 @@ impl MirBuilder {
     /// Convert AST type to MIR type
     fn convert_type(&self, ty: &ast::Type) -> MirType {
         match ty {
-            ast::Type::Named { name, generics, .. } => {
+            ast::Type::Named { name, generics: _generics, .. } => {
                 let type_name = &name.name;
                 match type_name.as_str() {
                     "i8" => MirType::Int(IntSize::I8),
@@ -919,7 +919,7 @@ impl Default for MirBuilder {
 // Helper methods for enhanced lowering
 impl MirBuilder {
     /// Lookup field index from type context
-    fn lookup_field_index(&self, object: &ast::Expr, field_name: &str) -> Option<usize> {
+    fn lookup_field_index(&self, _object: &ast::Expr, field_name: &str) -> Option<usize> {
         // In a full implementation, this would use the type system
         // For now, use a simple heuristic based on common field patterns
         match field_name {
@@ -953,6 +953,19 @@ impl MirBuilder {
                 // Would need enum type info for variant index
                 Some(name.name.chars().next()? as i64)
             }
+            ast::Pattern::Binding { .. } => None, // Named binding, not a switch value
+            ast::Pattern::Tuple(_) => None,       // Complex pattern
+            ast::Pattern::Struct { .. } => None,  // Complex pattern
+            ast::Pattern::Variant { variant, .. } => {
+                // Enum variant - use first char as discriminant for now
+                Some(variant.name.chars().next()? as i64)
+            }
+            ast::Pattern::Array(_) => None,
+            ast::Pattern::Slice { .. } => None,
+            ast::Pattern::Range { .. } => None, // Would need range comparison
+            ast::Pattern::Or(_) => None,        // Multiple values
+            ast::Pattern::Guard { pattern, .. } => self.pattern_to_int(pattern),
+            ast::Pattern::Ref { pattern, .. } => self.pattern_to_int(pattern),
         }
     }
 
@@ -1000,6 +1013,171 @@ impl MirBuilder {
                         self.bind_pattern_variables(sub_pattern, scrutinee_local);
                     }
                 }
+            }
+            ast::Pattern::Binding { name, subpattern, .. } => {
+                // Named binding - bind the name to scrutinee
+                let local = self.alloc_local(MirType::Int(IntSize::I64), Some(name.name.clone()));
+                self.var_map.insert(name.name.clone(), local);
+                self.emit_instruction(MirInstruction::Assign {
+                    dest: MirPlace {
+                        local,
+                        projection: vec![],
+                    },
+                    value: MirRvalue::Use(MirOperand::Copy(MirPlace {
+                        local: scrutinee_local,
+                        projection: vec![],
+                    })),
+                });
+                // Also bind subpattern if present
+                if let Some(sub) = subpattern {
+                    self.bind_pattern_variables(sub, scrutinee_local);
+                }
+            }
+            ast::Pattern::Tuple(patterns) => {
+                for (i, sub_pattern) in patterns.iter().enumerate() {
+                    // Extract i-th element of tuple
+                    let temp = self.alloc_local(MirType::Int(IntSize::I64), None);
+                    self.emit_instruction(MirInstruction::Assign {
+                        dest: MirPlace {
+                            local: temp,
+                            projection: vec![],
+                        },
+                        value: MirRvalue::Field {
+                            base: MirOperand::Copy(MirPlace {
+                                local: scrutinee_local,
+                                projection: vec![],
+                            }),
+                            index: i,
+                        },
+                    });
+                    self.bind_pattern_variables(sub_pattern, temp);
+                }
+            }
+            ast::Pattern::Struct { fields, .. } => {
+                for (i, (_, sub_pattern)) in fields.iter().enumerate() {
+                    let temp = self.alloc_local(MirType::Int(IntSize::I64), None);
+                    self.emit_instruction(MirInstruction::Assign {
+                        dest: MirPlace {
+                            local: temp,
+                            projection: vec![],
+                        },
+                        value: MirRvalue::Field {
+                            base: MirOperand::Copy(MirPlace {
+                                local: scrutinee_local,
+                                projection: vec![],
+                            }),
+                            index: i,
+                        },
+                    });
+                    self.bind_pattern_variables(sub_pattern, temp);
+                }
+            }
+            ast::Pattern::Variant { fields, .. } => {
+                match fields {
+                    ast::VariantFields::Unit => {}
+                    ast::VariantFields::Tuple(patterns) => {
+                        for (i, sub_pattern) in patterns.iter().enumerate() {
+                            let temp = self.alloc_local(MirType::Int(IntSize::I64), None);
+                            self.emit_instruction(MirInstruction::Assign {
+                                dest: MirPlace {
+                                    local: temp,
+                                    projection: vec![],
+                                },
+                                value: MirRvalue::Field {
+                                    base: MirOperand::Copy(MirPlace {
+                                        local: scrutinee_local,
+                                        projection: vec![],
+                                    }),
+                                    index: i + 1, // +1 to skip discriminant
+                                },
+                            });
+                            self.bind_pattern_variables(sub_pattern, temp);
+                        }
+                    }
+                    ast::VariantFields::Struct(field_patterns) => {
+                        for (i, (_, sub_pattern)) in field_patterns.iter().enumerate() {
+                            let temp = self.alloc_local(MirType::Int(IntSize::I64), None);
+                            self.emit_instruction(MirInstruction::Assign {
+                                dest: MirPlace {
+                                    local: temp,
+                                    projection: vec![],
+                                },
+                                value: MirRvalue::Field {
+                                    base: MirOperand::Copy(MirPlace {
+                                        local: scrutinee_local,
+                                        projection: vec![],
+                                    }),
+                                    index: i + 1,
+                                },
+                            });
+                            self.bind_pattern_variables(sub_pattern, temp);
+                        }
+                    }
+                }
+            }
+            ast::Pattern::Array(patterns) => {
+                for (i, sub_pattern) in patterns.iter().enumerate() {
+                    let temp = self.alloc_local(MirType::Int(IntSize::I64), None);
+                    self.emit_instruction(MirInstruction::Assign {
+                        dest: MirPlace {
+                            local: temp,
+                            projection: vec![],
+                        },
+                        value: MirRvalue::Field {
+                            base: MirOperand::Copy(MirPlace {
+                                local: scrutinee_local,
+                                projection: vec![],
+                            }),
+                            index: i,
+                        },
+                    });
+                    self.bind_pattern_variables(sub_pattern, temp);
+                }
+            }
+            ast::Pattern::Slice { before, middle, after } => {
+                // Bind 'before' elements from start
+                for (i, sub_pattern) in before.iter().enumerate() {
+                    let temp = self.alloc_local(MirType::Int(IntSize::I64), None);
+                    self.emit_instruction(MirInstruction::Assign {
+                        dest: MirPlace {
+                            local: temp,
+                            projection: vec![],
+                        },
+                        value: MirRvalue::Field {
+                            base: MirOperand::Copy(MirPlace {
+                                local: scrutinee_local,
+                                projection: vec![],
+                            }),
+                            index: i,
+                        },
+                    });
+                    self.bind_pattern_variables(sub_pattern, temp);
+                }
+                // Middle binding captures the rest (would need slice operation)
+                if let Some(mid) = middle {
+                    self.bind_pattern_variables(mid, scrutinee_local);
+                }
+                // 'after' elements from end (would need length calculation)
+                for sub_pattern in after {
+                    self.bind_pattern_variables(sub_pattern, scrutinee_local);
+                }
+            }
+            ast::Pattern::Range { .. } => {
+                // Range patterns don't bind variables directly
+            }
+            ast::Pattern::Or(patterns) => {
+                // For or-patterns, all branches must bind same names
+                // Just use first branch's bindings
+                if let Some(first) = patterns.first() {
+                    self.bind_pattern_variables(first, scrutinee_local);
+                }
+            }
+            ast::Pattern::Guard { pattern, .. } => {
+                self.bind_pattern_variables(pattern, scrutinee_local);
+            }
+            ast::Pattern::Ref { pattern, .. } => {
+                // Dereference and bind inner - use projection without MirProjection (simplified)
+                self.bind_pattern_variables(pattern, scrutinee_local);
             }
             ast::Pattern::Literal(_) | ast::Pattern::Wildcard | ast::Pattern::Rest => {
                 // No binding needed

@@ -14,9 +14,9 @@
 //! Reference: Tofte & Talpin (1997) "Region-Based Memory Management"
 //! Reference: Rust Reference on Lifetimes
 
-use crate::lexer::{Affix, AffixSequence, Span};
+use crate::lexer::Span;
 use crate::parser::ast::*;
-use std::collections::{HashMap, HashSet};
+use std::collections::HashMap;
 
 /// Lifetime checker - validates reference lifetimes
 pub struct LifetimeChecker {
@@ -159,7 +159,7 @@ impl LifetimeChecker {
         self.region_stack.push(func_region);
 
         // Set up function context
-        let mut lifetime_params = HashMap::new();
+        let lifetime_params = HashMap::new();
         let mut param_lifetimes = HashMap::new();
 
         // Process lifetime parameters from function definition
@@ -617,6 +617,96 @@ impl LifetimeChecker {
                 }
                 Ok(())
             }
+            Pattern::Binding {
+                name: _,
+                mutable: _,
+                subpattern,
+            } => {
+                if let Some(sub) = subpattern {
+                    self.check_pattern(sub)?;
+                }
+                Ok(())
+            }
+            Pattern::Tuple(patterns) => {
+                for p in patterns {
+                    self.check_pattern(p)?;
+                }
+                Ok(())
+            }
+            Pattern::Struct {
+                name: _,
+                fields,
+                rest: _,
+            } => {
+                for (_, p) in fields {
+                    self.check_pattern(p)?;
+                }
+                Ok(())
+            }
+            Pattern::Variant {
+                enum_name: _,
+                variant: _,
+                fields,
+            } => match fields {
+                crate::parser::ast::VariantFields::Unit => Ok(()),
+                crate::parser::ast::VariantFields::Tuple(patterns) => {
+                    for p in patterns {
+                        self.check_pattern(p)?;
+                    }
+                    Ok(())
+                }
+                crate::parser::ast::VariantFields::Struct(field_patterns) => {
+                    for (_, p) in field_patterns {
+                        self.check_pattern(p)?;
+                    }
+                    Ok(())
+                }
+            },
+            Pattern::Array(patterns) => {
+                for p in patterns {
+                    self.check_pattern(p)?;
+                }
+                Ok(())
+            }
+            Pattern::Slice {
+                before,
+                middle,
+                after,
+            } => {
+                for p in before {
+                    self.check_pattern(p)?;
+                }
+                if let Some(mid) = middle {
+                    self.check_pattern(mid)?;
+                }
+                for p in after {
+                    self.check_pattern(p)?;
+                }
+                Ok(())
+            }
+            Pattern::Range { start, end, .. } => {
+                if let Some(p) = start {
+                    self.check_pattern(p)?;
+                }
+                if let Some(p) = end {
+                    self.check_pattern(p)?;
+                }
+                Ok(())
+            }
+            Pattern::Or(patterns) => {
+                for p in patterns {
+                    self.check_pattern(p)?;
+                }
+                Ok(())
+            }
+            Pattern::Guard {
+                pattern,
+                condition: _,
+            } => self.check_pattern(pattern),
+            Pattern::Ref {
+                mutable: _,
+                pattern: inner,
+            } => self.check_pattern(inner),
             Pattern::Literal(_) => Ok(()),
             Pattern::Wildcard => Ok(()),
             Pattern::Rest => Ok(()),

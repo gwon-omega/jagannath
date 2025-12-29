@@ -295,7 +295,7 @@ impl ShabdaAnalyzer {
         let mut errors = Vec::new();
 
         // Check argument types
-        for (i, (arg_name, arg_type)) in args.iter().enumerate() {
+        for (i, (_arg_name, arg_type)) in args.iter().enumerate() {
             if let Some(param) = contract.params.get(i) {
                 if param.type_name != *arg_type && param.type_name != "*" {
                     errors.push(format!(

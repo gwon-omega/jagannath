@@ -1,9 +1,10 @@
 {
   "name": "jagannath",
   "displayName": "Jagannath Language",
-  "description": "Language support for Jagannath programming language",
-  "version": "0.1.0",
+  "description": "🕉️ Sanskrit-inspired systems programming language with Hindu philosophy integration",
+  "version": "1.0.0",
   "publisher": "jagannath-lang",
+  "icon": "images/jagannath-icon.png",
   "repository": {
     "type": "git",
     "url": "https://github.com/jagannath-lang/jagannath"
@@ -14,15 +15,17 @@
   "categories": [
     "Programming Languages",
     "Formatters",
-    "Linters"
+    "Linters",
+    "Visualization",
+    "Themes"
   ],
   "keywords": [
     "jagannath",
     "sanskrit",
-    "systems programming"
-  ],
-  "activationEvents": [
-    "onLanguage:jagannath"
+    "systems programming",
+    "hindu philosophy",
+    "vedic",
+    "compiler"
   ],
   "main": "./out/extension.js",
   "contributes": {
@@ -31,7 +34,11 @@
         "id": "jagannath",
         "aliases": ["Jagannath", "jagannath", "jag"],
         "extensions": [".jag", ".jagannath"],
-        "configuration": "./language-configuration.json"
+        "configuration": "./language-configuration.json",
+        "icon": {
+          "light": "./images/jag-icon-light.svg",
+          "dark": "./images/jag-icon-dark.svg"
+        }
       }
     ],
     "grammars": [
@@ -39,6 +46,103 @@
         "language": "jagannath",
         "scopeName": "source.jagannath",
         "path": "./syntaxes/jagannath.tmLanguage.json"
+      }
+    ],
+    "semanticTokenTypes": [
+      {
+        "id": "karaka",
+        "description": "Sanskrit semantic case markers [kartṛ], [karman]"
+      },
+      {
+        "id": "astra",
+        "description": "Divine weapons - optimization passes"
+      },
+      {
+        "id": "naraka",
+        "description": "Hell types - error classifications"
+      },
+      {
+        "id": "guna",
+        "description": "Quality levels - sattva/rajas/tamas"
+      },
+      {
+        "id": "kosha",
+        "description": "Sheaths - memory allocation regions"
+      },
+      {
+        "id": "chakra",
+        "description": "Energy centers - software layers"
+      },
+      {
+        "id": "varna",
+        "description": "Privilege rings"
+      },
+      {
+        "id": "marga",
+        "description": "Paths - optimization strategies"
+      },
+      {
+        "id": "mantra",
+        "description": "Sacred invocations"
+      },
+      {
+        "id": "lifetime",
+        "description": "Region-based lifetime annotations"
+      }
+    ],
+    "semanticTokenModifiers": [
+      {
+        "id": "mutable",
+        "description": "Mutable binding (-ā affix)"
+      },
+      {
+        "id": "immutable",
+        "description": "Immutable binding (-a affix)"
+      },
+      {
+        "id": "linear",
+        "description": "Linear ownership (-l affix)"
+      },
+      {
+        "id": "borrowed",
+        "description": "Borrowed reference (-b affix)"
+      },
+      {
+        "id": "threadsafe",
+        "description": "Thread-safe (-sūtra affix)"
+      },
+      {
+        "id": "secure",
+        "description": "Security boundary (-vaitaraṇī affix)"
+      },
+      {
+        "id": "sattva",
+        "description": "Pure quality level"
+      },
+      {
+        "id": "rajas",
+        "description": "Active quality level"
+      },
+      {
+        "id": "tamas",
+        "description": "Dark quality level"
+      }
+    ],
+    "semanticTokenScopes": [
+      {
+        "language": "jagannath",
+        "scopes": {
+          "karaka": ["support.type.karaka.jagannath"],
+          "astra": ["entity.name.class.astra.jagannath"],
+          "naraka": ["invalid.illegal.naraka.jagannath"],
+          "guna": ["constant.language.guna.jagannath"],
+          "kosha": ["support.class.kosha.jagannath"],
+          "chakra": ["markup.heading.chakra.jagannath"],
+          "varna": ["storage.modifier.varna.jagannath"],
+          "marga": ["entity.name.namespace.marga.jagannath"],
+          "mantra": ["constant.language.mantra.jagannath"],
+          "lifetime": ["storage.modifier.lifetime.jagannath"]
+        }
       }
     ],
     "configuration": {
@@ -57,40 +161,331 @@
         "jagannath.guna": {
           "type": "string",
           "enum": ["sattva", "rajas", "tamas"],
+          "enumDescriptions": [
+            "सत्त्व - Purity: Maximum safety, debug info, slower",
+            "रजस् - Activity: Balanced optimization (default)",
+            "तमस् - Power: Maximum optimization, minimal checks"
+          ],
           "default": "rajas",
-          "description": "Default optimization mode"
+          "description": "Compilation optimization mode (Guṇa)"
+        },
+        "jagannath.marga": {
+          "type": "string",
+          "enum": ["karma", "jnana", "bhakti", "raja"],
+          "enumDescriptions": [
+            "कर्म - Action: Optimize imperative/stateful code",
+            "ज्ञान - Knowledge: Optimize functional/pure code",
+            "भक्ति - Devotion: Domain-specific optimizations",
+            "राज - Royal: Balanced hybrid approach"
+          ],
+          "default": "raja",
+          "description": "Optimization strategy path (Mārga)"
+        },
+        "jagannath.showKoshaIndicators": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show memory allocation region (Kośa) indicators"
+        },
+        "jagannath.enableAstraHints": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show Astra (optimization) hints in code"
+        },
+        "jagannath.showSanskritHover": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show Sanskrit etymology in hover tooltips"
+        },
+        "jagannath.diagnosticStyle": {
+          "type": "string",
+          "enum": ["modern", "traditional"],
+          "default": "modern",
+          "description": "Diagnostic message style"
         }
       }
     },
     "commands": [
       {
         "command": "jagannath.build",
-        "title": "Jagannath: Build"
+        "title": "Jagannath: Build",
+        "icon": "$(tools)"
       },
       {
         "command": "jagannath.run",
-        "title": "Jagannath: Run"
+        "title": "Jagannath: Run",
+        "icon": "$(play)"
       },
       {
         "command": "jagannath.format",
-        "title": "Jagannath: Format Document"
+        "title": "Jagannath: Format Document",
+        "icon": "$(edit)"
+      },
+      {
+        "command": "jagannath.showAstViewer",
+        "title": "Jagannath: Show AST Viewer",
+        "icon": "$(symbol-structure)"
+      },
+      {
+        "command": "jagannath.showPipeline",
+        "title": "Jagannath: Show Compilation Pipeline",
+        "icon": "$(git-merge)"
+      },
+      {
+        "command": "jagannath.analyzeFunction",
+        "title": "Jagannath: Analyze Function"
+      },
+      {
+        "command": "jagannath.viewMemoryLayout",
+        "title": "Jagannath: View Memory Layout"
+      },
+      {
+        "command": "jagannath.viewAstraOptimization",
+        "title": "Jagannath: View Astra Optimization"
+      },
+      {
+        "command": "jagannath.viewNarakaClassification",
+        "title": "Jagannath: View Naraka Classification"
       }
     ],
+    "menus": {
+      "editor/title": [
+        {
+          "command": "jagannath.showAstViewer",
+          "when": "resourceLangId == jagannath",
+          "group": "navigation"
+        },
+        {
+          "command": "jagannath.showPipeline",
+          "when": "resourceLangId == jagannath",
+          "group": "navigation"
+        }
+      ],
+      "editor/context": [
+        {
+          "command": "jagannath.analyzeFunction",
+          "when": "resourceLangId == jagannath",
+          "group": "jagannath@1"
+        },
+        {
+          "command": "jagannath.build",
+          "when": "resourceLangId == jagannath",
+          "group": "jagannath@2"
+        },
+        {
+          "command": "jagannath.run",
+          "when": "resourceLangId == jagannath",
+          "group": "jagannath@3"
+        }
+      ]
+    },
     "snippets": [
       {
         "language": "jagannath",
         "path": "./snippets/jagannath.json"
+      }
+    ],
+    "configurationDefaults": {
+      "editor.tokenColorCustomizations": {
+        "textMateRules": [
+          {
+            "scope": "keyword.control.flow.jagannath",
+            "settings": { "foreground": "#C586C0", "fontStyle": "bold" }
+          },
+          {
+            "scope": "keyword.declaration.jagannath",
+            "settings": { "foreground": "#569CD6", "fontStyle": "bold" }
+          },
+          {
+            "scope": "entity.name.function.jagannath",
+            "settings": { "foreground": "#DCDCAA" }
+          },
+          {
+            "scope": "entity.name.type.class.jagannath",
+            "settings": { "foreground": "#4EC9B0" }
+          },
+          {
+            "scope": "support.type.primitive.jagannath",
+            "settings": { "foreground": "#4EC9B0" }
+          },
+          {
+            "scope": "constant.numeric.jagannath",
+            "settings": { "foreground": "#B5CEA8" }
+          },
+          {
+            "scope": "string.quoted.jagannath",
+            "settings": { "foreground": "#CE9178" }
+          },
+          {
+            "scope": "comment.jagannath",
+            "settings": { "foreground": "#6A9955", "fontStyle": "italic" }
+          },
+          {
+            "scope": "entity.name.class.astra.primary.jagannath",
+            "settings": { "foreground": "#FFD700", "fontStyle": "bold" }
+          },
+          {
+            "scope": "entity.name.class.astra.elemental.jagannath",
+            "settings": { "foreground": "#FF6B6B" }
+          },
+          {
+            "scope": "entity.name.class.astra.divine.jagannath",
+            "settings": { "foreground": "#A855F7", "fontStyle": "bold italic" }
+          },
+          {
+            "scope": "invalid.illegal.naraka.severe.jagannath",
+            "settings": { "foreground": "#FF0000", "fontStyle": "bold underline" }
+          },
+          {
+            "scope": "invalid.deprecated.naraka.medium.jagannath",
+            "settings": { "foreground": "#FF8C00", "fontStyle": "underline" }
+          },
+          {
+            "scope": "markup.deleted.naraka.memory.jagannath",
+            "settings": { "foreground": "#DC143C" }
+          },
+          {
+            "scope": "string.quoted.guna.sattva.jagannath",
+            "settings": { "foreground": "#7EE787", "fontStyle": "italic" }
+          },
+          {
+            "scope": "keyword.control.guna.rajas.jagannath",
+            "settings": { "foreground": "#FFA657" }
+          },
+          {
+            "scope": "invalid.deprecated.guna.tamas.jagannath",
+            "settings": { "foreground": "#8B0000" }
+          },
+          {
+            "scope": "support.class.kosha.anna.jagannath",
+            "settings": { "foreground": "#FF6B6B" }
+          },
+          {
+            "scope": "support.class.kosha.prana.jagannath",
+            "settings": { "foreground": "#FFA94D" }
+          },
+          {
+            "scope": "support.class.kosha.mano.jagannath",
+            "settings": { "foreground": "#69DB7C" }
+          },
+          {
+            "scope": "support.class.kosha.vijnana.jagannath",
+            "settings": { "foreground": "#74C0FC" }
+          },
+          {
+            "scope": "support.class.kosha.ananda.jagannath",
+            "settings": { "foreground": "#B197FC" }
+          },
+          {
+            "scope": "markup.heading.chakra.lower.jagannath",
+            "settings": { "foreground": "#FF6B6B" }
+          },
+          {
+            "scope": "markup.heading.chakra.middle.jagannath",
+            "settings": { "foreground": "#69DB7C" }
+          },
+          {
+            "scope": "markup.heading.chakra.upper.jagannath",
+            "settings": { "foreground": "#B197FC" }
+          },
+          {
+            "scope": "storage.modifier.varna.brahmin.jagannath",
+            "settings": { "foreground": "#FFD700", "fontStyle": "bold" }
+          },
+          {
+            "scope": "storage.modifier.varna.kshatriya.jagannath",
+            "settings": { "foreground": "#FF4500" }
+          },
+          {
+            "scope": "storage.modifier.varna.vaishya.jagannath",
+            "settings": { "foreground": "#32CD32" }
+          },
+          {
+            "scope": "storage.modifier.varna.shudra.jagannath",
+            "settings": { "foreground": "#808080" }
+          },
+          {
+            "scope": "support.type.karaka.jagannath",
+            "settings": { "foreground": "#61AFEF", "fontStyle": "italic" }
+          },
+          {
+            "scope": "storage.modifier.affix.jagannath",
+            "settings": { "foreground": "#E06C75" }
+          },
+          {
+            "scope": "storage.modifier.lifetime.jagannath",
+            "settings": { "foreground": "#98C379" }
+          },
+          {
+            "scope": "constant.language.mantra.jagannath",
+            "settings": { "foreground": "#FFD700", "fontStyle": "bold italic" }
+          },
+          {
+            "scope": "entity.name.namespace.marga.jagannath",
+            "settings": { "foreground": "#56B6C2" }
+          },
+          {
+            "scope": "support.function.macro.jagannath",
+            "settings": { "foreground": "#E5C07B", "fontStyle": "bold" }
+          },
+          {
+            "scope": "keyword.operator.jagannath",
+            "settings": { "foreground": "#ABB2BF" }
+          },
+          {
+            "scope": "meta.attribute.jagannath",
+            "settings": { "foreground": "#98C379" }
+          },
+          {
+            "scope": "comment.block.documentation.jagannath",
+            "settings": { "foreground": "#7EE787", "fontStyle": "italic" }
+          }
+        ]
+      },
+      "[jagannath]": {
+        "editor.semanticHighlighting.enabled": true,
+        "editor.bracketPairColorization.enabled": true,
+        "editor.guides.bracketPairs": true,
+        "editor.formatOnSave": true,
+        "editor.tabSize": 4,
+        "editor.insertSpaces": true
+      }
+    },
+    "colors": [
+      {
+        "id": "jagannath.sattva",
+        "description": "Sattva (purity) color - hints and info",
+        "defaults": { "dark": "#7EE787", "light": "#28A745" }
+      },
+      {
+        "id": "jagannath.rajas",
+        "description": "Rajas (activity) color - warnings",
+        "defaults": { "dark": "#FFA657", "light": "#D97706" }
+      },
+      {
+        "id": "jagannath.tamas",
+        "description": "Tamas (darkness) color - errors",
+        "defaults": { "dark": "#F85149", "light": "#DC2626" }
+      },
+      {
+        "id": "jagannath.brahman",
+        "description": "Brahman (divine) color - cosmic elements",
+        "defaults": { "dark": "#A371F7", "light": "#7C3AED" }
       }
     ]
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",
     "compile": "tsc -p ./",
-    "watch": "tsc -watch -p ./"
+    "watch": "tsc -watch -p ./",
+    "lint": "eslint src --ext ts",
+    "test": "node ./out/test/runTest.js"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",
     "@types/vscode": "^1.85.0",
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "eslint": "^8.45.0",
     "typescript": "^5.3.0"
   },
   "dependencies": {

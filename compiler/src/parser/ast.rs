@@ -256,22 +256,103 @@ pub struct MatchArm {
     pub span: Span,
 }
 
-/// Pattern for matching
+/// Pattern for matching (Pratyabhijñā - Recognition/Identification)
+///
+/// Implements comprehensive pattern matching as described in v4.0 spec:
+/// - Wildcard, binding, literal patterns
+/// - Tuple, struct, enum variant patterns
+/// - Array/slice patterns with rest (..)
+/// - Or patterns (|) for alternatives
+/// - Guard patterns (if condition)
+/// - Range patterns (0..10)
 #[derive(Debug, Clone)]
 pub enum Pattern {
-    /// Identifier pattern
-    Identifier(Identifier),
-    /// Literal pattern
+    /// Wildcard pattern (_) - matches anything, ignores value
+    Wildcard,
+
+    /// Binding pattern - captures value with optional mutability
+    Binding {
+        name: Identifier,
+        mutable: bool,
+        /// Optional subpattern: name @ pattern
+        subpattern: Option<Box<Pattern>>,
+    },
+
+    /// Literal pattern - matches exact value
     Literal(Literal),
-    /// Constructor pattern
+
+    /// Tuple pattern - (a, b, c)
+    Tuple(Vec<Pattern>),
+
+    /// Struct pattern - Point { x, y } or Point { x: 0, y }
+    Struct {
+        name: Identifier,
+        fields: Vec<(Identifier, Pattern)>,
+        /// Whether .. was used to ignore remaining fields
+        rest: bool,
+    },
+
+    /// Enum variant pattern - Some(x) or None
+    Variant {
+        enum_name: Option<Identifier>,
+        variant: Identifier,
+        fields: VariantFields,
+    },
+
+    /// Array pattern - [a, b, c]
+    Array(Vec<Pattern>),
+
+    /// Slice pattern with rest - [head, ..tail] or [first, .., last]
+    Slice {
+        before: Vec<Pattern>,
+        middle: Option<Box<Pattern>>, // The binding for ..rest
+        after: Vec<Pattern>,
+    },
+
+    /// Range pattern - 0..10 or 'a'..='z'
+    Range {
+        start: Option<Box<Pattern>>,
+        end: Option<Box<Pattern>>,
+        inclusive: bool,
+    },
+
+    /// Or pattern - A | B | C
+    Or(Vec<Pattern>),
+
+    /// Guard pattern - pattern if condition
+    Guard {
+        pattern: Box<Pattern>,
+        condition: Box<Expr>,
+    },
+
+    /// Reference pattern - &x or &mut x
+    Ref {
+        mutable: bool,
+        pattern: Box<Pattern>,
+    },
+
+    /// Rest pattern (..) - used in slice/struct patterns
+    Rest,
+
+    /// Constructor pattern (legacy alias for Variant)
     Constructor {
         name: Identifier,
         fields: Vec<Pattern>,
     },
-    /// Wildcard (_)
-    Wildcard,
-    /// Rest pattern (..)
-    Rest,
+
+    /// Identifier pattern (legacy - prefer Binding)
+    Identifier(Identifier),
+}
+
+/// Variant pattern fields
+#[derive(Debug, Clone)]
+pub enum VariantFields {
+    /// No fields: None
+    Unit,
+    /// Tuple-like: Some(x, y)
+    Tuple(Vec<Pattern>),
+    /// Struct-like: Point { x, y }
+    Struct(Vec<(Identifier, Pattern)>),
 }
 
 /// Loop variants

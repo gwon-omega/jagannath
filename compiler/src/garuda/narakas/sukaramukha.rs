@@ -4,7 +4,6 @@
 //! Code: Blocking operations without timeout
 
 use crate::parser::ast::{Ast, Expr, Item, Stmt, Block, LoopKind};
-use crate::errors::Span;
 use super::super::yama::{Violation, ViolationKind};
 use std::collections::HashSet;
 

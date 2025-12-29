@@ -7,6 +7,10 @@
 //! - Concurrency violations (11-16)
 //! - Security violations (17-23)
 //! - Resource violations (24-28)
+//!
+//! Implements v10.0 unified traits: SanskritNamed, SanskritDescribed, PhilosophicalEnum
+
+use crate::traits::{PhilosophicalEnum, SanskritDescribed, SanskritNamed};
 
 mod andhakupa;
 mod andhatamisram;
@@ -445,6 +449,237 @@ impl Naraka {
             Naraka::Suchimukha,
         ]
     }
+
+    /// Get the Sanskrit script name only
+    fn sanskrit_script(&self) -> &'static str {
+        match self {
+            Naraka::Tamisram => "तमिस्रम्",
+            Naraka::Andhatamisram => "अन्धतमिस्रम्",
+            Naraka::Raurava => "रौरव",
+            Naraka::Maharaurava => "महारौरव",
+            Naraka::Kumbhipaka => "कुम्भीपाक",
+            Naraka::Kalasutra => "कालसूत्र",
+            Naraka::Asipatravana => "असिपत्रवन",
+            Naraka::Sukaramukha => "सूकरमुख",
+            Naraka::Andhakupa => "अन्धकूप",
+            Naraka::Krimibhaksha => "क्रिमिभक्ष",
+            Naraka::Sandamsha => "सन्दंश",
+            Naraka::Taptasurmi => "तप्तसूर्मि",
+            Naraka::Vajrakantaka => "वज्रकण्टक",
+            Naraka::Vaitarani => "वैतरणी",
+            Naraka::Puyoda => "पूयोद",
+            Naraka::Pranarodha => "प्राणरोध",
+            Naraka::Visasana => "विशसन",
+            Naraka::Lalabhaksha => "लालाभक्ष",
+            Naraka::Sarameyadana => "सारमेयादन",
+            Naraka::Avichi => "अवीचि",
+            Naraka::Ayahpana => "अयःपान",
+            Naraka::Ksharakardama => "क्षारकर्दम",
+            Naraka::Raksogana => "रक्षोगण",
+            Naraka::Sulaprota => "शूलप्रोत",
+            Naraka::Dandasuka => "दण्डशूक",
+            Naraka::Vatarodha => "वातरोध",
+            Naraka::Paryavartana => "पर्यावर्तन",
+            Naraka::Suchimukha => "सूचीमुख",
+        }
+    }
+
+    /// Get the IAST transliteration only
+    fn iast_name(&self) -> &'static str {
+        match self {
+            Naraka::Tamisram => "Tamisram",
+            Naraka::Andhatamisram => "Andhatamisram",
+            Naraka::Raurava => "Raurava",
+            Naraka::Maharaurava => "Mahāraurava",
+            Naraka::Kumbhipaka => "Kumbhīpāka",
+            Naraka::Kalasutra => "Kālasūtra",
+            Naraka::Asipatravana => "Asipattravana",
+            Naraka::Sukaramukha => "Sūkaramukha",
+            Naraka::Andhakupa => "Andhakūpa",
+            Naraka::Krimibhaksha => "Krimibhakṣa",
+            Naraka::Sandamsha => "Sandaṃśa",
+            Naraka::Taptasurmi => "Taptasūrmi",
+            Naraka::Vajrakantaka => "Vajrakaṇṭaka",
+            Naraka::Vaitarani => "Vaitaraṇī",
+            Naraka::Puyoda => "Pūyoda",
+            Naraka::Pranarodha => "Prāṇarodha",
+            Naraka::Visasana => "Viśasana",
+            Naraka::Lalabhaksha => "Lālābhakṣa",
+            Naraka::Sarameyadana => "Sārameyādana",
+            Naraka::Avichi => "Avīci",
+            Naraka::Ayahpana => "Ayaḥpāna",
+            Naraka::Ksharakardama => "Kṣārakardama",
+            Naraka::Raksogana => "Rakṣogaṇa",
+            Naraka::Sulaprota => "Śūlaprota",
+            Naraka::Dandasuka => "Daṇḍaśūka",
+            Naraka::Vatarodha => "Vātarodha",
+            Naraka::Paryavartana => "Paryāvartana",
+            Naraka::Suchimukha => "Sūcīmukha",
+        }
+    }
+
+    /// Get English description of the punishment
+    fn english_name(&self) -> &'static str {
+        match self {
+            Naraka::Tamisram => "Heavy Flogging",
+            Naraka::Andhatamisram => "Darkness Flogging",
+            Naraka::Raurava => "Screaming Hell",
+            Naraka::Maharaurava => "Great Screaming",
+            Naraka::Kumbhipaka => "Pot Cooking",
+            Naraka::Kalasutra => "Black Thread",
+            Naraka::Asipatravana => "Sword-Leaf Forest",
+            Naraka::Sukaramukha => "Pig Face",
+            Naraka::Andhakupa => "Dark Well",
+            Naraka::Krimibhaksha => "Worm Eating",
+            Naraka::Sandamsha => "Tongs Torture",
+            Naraka::Taptasurmi => "Hot Iron",
+            Naraka::Vajrakantaka => "Diamond Needles",
+            Naraka::Vaitarani => "Filthy River",
+            Naraka::Puyoda => "Pus Well",
+            Naraka::Pranarodha => "Breath Stoppage",
+            Naraka::Visasana => "Slaughterhouse",
+            Naraka::Lalabhaksha => "Semen Sea",
+            Naraka::Sarameyadana => "Dog Bite",
+            Naraka::Avichi => "Waveless",
+            Naraka::Ayahpana => "Molten Iron Drink",
+            Naraka::Ksharakardama => "Alkali Mud",
+            Naraka::Raksogana => "Demon Gang",
+            Naraka::Sulaprota => "Spear Impalement",
+            Naraka::Dandasuka => "Snake Biting",
+            Naraka::Vatarodha => "Weapon Torture",
+            Naraka::Paryavartana => "Bird Torture",
+            Naraka::Suchimukha => "Needle Torture",
+        }
+    }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// v10.0 UNIFIED TRAIT IMPLEMENTATIONS
+// ═══════════════════════════════════════════════════════════════════════════════
+
+impl SanskritNamed for Naraka {
+    fn sanskrit(&self) -> &'static str {
+        self.sanskrit_script()
+    }
+
+    fn iast(&self) -> &'static str {
+        self.iast_name()
+    }
+
+    fn english(&self) -> &'static str {
+        self.english_name()
+    }
+}
+
+impl SanskritDescribed for Naraka {
+    fn meaning(&self) -> &'static str {
+        self.sin_description()
+    }
+
+    fn explanation(&self) -> &'static str {
+        self.redemption_path()
+    }
+
+    fn mantra(&self) -> Option<&'static str> {
+        // Each Naraka has a purification mantra
+        Some(match self {
+            // Memory violations - Vishnu mantras for protection
+            Naraka::Tamisram => "ॐ नमो नारायणाय (Om Namo Nārāyaṇāya)",
+            Naraka::Andhakupa => "ॐ विष्णवे नमः (Om Viṣṇave Namaḥ)",
+            Naraka::Asipatravana => "ॐ दामोदराय नमः (Om Dāmodarāya Namaḥ)",
+            Naraka::Krimibhaksha => "ॐ वासुदेवाय नमः (Om Vāsudevāya Namaḥ)",
+            Naraka::Suchimukha => "ॐ मुक्ताय नमः (Om Muktāya Namaḥ)",
+
+            // Concurrency violations - Shiva mantras for transformation
+            Naraka::Kalasutra => "ॐ नमः शिवाय (Om Namaḥ Śivāya)",
+            Naraka::Pranarodha => "ॐ त्र्यम्बकं यजामहे (Om Tryambakaṃ Yajāmahe)",
+            Naraka::Sandamsha => "ॐ महादेवाय नमः (Om Mahādevāya Namaḥ)",
+
+            // Security violations - Durga mantras for protection
+            Naraka::Vaitarani => "ॐ दुं दुर्गायै नमः (Om Duṃ Durgāyai Namaḥ)",
+            Naraka::Raksogana => "ॐ ऐं ह्रीं क्लीं (Om Aiṃ Hrīṃ Klīṃ)",
+            Naraka::Ksharakardama => "ॐ शक्तये नमः (Om Śaktaye Namaḥ)",
+
+            // Process violations - Yama mantras for judgment
+            Naraka::Raurava | Naraka::Maharaurava => "ॐ यमाय नमः (Om Yamāya Namaḥ)",
+            Naraka::Visasana => "ॐ धर्मराजाय नमः (Om Dharmarājāya Namaḥ)",
+
+            // Default - generic purification
+            _ => "ॐ शुद्धि कुरु स्वाहा (Om Śuddhi Kuru Svāhā)",
+        })
+    }
+
+    fn category(&self) -> &'static str {
+        match self {
+            // Memory violations (1-10)
+            Naraka::Tamisram
+            | Naraka::Andhatamisram
+            | Naraka::Raurava
+            | Naraka::Maharaurava
+            | Naraka::Kumbhipaka
+            | Naraka::Kalasutra
+            | Naraka::Asipatravana
+            | Naraka::Sukaramukha
+            | Naraka::Andhakupa
+            | Naraka::Krimibhaksha => "Memory Violations (स्मृति)",
+
+            // Concurrency violations (11-16)
+            Naraka::Sandamsha
+            | Naraka::Taptasurmi
+            | Naraka::Vajrakantaka
+            | Naraka::Vaitarani
+            | Naraka::Puyoda
+            | Naraka::Pranarodha => "Concurrency Violations (सूत्र)",
+
+            // Security violations (17-23)
+            Naraka::Visasana
+            | Naraka::Lalabhaksha
+            | Naraka::Sarameyadana
+            | Naraka::Avichi
+            | Naraka::Ayahpana
+            | Naraka::Ksharakardama
+            | Naraka::Raksogana => "Security Violations (सुरक्षा)",
+
+            // Resource violations (24-28)
+            Naraka::Sulaprota
+            | Naraka::Dandasuka
+            | Naraka::Vatarodha
+            | Naraka::Paryavartana
+            | Naraka::Suchimukha => "Resource Violations (संसाधन)",
+        }
+    }
+}
+
+impl PhilosophicalEnum for Naraka {
+    fn all() -> &'static [Self] {
+        Naraka::all()
+    }
+
+    fn count() -> usize {
+        28
+    }
+
+    fn index(&self) -> usize {
+        (*self as u8 - 1) as usize
+    }
+
+    fn ordinal(&self) -> usize {
+        *self as usize
+    }
+
+    fn next(&self) -> Self {
+        let idx = self.index();
+        Self::all()[(idx + 1) % 28]
+    }
+
+    fn prev(&self) -> Self {
+        let idx = self.index();
+        Self::all()[(idx + 28 - 1) % 28]
+    }
+
+    fn from_index(index: usize) -> Option<Self> {
+        Self::all().get(index).copied()
+    }
 }
 
 /// Garuda-style error message
@@ -495,7 +730,7 @@ impl NarakaError {
     pub fn from_ghost(ghost: &super::preta::Ghost) -> Self {
         Self::new(
             Naraka::Suchimukha,
-            ghost.location.clone(),
+            ghost.location.clone().into(),
             &ghost.description,
         )
     }
@@ -563,5 +798,175 @@ impl fmt::Display for NarakaError {
             f,
             "╚═══════════════════════════════════════════════════════════════╝"
         )
+    }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// TESTS
+// ═══════════════════════════════════════════════════════════════════════════════
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    // ═══════════════════════════════════════════════════════════════════════════
+    // BASIC NARAKA TESTS
+    // ═══════════════════════════════════════════════════════════════════════════
+
+    #[test]
+    fn test_naraka_count() {
+        assert_eq!(Naraka::all().len(), 28);
+    }
+
+    #[test]
+    fn test_naraka_name_contains_both_scripts() {
+        // name() returns "Sanskrit (IAST)" format
+        let name = Naraka::Tamisram.name();
+        assert!(name.contains("तमिस्रम्"));
+        assert!(name.contains("Tamisram"));
+    }
+
+    #[test]
+    fn test_naraka_severity_levels() {
+        assert_eq!(Naraka::Vaitarani.severity(), Severity::Critical);
+        assert_eq!(Naraka::Tamisram.severity(), Severity::Error);
+        assert_eq!(Naraka::Sukaramukha.severity(), Severity::Warning);
+    }
+
+    #[test]
+    fn test_naraka_ordinal_values() {
+        // Each Naraka has repr(u8) with specific values
+        assert_eq!(Naraka::Tamisram as u8, 1);
+        assert_eq!(Naraka::Suchimukha as u8, 28);
+        assert_eq!(Naraka::Vaitarani as u8, 14);
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════════
+    // v10.0 TRAIT IMPLEMENTATION TESTS
+    // ═══════════════════════════════════════════════════════════════════════════
+
+    #[test]
+    fn test_naraka_sanskrit_named_trait() {
+        let n = Naraka::Tamisram;
+        assert_eq!(SanskritNamed::sanskrit(&n), "तमिस्रम्");
+        assert_eq!(SanskritNamed::iast(&n), "Tamisram");
+        assert_eq!(SanskritNamed::english(&n), "Heavy Flogging");
+
+        let n2 = Naraka::Vaitarani;
+        assert_eq!(SanskritNamed::sanskrit(&n2), "वैतरणी");
+        assert_eq!(SanskritNamed::iast(&n2), "Vaitaraṇī");
+        assert_eq!(SanskritNamed::english(&n2), "Filthy River");
+    }
+
+    #[test]
+    fn test_naraka_sanskrit_described_trait() {
+        let n = Naraka::Suchimukha;
+        assert!(n.meaning().contains("Memory leak"));
+        assert!(n.explanation().contains("mukta()"));
+        assert!(n.mantra().is_some());
+        assert_eq!(n.category(), "Resource Violations (संसाधन)");
+    }
+
+    #[test]
+    fn test_naraka_philosophical_enum_trait() {
+        // Test count
+        assert_eq!(Naraka::count(), 28);
+
+        // Test index (0-based)
+        assert_eq!(Naraka::Tamisram.index(), 0);
+        assert_eq!(Naraka::Suchimukha.index(), 27);
+
+        // Test ordinal (1-based, same as repr)
+        assert_eq!(Naraka::Tamisram.ordinal(), 1);
+        assert_eq!(Naraka::Suchimukha.ordinal(), 28);
+
+        // Test navigation (wrapping)
+        assert_eq!(Naraka::Tamisram.next(), Naraka::Andhatamisram);
+        assert_eq!(Naraka::Suchimukha.next(), Naraka::Tamisram);
+        assert_eq!(Naraka::Tamisram.prev(), Naraka::Suchimukha);
+        assert_eq!(Naraka::Andhatamisram.prev(), Naraka::Tamisram);
+
+        // Test from_index
+        assert_eq!(Naraka::from_index(0), Some(Naraka::Tamisram));
+        assert_eq!(Naraka::from_index(27), Some(Naraka::Suchimukha));
+        assert_eq!(Naraka::from_index(28), None);
+    }
+
+    #[test]
+    fn test_naraka_all_have_mantras() {
+        for naraka in Naraka::all() {
+            assert!(naraka.mantra().is_some(), "Missing mantra for {:?}", naraka);
+        }
+    }
+
+    #[test]
+    fn test_naraka_categories_coverage() {
+        let mut memory_count = 0;
+        let mut concurrency_count = 0;
+        let mut security_count = 0;
+        let mut resource_count = 0;
+
+        for naraka in Naraka::all() {
+            match naraka.category() {
+                "Memory Violations (स्मृति)" => memory_count += 1,
+                "Concurrency Violations (सूत्र)" => concurrency_count += 1,
+                "Security Violations (सुरक्षा)" => security_count += 1,
+                "Resource Violations (संसाधन)" => resource_count += 1,
+                other => panic!("Unknown category: {}", other),
+            }
+        }
+
+        assert_eq!(memory_count, 10, "Memory violations should be 1-10");
+        assert_eq!(
+            concurrency_count, 6,
+            "Concurrency violations should be 11-16"
+        );
+        assert_eq!(security_count, 7, "Security violations should be 17-23");
+        assert_eq!(resource_count, 5, "Resource violations should be 24-28");
+    }
+
+    #[test]
+    fn test_naraka_all_have_redemption_paths() {
+        for naraka in Naraka::all() {
+            let path = naraka.redemption_path();
+            assert!(!path.is_empty(), "Empty redemption for {:?}", naraka);
+            // Redemption paths should contain some instructional word (any form of guidance)
+            assert!(
+                path.len() > 10,
+                "Redemption should be descriptive, got: {}",
+                path
+            );
+        }
+    }
+
+    #[test]
+    fn test_naraka_error_creation() {
+        use crate::errors::{SourceId, Span};
+
+        let error = NarakaError::new(
+            Naraka::Suchimukha,
+            Span::new(SourceId(0), 0, 10),
+            "Memory leak detected",
+        );
+
+        assert_eq!(error.naraka, Naraka::Suchimukha);
+        assert!(error.sin.contains("Memory leak"));
+        assert!(error.penance.contains("mukta()"));
+    }
+
+    #[test]
+    fn test_naraka_navigation_all_28() {
+        // Starting from first, navigate through all 28 and return to start
+        let mut current = Naraka::Tamisram;
+        for _ in 0..27 {
+            current = current.next();
+            assert_ne!(current, Naraka::Tamisram, "Should not loop before 28 steps");
+        }
+        current = current.next();
+        assert_eq!(
+            current,
+            Naraka::Tamisram,
+            "Should return to start after 28 steps"
+        );
     }
 }

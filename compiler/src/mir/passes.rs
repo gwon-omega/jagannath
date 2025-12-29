@@ -790,7 +790,7 @@ impl Inlining {
     fn extract_function_name(&self, op: &MirOperand) -> Option<String> {
         match op {
             MirOperand::Constant(MirConstant::String(name)) => Some(name.clone()),
-            MirOperand::Copy(place) | MirOperand::Move(place) => {
+            MirOperand::Copy(_place) | MirOperand::Move(_place) => {
                 // Could be a function pointer in a local
                 // For now, we only inline direct calls
                 None
@@ -942,7 +942,7 @@ impl Inlining {
         let mut entry_instructions: Vec<MirInstruction> = Vec::new();
 
         for (idx, arg) in call_site.args.iter().enumerate() {
-            if let Some(&new_local) = local_remap.get(&(idx + 1)) {
+            if let Some(&_new_local) = local_remap.get(&(idx + 1)) {
                 // +1 because 0 is return value
                 // Actually params start at a different index, need to check callee.params
                 if idx < callee.params.len() {
@@ -1424,7 +1424,7 @@ impl SimplifyCfg {
             // Apply merges
             for (target_id, source_id) in merge_into {
                 if let Some(target_idx) = func.blocks.iter().position(|b| b.id == target_id) {
-                    if let Some(source_idx) = func.blocks.iter().position(|b| b.id == source_id) {
+                    if let Some(_source_idx) = func.blocks.iter().position(|b| b.id == source_id) {
                         // Extract target block
                         let target_block = func.blocks.remove(target_idx);
 
@@ -1772,7 +1772,7 @@ impl LoopUnrolling {
         &self,
         func: &MirFunction,
         header: usize,
-        body: &HashSet<usize>,
+        _body: &HashSet<usize>,
     ) -> Option<usize> {
         // Look for comparison pattern in header terminator
         for block in &func.blocks {
@@ -1814,7 +1814,7 @@ impl LoopUnrolling {
     fn find_induction_variable(
         &self,
         func: &MirFunction,
-        header: usize,
+        _header: usize,
         body: &HashSet<usize>,
     ) -> Option<(usize, i64)> {
         // Look for i = i + constant pattern in loop body
@@ -2059,7 +2059,7 @@ impl MemoryAccessOpt {
         for block in &func.blocks {
             for (inst_idx, inst) in block.instructions.iter().enumerate() {
                 match inst {
-                    MirInstruction::Load { dest, ptr } => {
+                    MirInstruction::Load { dest: _dest, ptr } => {
                         if let MirOperand::Copy(place) | MirOperand::Move(place) = ptr {
                             let projection: Vec<usize> = place
                                 .projection
@@ -2249,7 +2249,7 @@ impl MemoryAccessOpt {
                 continue;
             }
 
-            for (j, access2) in self.accesses.iter().enumerate().skip(i + 1) {
+            for (_j, access2) in self.accesses.iter().enumerate().skip(i + 1) {
                 if access2.block != access1.block {
                     break; // Only within same block for now
                 }
@@ -2314,7 +2314,7 @@ impl MemoryAccessOpt {
     }
 
     /// Optimize strided access patterns by hoisting invariant address calculations
-    fn optimize_strided_access(&self, func: &mut MirFunction) {
+    fn optimize_strided_access(&self, _func: &mut MirFunction) {
         // Group accesses by local to find strided patterns
         let mut local_accesses: HashMap<usize, Vec<&MemoryAccess>> = HashMap::new();
         for access in &self.accesses {
@@ -2775,7 +2775,7 @@ impl ScalarReplacement {
                 match inst {
                     MirInstruction::Assign { dest, value } => {
                         // Check if creating an aggregate
-                        if let MirRvalue::Aggregate { operands, kind } = value {
+                        if let MirRvalue::Aggregate { operands, kind: _kind } = value {
                             let field_count = operands.len();
                             self.aggregates.entry(dest.local).or_insert(AggregateInfo {
                                 local: dest.local,
@@ -2858,7 +2858,7 @@ impl ScalarReplacement {
     }
 
     /// Check if an operand causes escaping
-    fn check_operand_escaping(&mut self, op: &MirOperand) {
+    fn check_operand_escaping(&mut self, _op: &MirOperand) {
         // Pass by reference or pointer - fields might escape
         // This is a conservative approximation
     }

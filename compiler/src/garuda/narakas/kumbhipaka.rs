@@ -5,7 +5,7 @@
 
 use super::super::yama::{Violation, ViolationKind};
 use crate::errors::Span;
-use crate::parser::ast::{Ast, Block, Expr, Item, Literal, LoopKind, MatchArm, Stmt};
+use crate::parser::ast::{Ast, Block, Expr, Item, Literal, LoopKind, Stmt};
 use std::collections::{HashMap, HashSet};
 
 /// Checker for Kumbhipaka violations (resource exhaustion)

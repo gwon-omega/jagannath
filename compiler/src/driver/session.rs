@@ -5,10 +5,10 @@
 
 use super::{CompileError, CompileResult, CompileTiming, CompilerOptions};
 use crate::codegen::asm::AsmEmitter;
-use crate::codegen::linker::{BuildPipeline, LinkOutput};
+use crate::codegen::linker::BuildPipeline;
 use crate::philosophy::kala::Kala;
-use crate::philosophy::samkhya::{SamkhyaPipeline, Tattva};
-use std::path::{Path, PathBuf};
+use crate::philosophy::samkhya::SamkhyaPipeline;
+use std::path::PathBuf;
 use std::time::{Duration, Instant};
 
 /// Compiler session state
@@ -63,6 +63,15 @@ impl CompilerSession {
         let typeck_timer = self.kala.begin_phase("type_checking");
         self.type_check(&ast)?;
         self.kala.end_phase(typeck_timer);
+
+        // Stage 3.5: Security Analysis via Nava Durga (9 Goddess Layers)
+        // "Sarva Maṅgala Māṅgalye Śive Sarvārtha Sādhike"
+        // - May the auspicious one protect all our code
+        if self.options.security_check {
+            let security_timer = self.kala.begin_phase("security");
+            self.security_check(source)?;
+            self.kala.end_phase(security_timer);
+        }
 
         // Stage 4: MIR Building
         let mir_timer = self.kala.begin_phase("mir_building");
@@ -136,14 +145,115 @@ impl CompilerSession {
         Ok(ast)
     }
 
+    /// Type checking via Nyāya 4-pramāṇa inference (Prakāra Parīkṣā)
+    ///
+    /// Like Yama examining the soul's karma before judgment,
+    /// this phase examines each expression's type before compilation proceeds.
+    /// Uses the 4 pramāṇas (valid means of knowledge) for type inference:
+    /// - Pratyakṣa (100%): Explicit type annotation
+    /// - Anumāna (95%): Logical deduction
+    /// - Śabda (90%): Testimony from function signatures
+    /// - Upamāna (85%): Pattern matching by analogy
     fn type_check(&mut self, ast: &crate::parser::ast::Ast) -> Result<(), CompileError> {
         let start = Instant::now();
 
         let mut typeck = crate::semantics::TypeChecker::new();
-        // TODO: Implement type checking
+
+        // Perform Nyāya-based type checking
+        typeck.check(ast).map_err(|errors| {
+            let mut msg = String::from("Type errors (Prakāra Doṣa):");
+            for error in &errors {
+                msg.push_str(&format!("\n  ॥ {} ॥", error));
+            }
+            if errors.len() > 1 {
+                msg.push_str(&format!(
+                    "\n\n  Total: {} errors detected by Yama's judgment",
+                    errors.len()
+                ));
+            }
+            CompileError {
+                message: msg,
+                location: errors.first().and_then(|e| e.span()).map(|span| {
+                    crate::driver::SourceLocation {
+                        file: String::new(),
+                        line: span.start,
+                        column: 0,
+                    }
+                }),
+                notes: vec![
+                    "Type inference follows Nyāya epistemology".to_string(),
+                    "Add explicit type annotations for Pratyakṣa (100% certainty)".to_string(),
+                ],
+            }
+        })?;
 
         self.timing.type_checking_us = start.elapsed().as_micros() as u64;
         Ok(())
+    }
+
+    /// Security analysis via Nava Durga (9 Goddess Protection Layers)
+    ///
+    /// "सर्वमङ्गलमाङ्गल्ये शिवे सर्वार्थसाधिके ।
+    ///  शरण्ये त्र्यम्बके गौरि नारायणि नमोऽस्तु ते ॥"
+    /// - May the auspicious Goddess protect this code
+    ///
+    /// The 9 Durgas progressively harden the code:
+    /// 1. Śailaputrī - Hardware security foundation
+    /// 2. Brahmacāriṇī - Authentication checks
+    /// 3. Candraghaṇṭā - Encryption verification
+    /// 4. Kūṣmāṇḍā - Access control analysis
+    /// 5. Skandamātā - Process isolation checks
+    /// 6. Kātyāyanī - Input validation
+    /// 7. Kālarātrī - Intrusion detection
+    /// 8. Mahāgaurī - Audit logging
+    /// 9. Siddhidātrī - Formal verification (perfection)
+    fn security_check(&mut self, source: &str) -> Result<(), CompileError> {
+        use crate::nava_durga::{NavaDurgaDefense, SecurityContext, SecurityResult};
+
+        // Create security context with source
+        let mut context = SecurityContext::new(source);
+
+        // Trust level based on deterministic build flag
+        // Deterministic builds are more trusted as they're reproducible
+        let trust_level = if self.options.deterministic { 0.7 } else { 0.3 };
+        context = context.with_trust(trust_level);
+
+        // Deploy the 9 Durga defense layers
+        let defense = NavaDurgaDefense::new();
+        let result = defense.protect(&mut context);
+
+        match result {
+            SecurityResult::Perfect {
+                layers_passed,
+                trust_level,
+            } => {
+                if self.options.verbose {
+                    eprintln!(
+                        "🛡️  Nava Durga Protection Complete: {} layers passed (trust: {:.0}%)",
+                        layers_passed,
+                        trust_level * 100.0
+                    );
+                    eprintln!("   ॐ सिद्धिदात्र्यै नमः - Siddhidatri grants perfection");
+                }
+                Ok(())
+            }
+            SecurityResult::Blocked {
+                layer,
+                goddess,
+                reason,
+            } => Err(CompileError {
+                message: format!(
+                    "Security blocked at layer {} ({}):\n  {}",
+                    layer, goddess, reason
+                ),
+                location: None,
+                notes: vec![
+                    format!("Goddess {} protects against this vulnerability", goddess),
+                    "Review security annotations and trust boundaries".to_string(),
+                    "Use --no-security to bypass (not recommended)".to_string(),
+                ],
+            }),
+        }
     }
 
     fn build_mir(
@@ -159,6 +269,17 @@ impl CompilerSession {
         Ok(mir)
     }
 
+    /// Optimization via Divine Astras (Divya Astra Anukūlana)
+    ///
+    /// Like Arjuna deploying divine weapons on the battlefield of Kurukshetra,
+    /// this phase deploys optimization astras against inefficient code.
+    ///
+    /// Weapon deployment order follows the Mahābhārata hierarchy:
+    /// 1. Analysis weapons (Nāgāstra, Varuṇāstra, Vāyavāstra)
+    /// 2. Transformation weapons (Agneyāstra, Garuḍāstra)
+    /// 3. Iterative refinement (Sudarśana Cakra)
+    /// 4. Final cleanup (Brahmāstra)
+    /// 5. Preservation (Nārāyaṇāstra)
     fn optimize(
         &mut self,
         mut mir: crate::mir::types::MirModule,
@@ -178,8 +299,44 @@ impl CompilerSession {
             crate::philosophy::guna::Guna::Tamas => crate::mir::optimizer::GunaMode::Tamas,
         };
 
+        // Standard MIR optimization
         let mut optimizer = crate::mir::MirOptimizer::new(opt_level, guna_mode);
         optimizer.optimize(&mut mir);
+
+        // Deploy Divine Astras for aggressive optimization (level 3+)
+        // "Om Brahmāstrāya Phaṭ" - May the divine weapons destroy inefficiency
+        if self.options.opt_level >= 3 {
+            use crate::astras::{AstraArsenal, AstraResult};
+
+            let arsenal = AstraArsenal::new();
+            let results = arsenal.deploy_all(&mut mir);
+
+            if self.options.verbose {
+                eprintln!("⚔️  Divine Astra deployment results:");
+                for (i, result) in results.iter().enumerate() {
+                    match result {
+                        AstraResult::Deployed {
+                            power_level,
+                            transformations,
+                            mantra: _mantra,
+                        } => {
+                            eprintln!(
+                                "    {}. 🏹 {} transformations (power {})",
+                                i + 1,
+                                transformations,
+                                power_level
+                            );
+                        }
+                        AstraResult::NoTargets => {
+                            eprintln!("    {}. ○ No targets found", i + 1);
+                        }
+                        AstraResult::Failed { reason } => {
+                            eprintln!("    {}. ✗ Failed: {}", i + 1, reason);
+                        }
+                    }
+                }
+            }
+        }
 
         self.timing.optimization_us = start.elapsed().as_micros() as u64;
         Ok(mir)
@@ -191,17 +348,37 @@ impl CompilerSession {
     ) -> Result<Vec<u8>, CompileError> {
         let start = Instant::now();
 
-        // Use x86-64 emitter to generate assembly
-        let mut emitter = crate::codegen::asm::x86_64::X86_64Emitter::new();
+        // Select emitter based on target architecture
+        let asm = match self.options.target {
+            crate::codegen::asm::Target::X86_64 => {
+                let mut emitter = crate::codegen::asm::x86_64::X86_64Emitter::new();
+                for func in &mir.functions {
+                    emitter.emit_prologue(func);
+                    emitter.emit_body(func);
+                    emitter.emit_epilogue(func);
+                }
+                emitter.get_asm()
+            }
+            crate::codegen::asm::Target::AArch64 => {
+                let mut emitter = crate::codegen::asm::aarch64::AArch64Emitter::new();
+                for func in &mir.functions {
+                    emitter.emit_prologue(func);
+                    emitter.emit_body(func);
+                    emitter.emit_epilogue(func);
+                }
+                emitter.get_asm()
+            }
+            crate::codegen::asm::Target::RiscV64 => {
+                let mut emitter = crate::codegen::asm::riscv64::RiscV64Emitter::new();
+                for func in &mir.functions {
+                    emitter.emit_prologue(func);
+                    emitter.emit_body(func);
+                    emitter.emit_epilogue(func);
+                }
+                emitter.get_asm()
+            }
+        };
 
-        for func in &mir.functions {
-            emitter.emit_prologue(func);
-            emitter.emit_body(func);
-            emitter.emit_epilogue(func);
-        }
-
-        // Get the generated assembly
-        let asm = emitter.get_asm();
         let output = asm.into_bytes();
 
         self.timing.codegen_us = start.elapsed().as_micros() as u64;
@@ -213,7 +390,7 @@ impl CompilerSession {
     /// Kriyā (Action) - The final manifestation stage where assembly
     /// becomes executable through the BuildPipeline.
     fn assemble_and_link(&mut self, asm_output: &[u8]) -> Result<Vec<u8>, CompileError> {
-        let start = Instant::now();
+        let _start = Instant::now();
 
         // Create build directory
         let build_dir = std::env::temp_dir().join("jagannath_build");

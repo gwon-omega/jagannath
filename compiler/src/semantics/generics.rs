@@ -26,12 +26,12 @@
 //! - Odersky et al. (2004): "A Type-Safe Embedding of Polymorphic Variants"
 //! - Rust RFC 2000: "Const generics"
 
-use std::collections::{HashMap, HashSet};
+use std::collections::HashMap;
 use std::fmt;
 
 use crate::lexer::Span;
-use crate::parser::ast::{Block, FunctionDef, GenericParam, Identifier, Type, TypeDef};
-use crate::semantics::traits::{TraitBound, TraitId, TraitRef};
+use crate::parser::ast::{Block, Type};
+use crate::semantics::traits::{TraitBound, TraitId};
 
 // ============================================================================
 // PART 1: TYPE PARAMETERS (Prakāra-Cala - Moving Types)
@@ -802,7 +802,11 @@ impl ConstraintSolver {
                 TypeConstraint::Equal { t1, t2, span } => {
                     self.unify(&t1, &t2, span)?;
                 }
-                TypeConstraint::Implements { ty, trait_id, span } => {
+                TypeConstraint::Implements {
+                    ty: _ty,
+                    trait_id: _trait_id,
+                    span: _span,
+                } => {
                     // Would need TraitSolver integration
                     // For now, just record the constraint
                 }
@@ -810,9 +814,13 @@ impl ConstraintSolver {
                     // Simplified: treat as equality for now
                     self.unify(&sub, &sup, span)?;
                 }
-                TypeConstraint::Bounded { var, bounds, span } => {
+                TypeConstraint::Bounded {
+                    var,
+                    bounds: _bounds,
+                    span: _span,
+                } => {
                     // Record bounds on the variable
-                    if let Some(type_var) = self.context.get_by_id(var) {
+                    if let Some(_type_var) = self.context.get_by_id(var) {
                         // Would merge bounds
                     }
                 }
@@ -1129,6 +1137,7 @@ impl std::error::Error for MonoError {}
 mod tests {
     use super::*;
     use crate::lexer::AffixSequence;
+    use crate::parser::ast::Identifier;
 
     fn make_type(name: &str) -> Type {
         Type::Named {

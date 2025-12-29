@@ -29,6 +29,10 @@ pub mod tantu;     // Threads (तन्तु)
 #[cfg(feature = "std")]
 pub mod tala;      // Synchronization (ताल)
 
+// Time
+#[cfg(feature = "std")]
+pub mod kala;      // Time/Duration (काल)
+
 // Memory
 pub mod smriti;    // Memory allocation (स्मृति)
 

@@ -32,6 +32,8 @@ pub struct CompilerOptions {
     pub deterministic: bool,
     /// Emit assembly only (no linking)
     pub emit_asm: bool,
+    /// Enable Nava Durga security analysis (9 goddess protection layers)
+    pub security_check: bool,
 }
 
 impl CompilerOptions {
@@ -50,6 +52,7 @@ impl CompilerOptions {
             verbose: false,
             deterministic: true,
             emit_asm: false,
+            security_check: true, // Enabled by default - Nava Durga always protects
         }
     }
 
@@ -100,6 +103,8 @@ impl CompilerOptions {
                 "-v" | "--verbose" => options.verbose = true,
                 "--deterministic" => options.deterministic = true,
                 "--emit-asm" | "-S" => options.emit_asm = true,
+                "--security" | "--durga" => options.security_check = true,
+                "--no-security" => options.security_check = false,
                 "--sattva" => options.guna = Guna::Sattva,
                 "--rajas" => options.guna = Guna::Rajas,
                 "--tamas" => options.guna = Guna::Tamas,

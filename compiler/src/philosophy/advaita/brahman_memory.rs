@@ -7,7 +7,7 @@
 //! - Allocation decisions are made holistically
 //! - Memory layout is optimized across all "apparent" distinctions
 
-use super::{AllocationHandle, RegionKind};
+use super::RegionKind;
 use std::collections::HashMap;
 
 /// Brahman - The unified memory allocator

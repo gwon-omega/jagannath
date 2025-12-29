@@ -123,7 +123,7 @@ impl MimamsaInference {
 
     /// Try anupalabdhi (non-apprehension)
     /// Example: "No error type is declared" → "Function cannot fail"
-    pub fn anupalabdhi(&self, expression: &str, available_info: &[&str]) -> Option<TypeEvidence> {
+    pub fn anupalabdhi(&self, _expression: &str, available_info: &[&str]) -> Option<TypeEvidence> {
         for rule in &self.absence_rules {
             let sought_present = available_info
                 .iter()

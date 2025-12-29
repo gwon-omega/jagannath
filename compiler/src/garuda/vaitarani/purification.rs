@@ -2,8 +2,6 @@
 //!
 //! Sanitizers that cleanse tainted data for Vaitarani crossing.
 
-use super::TaintLevel;
-
 /// A purifier function
 pub trait Purifier {
     /// Name of this purifier

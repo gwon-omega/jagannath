@@ -4,7 +4,6 @@
 //! Code: SQL/LDAP/XPath/Command injection
 
 use super::super::yama::{Violation, ViolationKind};
-use crate::errors::Span;
 use crate::parser::ast::{Ast, BinaryOp, Block, Expr, Item, LoopKind, Stmt};
 use std::collections::HashSet;
 
@@ -157,7 +156,7 @@ impl SulaprotaChecker {
                 left,
                 right,
                 op,
-                span,
+                span: _span,
             } => {
                 // String concatenation with taint is suspicious
                 if *op == BinaryOp::Add {

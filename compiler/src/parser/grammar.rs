@@ -973,4 +973,392 @@ impl Parser {
             span: self.peek().map(|t| t.span).unwrap_or(Span::dummy()),
         }
     }
+
+    // ========================================================================
+    // Pattern Matching (Pratyabhijñā - Recognition)
+    // ========================================================================
+
+    /// Parse a pattern (pratyabhijñā)
+    /// Grammar: pattern := or_pattern
+    pub fn parse_pattern(&mut self) -> Result<Pattern, ParseError> {
+        self.parse_or_pattern()
+    }
+
+    /// Parse or-pattern: pattern | pattern | ...
+    fn parse_or_pattern(&mut self) -> Result<Pattern, ParseError> {
+        let mut patterns = vec![self.parse_guard_pattern()?];
+
+        while self.match_token(&TokenKind::Pipe) {
+            patterns.push(self.parse_guard_pattern()?);
+        }
+
+        if patterns.len() == 1 {
+            Ok(patterns.remove(0))
+        } else {
+            Ok(Pattern::Or(patterns))
+        }
+    }
+
+    /// Parse guard pattern: pattern if condition
+    fn parse_guard_pattern(&mut self) -> Result<Pattern, ParseError> {
+        let pattern = self.parse_binding_pattern()?;
+
+        // Check for guard: 'if' or 'yadi' or 'yad'
+        if self.match_token(&TokenKind::Yad) || self.check_identifier("if") {
+            if self.check_identifier("if") {
+                self.advance();
+            }
+            let condition = self.parse_expr()?;
+            Ok(Pattern::Guard {
+                pattern: Box::new(pattern),
+                condition: Box::new(condition),
+            })
+        } else {
+            Ok(pattern)
+        }
+    }
+
+    /// Parse binding pattern: name @ pattern or just primary_pattern
+    fn parse_binding_pattern(&mut self) -> Result<Pattern, ParseError> {
+        // Check for mutable binding: mut name
+        let mutable = self.match_token(&TokenKind::Let);
+
+        // Try to parse as identifier with possible @ subpattern
+        if let Some(Token {
+            kind: TokenKind::Identifier(_),
+            ..
+        }) = self.peek()
+        {
+            let name = self.expect_identifier()?;
+
+            // Check for @ subpattern
+            if self.match_token(&TokenKind::At) {
+                let subpattern = self.parse_primary_pattern()?;
+                return Ok(Pattern::Binding {
+                    name,
+                    mutable,
+                    subpattern: Some(Box::new(subpattern)),
+                });
+            }
+
+            // Check if this is a constructor pattern
+            if self.check(&TokenKind::LeftParen) || self.check(&TokenKind::LeftBrace) {
+                return self.parse_constructor_pattern_rest(name);
+            }
+
+            // Simple binding or identifier
+            return Ok(Pattern::Binding {
+                name,
+                mutable,
+                subpattern: None,
+            });
+        }
+
+        self.parse_primary_pattern()
+    }
+
+    /// Parse primary pattern
+    fn parse_primary_pattern(&mut self) -> Result<Pattern, ParseError> {
+        match self.peek().map(|t| &t.kind) {
+            // Wildcard: _
+            Some(TokenKind::Underscore) => {
+                self.advance();
+                Ok(Pattern::Wildcard)
+            }
+
+            // Rest pattern: ..
+            Some(TokenKind::DotDot) => {
+                self.advance();
+                // Check for binding after ..
+                if let Some(Token {
+                    kind: TokenKind::Identifier(_),
+                    ..
+                }) = self.peek()
+                {
+                    let name = self.expect_identifier()?;
+                    Ok(Pattern::Binding {
+                        name,
+                        mutable: false,
+                        subpattern: Some(Box::new(Pattern::Rest)),
+                    })
+                } else {
+                    Ok(Pattern::Rest)
+                }
+            }
+
+            // Literal patterns
+            Some(TokenKind::IntLiteral(n)) => {
+                let n = *n;
+                self.advance();
+                // Check for range pattern
+                if self.check(&TokenKind::DotDot) || self.check(&TokenKind::DotDotEquals) {
+                    return self.parse_range_pattern_rest(Some(Pattern::Literal(Literal::Int(n))));
+                }
+                Ok(Pattern::Literal(Literal::Int(n)))
+            }
+            Some(TokenKind::FloatLiteral(f)) => {
+                let f = *f;
+                self.advance();
+                Ok(Pattern::Literal(Literal::Float(f)))
+            }
+            Some(TokenKind::StringLiteral(s)) => {
+                let s = s.clone();
+                self.advance();
+                Ok(Pattern::Literal(Literal::String(s)))
+            }
+            Some(TokenKind::BoolLiteral(b)) => {
+                let b = *b;
+                self.advance();
+                Ok(Pattern::Literal(Literal::Bool(b)))
+            }
+
+            // Tuple pattern: (a, b, c) or grouping
+            Some(TokenKind::LeftParen) => {
+                self.advance();
+                if self.check(&TokenKind::RightParen) {
+                    // Unit pattern ()
+                    self.advance();
+                    return Ok(Pattern::Tuple(vec![]));
+                }
+
+                let first = self.parse_pattern()?;
+
+                if self.match_token(&TokenKind::Comma) {
+                    // Tuple pattern
+                    let mut patterns = vec![first];
+                    while !self.check(&TokenKind::RightParen) && !self.is_eof() {
+                        patterns.push(self.parse_pattern()?);
+                        if !self.match_token(&TokenKind::Comma) {
+                            break;
+                        }
+                    }
+                    self.expect(&TokenKind::RightParen)?;
+                    Ok(Pattern::Tuple(patterns))
+                } else {
+                    // Grouping
+                    self.expect(&TokenKind::RightParen)?;
+                    Ok(first)
+                }
+            }
+
+            // Array/slice pattern: [a, b, c] or [head, ..tail]
+            Some(TokenKind::LeftBracket) => {
+                self.advance();
+                let mut before = Vec::new();
+                let mut middle = None;
+                let mut after = Vec::new();
+                let mut seen_rest = false;
+
+                while !self.check(&TokenKind::RightBracket) && !self.is_eof() {
+                    if self.check(&TokenKind::DotDot) {
+                        self.advance();
+                        seen_rest = true;
+                        // Check for binding after ..
+                        if let Some(Token {
+                            kind: TokenKind::Identifier(_),
+                            ..
+                        }) = self.peek()
+                        {
+                            let name = self.expect_identifier()?;
+                            middle = Some(Box::new(Pattern::Binding {
+                                name,
+                                mutable: false,
+                                subpattern: None,
+                            }));
+                        }
+                    } else {
+                        let pat = self.parse_pattern()?;
+                        if seen_rest {
+                            after.push(pat);
+                        } else {
+                            before.push(pat);
+                        }
+                    }
+
+                    if !self.match_token(&TokenKind::Comma) {
+                        break;
+                    }
+                }
+                self.expect(&TokenKind::RightBracket)?;
+
+                if seen_rest {
+                    Ok(Pattern::Slice {
+                        before,
+                        middle,
+                        after,
+                    })
+                } else {
+                    Ok(Pattern::Array(before))
+                }
+            }
+
+            // Reference pattern: &x or &mut x
+            Some(TokenKind::Ampersand) => {
+                self.advance();
+                let mutable = self.match_token(&TokenKind::Let);
+                let pattern = self.parse_primary_pattern()?;
+                Ok(Pattern::Ref {
+                    mutable,
+                    pattern: Box::new(pattern),
+                })
+            }
+
+            // Identifier or constructor pattern
+            Some(TokenKind::Identifier(_)) => {
+                let name = self.expect_identifier()?;
+
+                // Check for constructor pattern
+                if self.check(&TokenKind::LeftParen) || self.check(&TokenKind::LeftBrace) {
+                    self.parse_constructor_pattern_rest(name)
+                } else if self.check(&TokenKind::DotDot) || self.check(&TokenKind::DotDotEquals) {
+                    // Range pattern starting with identifier
+                    self.parse_range_pattern_rest(Some(Pattern::Identifier(name)))
+                } else {
+                    Ok(Pattern::Identifier(name))
+                }
+            }
+
+            Some(kind) => Err(self.make_error(format!("Unexpected token in pattern: {:?}", kind))),
+            None => Err(self.make_error("Unexpected end of file in pattern".to_string())),
+        }
+    }
+
+    /// Parse constructor pattern after name: Name(...) or Name { ... }
+    fn parse_constructor_pattern_rest(&mut self, name: Identifier) -> Result<Pattern, ParseError> {
+        if self.match_token(&TokenKind::LeftParen) {
+            // Tuple-like variant: Some(x) or Point(x, y)
+            let mut fields = Vec::new();
+            while !self.check(&TokenKind::RightParen) && !self.is_eof() {
+                fields.push(self.parse_pattern()?);
+                if !self.match_token(&TokenKind::Comma) {
+                    break;
+                }
+            }
+            self.expect(&TokenKind::RightParen)?;
+
+            Ok(Pattern::Variant {
+                enum_name: None,
+                variant: name,
+                fields: VariantFields::Tuple(fields),
+            })
+        } else if self.match_token(&TokenKind::LeftBrace) {
+            // Struct-like pattern: Point { x, y } or Point { x: 0, y: _ }
+            let mut fields = Vec::new();
+            let mut rest = false;
+
+            while !self.check(&TokenKind::RightBrace) && !self.is_eof() {
+                if self.match_token(&TokenKind::DotDot) {
+                    rest = true;
+                    break;
+                }
+
+                let field_name = self.expect_identifier()?;
+
+                let pattern = if self.match_token(&TokenKind::Colon) {
+                    self.parse_pattern()?
+                } else {
+                    // Shorthand: { x } means { x: x }
+                    Pattern::Binding {
+                        name: field_name.clone(),
+                        mutable: false,
+                        subpattern: None,
+                    }
+                };
+
+                fields.push((field_name, pattern));
+
+                if !self.match_token(&TokenKind::Comma) {
+                    break;
+                }
+            }
+            self.expect(&TokenKind::RightBrace)?;
+
+            Ok(Pattern::Struct { name, fields, rest })
+        } else {
+            // Just an identifier
+            Ok(Pattern::Identifier(name))
+        }
+    }
+
+    /// Parse range pattern after start: start..end or start..=end
+    fn parse_range_pattern_rest(&mut self, start: Option<Pattern>) -> Result<Pattern, ParseError> {
+        let inclusive = if self.match_token(&TokenKind::DotDotEquals) {
+            true
+        } else if self.match_token(&TokenKind::DotDot) {
+            false
+        } else {
+            return Ok(start.unwrap_or(Pattern::Wildcard));
+        };
+
+        // Parse end if present
+        let end = if self.check_int_literal() || self.check_identifier_any() {
+            Some(Box::new(self.parse_primary_pattern()?))
+        } else {
+            None
+        };
+
+        Ok(Pattern::Range {
+            start: start.map(Box::new),
+            end,
+            inclusive,
+        })
+    }
+
+    /// Check if current token is an integer literal
+    fn check_int_literal(&self) -> bool {
+        self.peek()
+            .map(|t| matches!(t.kind, TokenKind::IntLiteral(_)))
+            .unwrap_or(false)
+    }
+
+    /// Check if current token is any identifier
+    fn check_identifier_any(&self) -> bool {
+        self.peek()
+            .map(|t| matches!(t.kind, TokenKind::Identifier(_)))
+            .unwrap_or(false)
+    }
+
+    /// Parse match expression (pratyabhijñā)
+    pub fn parse_match_expr(&mut self) -> Result<Expr, ParseError> {
+        let start_span = self.peek().map(|t| t.span).unwrap_or(Span::dummy());
+
+        // Expect 'pratyabhijñā' or 'match'
+        if !self.check_identifier("pratyabhijñā") && !self.check_identifier("match") {
+            return Err(self.make_error("Expected 'pratyabhijñā' or 'match'".to_string()));
+        }
+        self.advance();
+
+        // Parse scrutinee
+        let scrutinee = self.parse_expr()?;
+
+        self.expect(&TokenKind::LeftBrace)?;
+
+        let mut arms = Vec::new();
+        while !self.check(&TokenKind::RightBrace) && !self.is_eof() {
+            let pattern = self.parse_pattern()?;
+            self.expect(&TokenKind::FatArrow)?;
+            let body = self.parse_expr()?;
+
+            arms.push(MatchArm {
+                pattern,
+                guard: None, // Guard is embedded in pattern via Pattern::Guard
+                body,
+                span: start_span,
+            });
+
+            // Allow trailing comma
+            self.match_token(&TokenKind::Comma);
+        }
+
+        self.expect(&TokenKind::RightBrace)?;
+
+        Ok(Expr::Block(Block {
+            stmts: vec![Stmt::Match {
+                scrutinee,
+                arms,
+                span: start_span,
+            }],
+            span: start_span,
+        }))
+    }
 }

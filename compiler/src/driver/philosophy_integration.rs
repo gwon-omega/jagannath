@@ -10,17 +10,14 @@
 //! - Tantra: SIMD optimization
 //! - Āyurveda: System health monitoring
 
-use std::time::Instant;
-
 // Import philosophy modules
 use crate::ayurveda::AyurvedaMonitor;
 use crate::mimamsa::{AnupalabdhiEngine, ArthapattEngine, MimamsaInference};
 use crate::philosophy::advaita::{AtmanOptimizer, BrahmanMemory, MayaOverlay};
 use crate::philosophy::nyaya::{NyayaInference, Pramana, TypeEvidence};
-use crate::philosophy::samkhya::SamkhyaPipeline;
 use crate::tantra::{KundaliniFlow, MandalaScheduler, ShriYantra};
 use crate::vedic_math::VedicConstantFolder;
-use crate::yoga::ashtanga::{Anga, AshtangaLifecycle};
+use crate::yoga::ashtanga::AshtangaLifecycle;
 use crate::yoga::chakra::{Chakra, ChakraArchitecture, ChakraOptimizer};
 
 /// Integrated philosophy engine

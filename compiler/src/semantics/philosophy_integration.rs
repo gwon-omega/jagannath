@@ -2,8 +2,6 @@
 //!
 //! Bridges the v1.0 semantics with v3.0 philosophy systems.
 
-use super::{TypeChecker, KarakaAnalyzer};
-
 /// Integration point for philosophy-based optimizations
 pub struct PhilosophyIntegration {
     /// Enable Nyāya type inference
@@ -30,7 +28,7 @@ impl PhilosophyIntegration {
     }
 
     /// Configure from compilation options
-    pub fn from_options(options: &crate::driver::options::CompilerOptions) -> Self {
+    pub fn from_options(_options: &crate::driver::options::CompilerOptions) -> Self {
         // TODO: Read philosophy settings from options
         Self::new()
     }

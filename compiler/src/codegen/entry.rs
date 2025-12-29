@@ -97,8 +97,7 @@ impl RuntimeEntry {
     /// Linux x86-64 bare entry (no libc)
     fn linux_x86_64_bare(&self) -> String {
         format!(
-            r#"; Jagannath Runtime Entry Point (Linux x86-64 bare)
-; जगन्नाथ रनटाइम प्रवेश बिंदु
+            r#"# Jagannath Runtime Entry Point (Linux x86-64 bare)
 .intel_syntax noprefix
 
 .section .text
@@ -106,16 +105,16 @@ impl RuntimeEntry {
 .type _start, @function
 
 _start:
-    ; Clear frame pointer for debugger
+    # Clear frame pointer for debugger
     xor rbp, rbp
 
-    ; Call user's main function (mukhya)
+    # Call user's main function (mukhya)
     call {main_fn}
 
-    ; Exit with return value from mukhya
-    ; rax contains return code
-    mov rdi, rax        ; exit code
-    mov rax, 60         ; sys_exit
+    # Exit with return value from mukhya
+    # rax contains return code
+    mov rdi, rax        # exit code
+    mov rax, 60         # sys_exit
     syscall
 
 .size _start, .-_start
@@ -127,8 +126,7 @@ _start:
     /// Linux x86-64 with C runtime
     fn linux_x86_64_crt(&self) -> String {
         format!(
-            r#"; Jagannath Runtime Entry Point (Linux x86-64 with CRT)
-; जगन्नाथ रनटाइम प्रवेश बिंदु
+            r#"# Jagannath Runtime Entry Point (Linux x86-64 with CRT)
 .intel_syntax noprefix
 
 .section .text
@@ -139,10 +137,10 @@ main:
     push rbp
     mov rbp, rsp
 
-    ; Call user's main function (mukhya)
+    # Call user's main function (mukhya)
     call {main_fn}
 
-    ; Return value already in rax
+    # Return value already in rax
     pop rbp
     ret
 
@@ -156,7 +154,6 @@ main:
     fn windows_x86_64_bare(&self) -> String {
         format!(
             r#"; Jagannath Runtime Entry Point (Windows x86-64 bare)
-; जगन्नाथ रनटाइम प्रवेश बिंदु
 
 .code
 
@@ -184,8 +181,7 @@ END
     /// Windows x86-64 with C runtime
     fn windows_x86_64_crt(&self) -> String {
         format!(
-            r#"; Jagannath Runtime Entry Point (Windows x86-64 with CRT)
-; जगन्नाथ रनटाइम प्रवेश बिंदु
+            r#"# Jagannath Runtime Entry Point (Windows x86-64 with CRT)
 .intel_syntax noprefix
 
 .section .text
@@ -194,12 +190,12 @@ END
 main:
     push rbp
     mov rbp, rsp
-    sub rsp, 32         ; Shadow space
+    sub rsp, 32         # Shadow space
 
-    ; Call user's main function (mukhya)
+    # Call user's main function (mukhya)
     call {main_fn}
 
-    ; Return value already in eax
+    # Return value already in eax
     add rsp, 32
     pop rbp
     ret
@@ -213,7 +209,6 @@ main:
     fn macos_x86_64(&self) -> String {
         format!(
             r#"; Jagannath Runtime Entry Point (macOS x86-64)
-; जगन्नाथ रनटाइम प्रवेश बिंदु
 .intel_syntax noprefix
 
 .section __TEXT,__text
@@ -239,7 +234,6 @@ _main:
     fn linux_aarch64(&self) -> String {
         format!(
             r#"; Jagannath Runtime Entry Point (Linux AArch64)
-; जगन्नाथ रनटाइम प्रवेश बिंदु
 
 .section .text
 .global main
@@ -266,7 +260,6 @@ main:
     fn macos_aarch64(&self) -> String {
         format!(
             r#"; Jagannath Runtime Entry Point (macOS AArch64)
-; जगन्नाथ रनटाइम प्रवेश बिंदु
 
 .section __TEXT,__text
 .global _main

@@ -20,7 +20,7 @@ pub struct Sentence {
 
 impl Sentence {
     /// Generate a sentence for a Naraka violation
-    pub fn generate(naraka: Naraka, location: &Span, details: &str) -> Self {
+    pub fn generate(naraka: Naraka, _location: &Span, details: &str) -> Self {
         let message = format!(
             "{}: {}",
             naraka.sin_description(),

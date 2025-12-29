@@ -3,9 +3,8 @@
 //! Sin: Deceiving women, false promises
 //! Code: Data corruption, malformed structures
 
-use crate::parser::ast::{Ast, Expr, Item, Stmt, Block, LoopKind, BinaryOp};
-use crate::errors::Span;
 use super::super::yama::{Violation, ViolationKind};
+use crate::parser::ast::{Ast, BinaryOp, Block, Expr, Item, LoopKind, Stmt};
 use std::collections::HashSet;
 
 /// Checker for Puyoda violations (data corruption)
@@ -19,8 +18,17 @@ pub struct PuyodaChecker {
 impl PuyodaChecker {
     pub fn new() -> Self {
         Self {
-            corrupt_ops: ["memset", "bzero", "clear", "overwrite", "truncate",
-                          "bit_flip", "corrupt", "mangle"].into(),
+            corrupt_ops: [
+                "memset",
+                "bzero",
+                "clear",
+                "overwrite",
+                "truncate",
+                "bit_flip",
+                "corrupt",
+                "mangle",
+            ]
+            .into(),
             type_manip: ["reinterpret", "union_access", "transmute", "bit_cast"].into(),
         }
     }
@@ -46,10 +54,17 @@ impl PuyodaChecker {
         match stmt {
             Stmt::Expr(e) => self.check_expr(e, violations),
             Stmt::Let { value: Some(v), .. } => self.check_expr(v, violations),
-            Stmt::If { condition, then_block, else_block, .. } => {
+            Stmt::If {
+                condition,
+                then_block,
+                else_block,
+                ..
+            } => {
                 self.check_expr(condition, violations);
                 self.check_block(then_block, violations);
-                if let Some(eb) = else_block { self.check_block(eb, violations); }
+                if let Some(eb) = else_block {
+                    self.check_block(eb, violations);
+                }
             }
             Stmt::Loop { body, kind, .. } => {
                 if let LoopKind::While { condition } = kind {
@@ -68,7 +83,8 @@ impl PuyodaChecker {
                     // Check for corruption operations
                     if self.corrupt_ops.contains(id.name.as_str()) {
                         violations.push(Violation::full(
-                            ViolationKind::DataCorruption, span.clone().into(),
+                            ViolationKind::DataCorruption,
+                            span.clone().into(),
                             format!("Potentially corrupting operation '{}'", id.name),
                             "Deception: Destroying data integrity",
                             "Entry to Puyoda (pus-filled hell)",
@@ -78,7 +94,8 @@ impl PuyodaChecker {
                     // Check for unsafe type manipulation
                     if self.type_manip.contains(id.name.as_str()) {
                         violations.push(Violation::full(
-                            ViolationKind::TypeConfusion, span.clone().into(),
+                            ViolationKind::TypeConfusion,
+                            span.clone().into(),
                             format!("Type manipulation via '{}' can corrupt structure", id.name),
                             "Deception: Breaking type safety",
                             "Entry to Puyoda",
@@ -86,19 +103,33 @@ impl PuyodaChecker {
                         ));
                     }
                 }
-                for a in args { self.check_expr(a, violations); }
+                for a in args {
+                    self.check_expr(a, violations);
+                }
             }
-            Expr::Index { object, index, span } => {
+            Expr::Index {
+                object,
+                index,
+                span: _span,
+            } => {
                 // Writing through unchecked index
                 self.check_expr(object, violations);
                 self.check_expr(index, violations);
             }
-            Expr::FieldAccess { object, field, span } => {
+            Expr::FieldAccess {
+                object,
+                field,
+                span,
+            } => {
                 // Check for union field access (type punning)
                 if self.is_union_access(object) {
                     violations.push(Violation::full(
-                        ViolationKind::DataCorruption, span.clone().into(),
-                        format!("Union field '{}' access - potential type punning", field.name),
+                        ViolationKind::DataCorruption,
+                        span.clone().into(),
+                        format!(
+                            "Union field '{}' access - potential type punning",
+                            field.name
+                        ),
                         "Deception: Viewing data as different type",
                         "Entry to Puyoda",
                         "Use explicit conversion functions".to_string(),
@@ -106,12 +137,27 @@ impl PuyodaChecker {
                 }
                 self.check_expr(object, violations);
             }
-            Expr::Binary { left, right, op, span } => {
+            Expr::Binary {
+                left,
+                right,
+                op,
+                span,
+            } => {
                 // Check for bitwise operations on non-integer types
-                if matches!(op, BinaryOp::BitOr | BinaryOp::BitAnd | BinaryOp::BitXor | BinaryOp::Shl | BinaryOp::Shr) {
-                    if self.is_potentially_non_numeric(left) || self.is_potentially_non_numeric(right) {
+                if matches!(
+                    op,
+                    BinaryOp::BitOr
+                        | BinaryOp::BitAnd
+                        | BinaryOp::BitXor
+                        | BinaryOp::Shl
+                        | BinaryOp::Shr
+                ) {
+                    if self.is_potentially_non_numeric(left)
+                        || self.is_potentially_non_numeric(right)
+                    {
                         violations.push(Violation::full(
-                            ViolationKind::DataCorruption, span.clone().into(),
+                            ViolationKind::DataCorruption,
+                            span.clone().into(),
                             "Bitwise operation on potentially non-numeric type".to_string(),
                             "Deception: Corrupting structured data",
                             "Entry to Puyoda",
@@ -135,13 +181,15 @@ impl PuyodaChecker {
 
     fn is_potentially_non_numeric(&self, expr: &Expr) -> bool {
         match expr {
-            Expr::FieldAccess { .. } => true,  // Struct fields might not be numeric
-            Expr::MethodCall { .. } => true,    // Method returns might not be numeric
+            Expr::FieldAccess { .. } => true, // Struct fields might not be numeric
+            Expr::MethodCall { .. } => true,  // Method returns might not be numeric
             _ => false,
         }
     }
 }
 
 impl Default for PuyodaChecker {
-    fn default() -> Self { Self::new() }
+    fn default() -> Self {
+        Self::new()
+    }
 }

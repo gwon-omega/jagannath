@@ -9,8 +9,6 @@
 //! 4. Svādhyāya (स्वाध्याय) - Self-study → Documentation
 //! 5. Īśvara Praṇidhāna (ईश्वर प्रणिधान) - Surrender → Follow standards
 
-use std::collections::HashMap;
-
 /// The five Niyamas (observances)
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum Niyama {

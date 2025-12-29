@@ -5,7 +5,6 @@
 use super::{Violation, ViolationKind, Yamaduta};
 use super::yamadutas::{MemoryYamaduta, SecurityYamaduta, ConcurrencyYamaduta};
 use crate::garuda::narakas::Naraka;
-use crate::garuda::chitragupta::ChitraguptaRecords;
 use crate::parser::ast::Ast;
 
 /// Yama Dharmaraja - Judge of the dead (code analyzer)

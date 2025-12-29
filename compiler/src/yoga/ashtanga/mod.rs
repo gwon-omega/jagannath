@@ -204,7 +204,7 @@ impl AshtangaLifecycle {
     }
 
     /// Check if code passes a specific check
-    fn passes_check(&self, check: &str, code: &str) -> bool {
+    fn passes_check(&self, _check: &str, _code: &str) -> bool {
         // TODO: Implement actual checks
         true
     }

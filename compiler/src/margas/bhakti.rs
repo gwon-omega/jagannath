@@ -11,8 +11,8 @@
 //! embedded systems, DSLs. The compiler becomes devoted to that domain's needs.
 
 use super::{Domain, Marga, MargaOptimizer, MargaResult};
-use crate::mir::types::{MirFunction, MirInstruction, MirTerminator, MirRvalue, MirOperand, MirType, PlaceProjection, SimdOp, SimdWidth, MirPlace, MirConstant};
-use std::collections::{HashMap, HashSet};
+use crate::mir::types::{MirFunction, MirInstruction, MirTerminator, MirRvalue, MirOperand, PlaceProjection, MirConstant};
+use std::collections::HashMap;
 
 /// Bhakti Marga optimizer for domain-specific devoted optimization
 pub struct BhaktiMarga {

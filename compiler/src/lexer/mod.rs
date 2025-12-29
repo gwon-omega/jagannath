@@ -570,6 +570,28 @@ impl<'src> Lexer<'src> {
 
     /// Scan an identifier or keyword
     fn scan_identifier(&mut self, first: char) -> Token {
+        // Handle underscore specially - if it's just `_`, return Underscore token
+        if first == '_' {
+            // Check if next char continues the identifier
+            if let Some(ch) = self.scanner.peek() {
+                if !Scanner::is_identifier_char(ch) {
+                    // Just a single underscore - wildcard pattern
+                    return Token {
+                        kind: TokenKind::Underscore,
+                        span: self.scanner.token_span(),
+                        lexeme: "_".to_string(),
+                    };
+                }
+            } else {
+                // End of file, single underscore
+                return Token {
+                    kind: TokenKind::Underscore,
+                    span: self.scanner.token_span(),
+                    lexeme: "_".to_string(),
+                };
+            }
+        }
+
         while let Some(ch) = self.scanner.peek() {
             if Scanner::is_identifier_char(ch) {
                 self.scanner.advance();

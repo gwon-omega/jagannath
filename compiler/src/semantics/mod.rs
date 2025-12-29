@@ -16,6 +16,12 @@ pub mod lifetime;
 pub mod philosophy_integration;
 pub mod security;
 pub mod traits;
+
+// Type checking - split into submodules for better organization
+// The main TypeChecker implementation is in typeck_impl.rs (legacy, to be migrated)
+// New modular components are in typeck/ directory
+#[path = "typeck_impl.rs"]
+mod typeck_impl;
 pub mod typeck;
 
 // Re-exports
@@ -28,4 +34,5 @@ pub use karaka::KarakaAnalyzer;
 pub use lifetime::LifetimeChecker;
 pub use security::SecurityAnalyzer;
 pub use traits::{ImplId, TraitDef, TraitError, TraitId, TraitImpl, TraitSolver};
-pub use typeck::TypeChecker;
+// Re-export TypeChecker from the impl module
+pub use typeck_impl::TypeChecker;

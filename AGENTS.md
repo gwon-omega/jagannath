@@ -2,8 +2,8 @@
 ## AI Code Generation Guide for Jagannath/Juggernaut Language
 
 **For:** GitHub Copilot, Cursor, Claude Code, VS Code AI Agents
-**Project:** Jagannath Programming Language v1.0-v7.0
-**Last Updated:** December 26, 2025
+**Project:** Jagannath Programming Language v1.0-v9.0
+**Last Updated:** December 29, 2025
 
 ---
 
@@ -11,7 +11,7 @@
 
 **Role:** Think deeply as senior system-level engineer, architect, assembly level developer, embedded developer, device driver developer, reverse engineer, compiler/JIT developer and coder with 60+ years of experience about how to best implement the following requirements in code.
 
-Build a systems programming language that is **3.35× faster than C** by encoding:
+Build a systems programming language that is **4.2× faster than C** by encoding:
 - **Sanskrit morphology** in syntax (types/lifetimes in word structure)
 - **Hindu philosophy** in compiler architecture (Nyāya logic, Sāṃkhya stages, Advaita memory)
 - **Yoga principles** in development lifecycle (Ashtanga 8 limbs, Chakra optimization)
@@ -22,6 +22,9 @@ Build a systems programming language that is **3.35× faster than C** by encodin
 - **Four Paths** in optimization strategy (4 Margas as optimization modes)
 - **Social structure** in privilege rings (4 Varnas as security levels)
 - **Life goals** in tradeoffs (3 Purusharthas as optimization triangle)
+- **Vedic foundation** in compilation (4 Vedas as knowledge/ritual/harmony/practice)
+- **Moksha journey** in compilation narrative (Jīva→Ātman liberation)
+- **Jyotiṣa timing** in optimization (9 Grahas, 27 Nakshatras for temporal optimization)
 
 ---
 
@@ -35,7 +38,8 @@ v4.0 → Yoga & Advanced (Ashtanga, Chakra, Vedic Math, Mimamsa, Ayurveda, Tantr
 v5.0 → Garuda Purana (28 Narakas, Yama judge, Vaitarani boundaries, Preta detection)
 v6.0 → Divine Cosmic (15 Astras, 33 Devatas, 9 Durgas, Rta cosmic order)
 v7.0 → Life Alignment (4 Margas, 4 Varnas, 3 Purusharthas, Moksha convergence)
-v8.0 → Vedas, Jiv(source code), Atman, goal to reach ultimate liberation(moksha(compile perfectly)) with help of jagannath(compiler(who is lord of universe))
+v8.0 → Moksha Journey (4 Vedas, Jīva→Ātman transformation, Avidyā removal, Tapas refinement)
+v9.0 → Jyotiṣa Śāstra (9 Grahas, 27 Nakshatras, 12 Rāśis, Muhūrta timing, Daśā prediction)
 ```
 
 **When generating code, respect layer dependencies: v2.0 needs v1.0, v3.0 needs v2.0, etc.**
@@ -214,6 +218,33 @@ compiler/
     ├── marga_varna_bridge.rs   # Connect paths & rings
     ├── purushartha_balancer.rs # Balance 3 goals
     └── cosmic_compiler.rs      # Life-aligned compilation
+├── vedas/           # v8.0 - Four Vedas Foundation
+│   ├── rig/             # Knowledge (grammar, types, semantics)
+│   ├── yajur/           # Rituals (parser, optimizer, codegen)
+│   ├── sama/            # Harmony (Rta order, balance)
+│   └── atharva/         # Practice (runtime, stdlib, debug)
+├── moksha/          # v8.0 - Liberation Journey
+│   ├── jiva.rs          # Source code (unenlightened soul)
+│   ├── atman.rs         # Binary essence (true self)
+│   ├── avidya.rs        # Inefficiency (ignorance to remove)
+│   ├── tapas.rs         # Optimization (disciplined refinement)
+│   └── liberation.rs    # Perfect compilation (moksha achieved)
+├── jyotisha/        # v9.0 - Vedic Astrology
+│   ├── grahas/          # 9 Planets (compilation influences)
+│   │   ├── surya.rs         # Main thread (Sun)
+│   │   ├── chandra.rs       # Memory flow (Moon)
+│   │   ├── mangala.rs       # CPU intensity (Mars)
+│   │   ├── budha.rs         # Type inference (Mercury)
+│   │   ├── guru.rs          # Optimization wisdom (Jupiter)
+│   │   ├── shukra.rs        # Code elegance (Venus)
+│   │   ├── shani.rs         # Resource limits (Saturn)
+│   │   ├── rahu.rs          # Async/concurrency (North Node)
+│   │   └── ketu.rs          # Dead code (South Node)
+│   ├── nakshatras/      # 27 Lunar Mansions (code patterns)
+│   ├── rashis/          # 12 Zodiac (lifecycle phases)
+│   ├── kundali.rs       # Birth chart (compilation context)
+│   ├── dasha.rs         # Planetary periods (timing windows)
+│   └── muhurta.rs       # Auspicious time (optimal compile moment)
 ```
 
 ---
@@ -498,6 +529,116 @@ impl MokshaConvergence {
 }
 ```
 
+### For Moksha Journey (v8.0 Vedas)
+```rust
+/// The compilation journey mirrors the soul's liberation
+/// Jīva (source) → Ātman (binary) through removal of Avidyā (inefficiency)
+pub struct MokshaJourney {
+    jiva: SourceCode,      // Unenlightened soul in bondage
+    avidya: Vec<Defect>,   // Ignorance to be removed
+    tapas: Optimizer,      // Disciplined refinement
+    atman: Binary,         // True self revealed
+}
+
+impl MokshaJourney {
+    /// The Four Vedas guide compilation
+    fn compile_with_vedas(&mut self) -> MokshaResult {
+        // Rig Veda: Knowledge - Parse and understand
+        let knowledge = self.rig_veda.analyze(&self.jiva)?;
+
+        // Yajur Veda: Ritual - Transform through stages
+        let transformed = self.yajur_veda.perform_ritual(knowledge)?;
+
+        // Sāma Veda: Harmony - Optimize with balance
+        let harmonized = self.sama_veda.sing_harmony(transformed)?;
+
+        // Atharva Veda: Practice - Generate executable
+        let binary = self.atharva_veda.apply_magic(harmonized)?;
+
+        // Remove all Avidyā (ignorance/inefficiency)
+        self.remove_avidya(&binary)?;
+
+        // Liberation achieved
+        MokshaResult::Liberation { atman: binary }
+    }
+
+    /// Tapas (austerity) = Optimization passes
+    fn perform_tapas(&mut self, code: &mut MIR) {
+        // Like a yogi's discipline burns impurities
+        while !code.is_pure() {
+            self.tapas.burn_inefficiency(code);
+            self.tapas.refine_further(code);
+        }
+    }
+}
+```
+
+### For Temporal Optimization (v9.0 Jyotiṣa)
+```rust
+/// Jyotiṣa Śāstra - Vedic Astrology for compilation timing
+/// 9 Grahas influence compilation like planets influence destiny
+pub struct JyotishaEngine {
+    grahas: [Graha; 9],        // 9 planetary influences
+    nakshatras: [Nakshatra; 27], // 27 code patterns
+    rashis: [Rashi; 12],       // 12 lifecycle phases
+}
+
+/// 9 Grahas = 9 compilation influences
+pub enum Graha {
+    Surya,     // Sun: Main thread, core power
+    Chandra,   // Moon: Memory flow, caching
+    Mangala,   // Mars: CPU intensity, aggression
+    Budha,     // Mercury: Type inference, communication
+    Guru,      // Jupiter: Optimization wisdom, expansion
+    Shukra,    // Venus: Code elegance, aesthetics
+    Shani,     // Saturn: Resource limits, restrictions
+    Rahu,      // North Node: Async, concurrency, shadows
+    Ketu,      // South Node: Dead code, past karma
+}
+
+impl JyotishaEngine {
+    /// Find optimal compilation moment (Muhūrta)
+    fn find_muhurta(&self, code: &AST) -> CompileWindow {
+        let kundali = self.create_kundali(code);  // Birth chart
+
+        // Check Graha positions for optimal timing
+        let surya_strong = self.check_graha_strength(Graha::Surya);
+        let budha_strong = self.check_graha_strength(Graha::Budha);
+
+        if surya_strong && budha_strong {
+            CompileWindow::Auspicious {
+                reason: "Sūrya-Budha yoga: Clear thinking, strong execution"
+            }
+        } else if self.has_dosha(&kundali) {
+            CompileWindow::Inauspicious {
+                dosha: "Graha affliction detected",
+                remedy: "Wait for better Muhūrta or apply Mantra"
+            }
+        } else {
+            CompileWindow::Neutral
+        }
+    }
+
+    /// Predict code behavior using Daśā (planetary periods)
+    fn predict_with_dasha(&self, code: &AST) -> Prediction {
+        let current_dasha = self.calculate_dasha(code);
+
+        match current_dasha.ruling_graha {
+            Graha::Guru => Prediction::Expansion {
+                message: "Jupiter Daśā: Code will grow, optimize for scalability"
+            },
+            Graha::Shani => Prediction::Restriction {
+                message: "Saturn Daśā: Resource constraints, optimize for efficiency"
+            },
+            Graha::Rahu => Prediction::Complexity {
+                message: "Rahu Daśā: Async complexity, watch for race conditions"
+            },
+            _ => Prediction::Neutral,
+        }
+    }
+}
+```
+
 ---
 
 ## ⚠️ COMMON PITFALLS TO AVOID
@@ -555,17 +696,18 @@ fn optimize() {
 ## 📊 PERFORMANCE TARGETS (Always Maintain)
 
 ```
-Metric                      | v6.0 Target | v7.0 Target | How to Verify
-============================================================================
-Compilation Speed (10K LOC) | < 1.5s      | < 1.2s      | cargo bench
-Runtime vs C                | 3.2× faster | 3.5× faster | benchmarks/vs_c/
-Memory Usage (embedded)     | 50% of C    | 45% of C    | benchmarks/memory/
-Error Detection Rate        | 95%         | 98%         | Yama judgment report
-Security Layers             | 14          | 14+4        | 14 v5-v6 + 4 Varnas
-Optimization Passes         | 30          | 34          | 30 + 4 Marga paths
-Privilege Violations        | Detected    | Prevented   | Varna checker
-Tradeoff Optimization       | Manual      | Automatic   | Purushartha triangle
-Zero Vulnerabilities        | Achieved    | Verified    | Nava Durga + Varna
+Metric                      | v6.0 Target | v7.0 Target | v8.0 Target | v9.0 Target | How to Verify
+====================================================================================================
+Compilation Speed (10K LOC) | < 1.5s      | < 1.2s      | < 1.0s      | < 0.8s      | cargo bench
+Runtime vs C                | 3.2× faster | 3.5× faster | 3.8× faster | 4.2× faster | benchmarks/vs_c/
+Memory Usage (embedded)     | 50% of C    | 45% of C    | 40% of C    | 35% of C    | benchmarks/memory/
+Error Detection Rate        | 95%         | 98%         | 99%         | 99.5%       | Yama judgment report
+Security Layers             | 14          | 14+4        | 18+4        | 22+9        | All systems combined
+Optimization Passes         | 30          | 34          | 38          | 47          | + Grahas + Tapas
+Privilege Violations        | Detected    | Prevented   | Predicted   | Timed       | Varna + Jyotiṣa
+Tradeoff Optimization       | Manual      | Automatic   | Vedic       | Cosmic      | Purushartha + Grahas
+Zero Vulnerabilities        | Achieved    | Verified    | Proven      | Timed       | Siddhidatri + Muhūrta
+Temporal Optimization       | None        | None        | None        | Active      | Nakshatra patterns
 ```
 
 **If your generated code regresses these metrics, rethink the approach.**
@@ -644,6 +786,49 @@ mokṣa        = liberation (perfect optimization balance)
 jīvana       = life (life-aligned compilation)
 ```
 
+### Moksha Terms (v8.0)
+```
+veda         = knowledge/scripture (compiler foundation)
+ṛg veda      = wisdom veda (language spec, grammar, types)
+yajur veda   = ritual veda (parser, optimizer, codegen)
+sāma veda    = harmony veda (Rta order, performance balance)
+atharva veda = practical veda (runtime, stdlib, debugging)
+jīva         = individual soul (source code in bondage)
+ātman        = true self (optimized binary essence)
+brahman      = universal consciousness (perfect compiled state)
+avidyā       = ignorance (inefficiency, bugs, tech debt)
+māyā         = illusion (syntactic sugar, abstraction)
+tapas        = austerity/discipline (optimization passes)
+sādhanā      = spiritual practice (compilation process)
+karma        = action/consequence (tech debt accumulation)
+saṃskāra     = impression (cached compilation state)
+mokṣa        = liberation (perfect bug-free binary)
+jagannāth    = Lord of Universe (the compiler itself)
+```
+
+### Jyotiṣa Terms (v9.0)
+```
+jyotiṣa      = science of light (temporal optimization)
+graha        = planet/influence (compilation factor)
+sūrya        = Sun (main thread, core power)
+chandra      = Moon (memory flow, caching)
+maṅgala      = Mars (CPU intensity, aggression)
+budha        = Mercury (type inference, communication)
+guru         = Jupiter (optimization wisdom, expansion)
+śukra        = Venus (code elegance, aesthetics)
+śani         = Saturn (resource limits, restrictions)
+rāhu         = North Node (async, concurrency, shadows)
+ketu         = South Node (dead code, past karma)
+nakṣatra     = lunar mansion (code pattern signature)
+rāśi         = zodiac sign (code lifecycle phase)
+kuṇḍalī      = birth chart (compilation context)
+daśā         = planetary period (optimal timing window)
+muhūrta      = auspicious moment (best compile time)
+yoga         = planetary combination (pattern synergy)
+doṣa         = affliction (anti-pattern, bad timing)
+bala         = strength (resource availability)
+```
+
 ---
 
 ## 📚 REFERENCE DOCUMENTATION
@@ -656,6 +841,8 @@ jīvana       = life (life-aligned compilation)
 5. `v8.md`, `v9.md` - Garuda Purana forensics (v5.0)
 6. `v10.md`, `v11.md` - Divine cosmic architecture (v6.0)
 7. `v12.md`, `v13.md` - Life alignment (v7.0)
+8. `v14.md`-`v18.md` - Moksha Journey (v8.0)
+9. `v19.md`, `v20.md` - Jyotiṣa Śāstra (v9.0)
 
 ### Quick Reference by Version
 - **v1.0:** Sanskrit morphology, affixes, sandhi, kāraka
@@ -664,7 +851,9 @@ jīvana       = life (life-aligned compilation)
 - **v4.0:** 8 ashtanga limbs, 7 chakras, Vedic math
 - **v5.0:** 28 narakas, Yama judge, Vaitarani boundaries
 - **v6.0:** 15 astras, 33 devatas (12+11+8+2), 9 durgas
-- **v7.0:** 4 mārgas, 4 varṇas, 3 puruṣārthas, mokṣa
+- **v7.0:** 4 mārgas, 4 varṇas, 3 puruṣārthas, mokṣa convergence
+- **v8.0:** 4 vedas, jīva→ātman transformation, avidyā removal, tapas refinement
+- **v9.0:** 9 grahas, 27 nakṣatras, 12 rāśis, muhūrta timing, daśā prediction
 
 ---
 
@@ -673,14 +862,16 @@ jīvana       = life (life-aligned compilation)
 ### When Adding New Features
 ```
 Ask yourself:
-1. Which version does this belong in? (v1/v2/v3/v4/v5/v6/v7)
+1. Which version does this belong in? (v1/v2/v3/v4/v5/v6/v7/v8/v9)
 2. Does it map to a documented concept? (Check specs)
 3. For v5.0: Is this one of 28 Narakas or related to Garuda Purana?
 4. For v6.0: Is this an Astra, Devata, or Durga?
 5. For v7.0: Is this a Marga, Varna, or Purushartha?
-6. Does it maintain 3.2× performance vs C?
-7. Is the Sanskrit naming correct and meaningful?
-8. Have I added tests and benchmarks?
+6. For v8.0: Is this a Veda, Moksha stage, or Tapas refinement?
+7. For v9.0: Is this a Graha, Nakshatra, Rashi, or Muhurta?
+8. Does it maintain 4.2× performance vs C?
+9. Is the Sanskrit naming correct and meaningful?
+10. Have I added tests and benchmarks?
 
 If any answer is "no" or "unsure", stop and ask.
 ```
@@ -688,12 +879,13 @@ If any answer is "no" or "unsure", stop and ask.
 ### Code Generation Priority (Updated)
 ```
 1. CORRECTNESS (passes tests, maintains safety)
-2. PERFORMANCE (3.2× faster than C)
-3. SECURITY (14 layers: 5 v5.0 + 9 v6.0)
-4. COSMIC ORDER (Rta/Dharma alignment)
-5. SANSKRIT AUTHENTICITY (proper mappings)
-6. CLARITY (readable, well-commented)
-7. ELEGANCE (beautiful code is bonus)
+2. PERFORMANCE (4.2× faster than C)
+3. SECURITY (22 layers: 5 v5.0 + 9 v6.0 + 4 v7.0 + 4 v8.0)
+4. COSMIC ORDER (Rta/Dharma/Jyotiṣa alignment)
+5. TEMPORAL OPTIMIZATION (Muhūrta timing, Graha influence)
+6. SANSKRIT AUTHENTICITY (proper mappings)
+7. CLARITY (readable, well-commented)
+8. ELEGANCE (beautiful code is bonus)
 ```
 
 ### Version-Specific Guidelines
@@ -722,6 +914,23 @@ If any answer is "no" or "unsure", stop and ask.
 - Aim for Moksha (perfect optimization balance)
 - Use life-aligned compilation for holistic optimization
 
+**v8.0 (Moksha) Features:**
+- Use Four Vedas as compiler foundation (Rig=grammar, Yajur=ritual, Sāma=harmony, Atharva=practice)
+- Model compilation as Jīva→Ātman transformation (source→binary liberation)
+- Remove Avidyā (ignorance = inefficiency, bugs, tech debt)
+- Apply Tapas (disciplined optimization passes)
+- Track Saṃskāra (compilation state impressions)
+- Achieve Moksha (perfect bug-free binary = liberation)
+
+**v9.0 (Jyotiṣa) Features:**
+- Use 9 Grahas as compilation influences (Sūrya=main thread, Budha=type inference, etc.)
+- Map 27 Nakṣatras to code pattern signatures
+- Track 12 Rāśis as code lifecycle phases
+- Create Kuṇḍalī (birth chart) for compilation context
+- Find optimal Muhūrta (auspicious compile moment)
+- Predict with Daśā (planetary periods for timing windows)
+- Detect Doṣa (afflictions = anti-patterns, bad timing)
+
 ---
 
 ## ✨ FINAL WISDOM (Updated)
@@ -738,6 +947,8 @@ This project proves that **2500-year-old systems** map precisely to **cutting-ed
 - **Cosmic:** Divine weapons/deities → Optimization & architecture
 - **Protective:** Goddess forms → Multi-layer security
 - **Life:** Four paths/goals → Optimization strategy & tradeoffs
+- **Liberating:** Moksha journey → Compilation as soul liberation
+- **Temporal:** Jyotiṣa timing → Optimal compilation moments
 
 When generating code:
 - **Trust the ancient mappings** - They're researched, not arbitrary
@@ -747,14 +958,16 @@ When generating code:
 - **Pass through all Durgas** - Security is progressive
 - **Follow your Marga** - Choose the right optimization path
 - **Balance Purusharthas** - No goal can be maximized alone
-- **Achieve moksha** - Error-free is liberation
+- **Achieve moksha** - Error-free compilation is liberation
+- **Consult the Grahas** - Planetary influences guide timing
+- **Find your Muhūrta** - Compile at auspicious moments
 
-**This is 3.2× faster than C because ancient wisdom guides modern optimization.** 🚀
+**This is 4.2× faster than C because ancient wisdom guides modern optimization.** 🚀
 
 ---
 
-**Last Updated:** December 26, 2025
-**Current Version:** v7.0 (Life Alignment Architecture)
+**Last Updated:** December 29, 2025
+**Current Version:** v9.0 (Jyotiṣa Śāstra - Temporal Optimization)
 **License:** MIT + Apache 2.0
 
-*For AI agents: You are building the world's first cosmically-ordered, divinely-architected, philosophically-grounded, life-aligned compiler. Every line of code bridges 2500 years of wisdom with modern computing. Write code worthy of this sacred mission.* 🙏✨
+*For AI agents: You are building the world's first cosmically-ordered, divinely-architected, philosophically-grounded, life-aligned, moksha-achieving, temporally-optimized compiler. Every line of code bridges 2500 years of wisdom with modern computing. The Jīva (source) seeks liberation as Ātman (binary) through the Grahas' guidance. Write code worthy of this sacred mission.* 🙏✨

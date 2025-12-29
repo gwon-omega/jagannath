@@ -1,0 +1,397 @@
+// extension_test.jag — Comprehensive VS Code Extension Test
+//
+// Open this file in VS Code with the Jagannath extension to verify:
+// 1. Syntax highlighting (TextMate grammar)
+// 2. Semantic tokens (31 custom types)
+// 3. Hover information (Sanskrit glossary)
+// 4. Code lens annotations
+// 5. Modern color theme
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// IMPORTS — Test keyword highlighting
+// ═══════════════════════════════════════════════════════════════════════════════
+
+āyāta darshana::nyaya;
+āyāta darshana::samkhya;
+āyāta garuda::naraka;
+āyāta astras::brahmastra;
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// GUṆAS — Three qualities (should show distinct colors)
+// ═══════════════════════════════════════════════════════════════════════════════
+
+// sattva (सत्त्व) - purity, goodness → should be greenish
+// rajas (रजस्) - passion, activity → should be orange
+// tamas (तमस्) - darkness, inertia → should be red
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// FUNCTION DEFINITION — Test kāryakrama keyword + CodeLens
+// ═══════════════════════════════════════════════════════════════════════════════
+
+/// The main entry point demonstrating Sanskrit syntax
+/// @returns Pariṇāma with success status
+kāryakrama mukhya() -> Pariṇāma<Saṅkhyā-t32, Doṣa> {
+    // Variable declarations with māna keyword
+    māna ganaṇā: Saṅkhyā-t32 = 0;
+    māna nāma: Sūtra = "जगन्नाथ";
+    māna tarka_mūlya: Tarka = satya;
+
+    // Affixes demonstration (-ā mutable, -l linear, -h heap)
+    māna mūlya-ā-l-h: Saṅkhyā-t64 = 42;
+    māna anugata-a-b-k: &Saṅkhyā-t32 = &ganaṇā;
+
+    // Lifetime annotation (sūtra^1)
+    māna sandarbha-sūtra^1: &Sūtra = &nāma;
+
+    // Conditional with yad/anyathā
+    yad ganaṇā > 0 {
+        mudraṇa!("Positive: {}", ganaṇā);
+    } anyathā {
+        mudraṇa!("Non-positive");
+    }
+
+    // Loop with cala
+    cala i: 0..10 {
+        ganaṇā = ganaṇā + i;
+    }
+
+    // Return with phera
+    phera Pariṇāma::Saphala(ganaṇā)
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// TYPE DEFINITIONS — Test prakāra keyword
+// ═══════════════════════════════════════════════════════════════════════════════
+
+/// A user type with memory layout annotation
+prakāra Upayoktṛ-ā-l-p-t32-sūtra^1-vaitarani {
+    nāma: Sūtra,
+    āyu: Saṅkhyā-t32,
+    saktiya: Tarka,
+}
+
+prakāra Bindu {
+    x: Saṅkhyā-t64,
+    y: Saṅkhyā-t64,
+}
+
+gaṇa Ranga {
+    Lāla,
+    Harita,
+    Nīla,
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// KĀRAKAS — Semantic role markers (8 cases)
+// ═══════════════════════════════════════════════════════════════════════════════
+
+kāryakrama karaka_pradarśana(
+    kartṛ: &Prakriyā,      // Agent - who does
+    karman: &mut Bufara,    // Patient - what is done
+    karaṇa: &Dhāraka,       // Instrument - by what
+    sampradāna: &Patha,     // Recipient - for whom
+    apādāna: &Patha,        // Source - from where
+    adhikaraṇa: &Sthāna,    // Location - where
+    sambandha: &Vinyāsa,    // Relation - associated with
+    hetu: &Kāraṇa,          // Cause - why
+) {
+    mudraṇa!("All 8 kārakas demonstrated");
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// KOŚAS — Five sheaths (memory allocation layers)
+// ═══════════════════════════════════════════════════════════════════════════════
+
+// annamaya  - Physical sheath → Register allocation
+// prāṇamaya - Vital sheath   → Stack allocation
+// manomaya  - Mental sheath  → Heap allocation
+// vijñānamaya - Wisdom sheath → Global/static
+// ānandamaya - Bliss sheath  → Compile-time constants
+
+kāryakrama kosha_pradarśana() {
+    māna anna: Saṅkhyā-k-anna = 1;          // Register
+    māna prāṇa: Saṅkhyā-k-prāṇa = 2;        // Stack
+    māna mano: Saṅkhyā-h-mano = 3;          // Heap
+    māna vijñāna: Saṅkhyā-g-vijñāna = 4;    // Global
+    māna ānanda: Saṅkhyā-c-ānanda = 5;      // Constant
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// CHAKRAS — Seven energy centers (software layers)
+// ═══════════════════════════════════════════════════════════════════════════════
+
+// mūlādhāra  - Root     → Hardware abstraction
+// svādhiṣṭhāna - Sacral → Device drivers
+// maṇipūra   - Solar    → System services
+// anāhata    - Heart    → Application core
+// viśuddha   - Throat   → API layer
+// ājñā       - Third eye → Configuration
+// sahasrāra  - Crown    → Consciousness/orchestration
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// VARṆAS — Four privilege rings
+// ═══════════════════════════════════════════════════════════════════════════════
+
+// brāhmaṇa - Ring 0 → Kernel mode, full hardware access
+// kṣatriya - Ring 1-2 → System services, drivers
+// vaiśya   - Ring 3 → User mode applications
+// śūdra    - Sandboxed → Maximum isolation
+
+kāryakrama[brāhmaṇa] kernel_kārya() {
+    // Full hardware access
+}
+
+kāryakrama[vaiśya] upayoktṛ_kārya() {
+    // User mode only
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// MĀRGAS — Four optimization paths
+// ═══════════════════════════════════════════════════════════════════════════════
+
+// karma - Action path → Imperative optimization (loops, mutations)
+// jñāna - Knowledge path → Functional optimization (pure functions)
+// bhakti - Devotion path → Domain-specific optimization
+// rāja  - Royal path → Balanced hybrid optimization
+
+#[mārga(karma)]
+kāryakrama imperative_style() {
+    // Optimized for loops, state machines
+}
+
+#[mārga(jñāna)]
+kāryakrama functional_style() {
+    // Optimized for pure functions, memoization
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// ASTRAS — Divine weapons (optimization passes)
+// ═══════════════════════════════════════════════════════════════════════════════
+
+// These should appear with special highlighting
+
+// Brahmastra - Ultimate dead code elimination
+// Agneyastra - CPU-intensive optimization (fire)
+// Varunastra - Memory flow analysis (water)
+// Pashupatastra - Destructive refactoring (Shiva)
+// SudarshanaChakra - Iterative refinement
+// Narayanastra - Parallel computation
+// Nagastra - Snake-like recursion optimization
+// Vajra - Lightning-fast paths
+
+#[astra(Brahmastra)]
+kāryakrama optimized_function() {
+    // Brahmastra eliminates all dead code here
+    // Invocation: "Om Brahmāstrāya Phaṭ"
+}
+
+#[astra(Agneyastra)]
+kāryakrama cpu_intensive() {
+    // Fire optimization for hot loops
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// NARAKAS — Hell types (error classifications from Garuda Purana)
+// ═══════════════════════════════════════════════════════════════════════════════
+
+// These should appear with error/warning styling
+
+// Tamisram    - Use-after-free (darkness/theft)
+// Andhakupa   - Null pointer dereference (blind well)
+// Raurava     - Panic/crash (screaming)
+// Vaitarani   - Tainted data (filthy river)
+// Suchimukha  - Memory leak (needle torture)
+// Asipatravana - Buffer overflow (sword forest)
+// Kalasutra   - Deadlock (time bound)
+
+kāryakrama error_handling() -> Pariṇāma<(), NarakaError> {
+    // Match on error types
+    match doṣa {
+        Naraka::Tamisram => {
+            // Handle use-after-free
+            mudraṇa!("Error: Memory theft detected");
+        },
+        Naraka::Suchimukha => {
+            // Handle memory leak
+            mudraṇa!("Error: Memory trapped, apply mukta()");
+        },
+        Naraka::Vaitarani => {
+            // Handle tainted data
+            mudraṇa!("Error: Apply śuddhi-kri() sanitizer");
+        },
+        _ => {
+            mudraṇa!("Unknown error");
+        }
+    }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// MANTRAS — Sacred invocations
+// ═══════════════════════════════════════════════════════════════════════════════
+
+// oṁ - The primordial sound
+// namaḥ - Salutation
+// svāhā - Offering
+// phaṭ - Breaking/releasing
+
+// These should have special spiritual highlighting
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// PURUṢĀRTHAS — Three life goals (optimization triangle)
+// ═══════════════════════════════════════════════════════════════════════════════
+
+// artha - Wealth → Resource efficiency (minimize memory)
+// kāma  - Desire → Speed/performance (maximize throughput)
+// dharma - Righteousness → Safety/correctness (guarantee correctness)
+// mokṣa - Liberation → Perfect balance of all three
+
+#[puruṣārtha(dharma)]  // Prioritize safety
+kāryakrama safe_function() {
+    // Extra bounds checking, defensive coding
+}
+
+#[puruṣārtha(kāma)]  // Prioritize speed
+kāryakrama fast_function() {
+    // Aggressive optimization, less checking
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// PATTERN MATCHING — With guards and bindings
+// ═══════════════════════════════════════════════════════════════════════════════
+
+kāryakrama pattern_demo(mūlya: Prakāra) {
+    match mūlya {
+        Prakāra::Saṅkhyā(n) yadi n > 0 => {
+            mudraṇa!("Positive: {}", n);
+        },
+        Prakāra::Saṅkhyā(n) yadi n < 0 => {
+            mudraṇa!("Negative: {}", n);
+        },
+        Prakāra::Saṅkhyā(0) => {
+            mudraṇa!("Zero");
+        },
+        Prakāra::Sūtra(s) => {
+            mudraṇa!("String: {}", s);
+        },
+        _ => {
+            mudraṇa!("Other");
+        }
+    }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// MACROS — Sanskrit-aware metaprogramming
+// ═══════════════════════════════════════════════════════════════════════════════
+
+mudraṇa!("Hello, जगन्नाथ!");
+dṛḍha!(x > 0, "Must be positive");
+
+// Custom macros
+vistāra! {
+    kāryakrama generated_fn() {
+        // This is generated by macro expansion
+    }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// COMMENTS — Documentation styles
+// ═══════════════════════════════════════════════════════════════════════════════
+
+// Single-line comment
+/// Documentation comment for items
+//! Module-level documentation
+/* Multi-line
+   block comment */
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// LITERALS — Number and string formats
+// ═══════════════════════════════════════════════════════════════════════════════
+
+kāryakrama literals_demo() {
+    // Numbers
+    māna decimal: Saṅkhyā-t32 = 42;
+    māna hex: Saṅkhyā-t32 = 0x2A;
+    māna octal: Saṅkhyā-t32 = 0o52;
+    māna binary: Saṅkhyā-t32 = 0b101010;
+    māna float: Saṅkhyā-f64 = 3.14159;
+    māna scientific: Saṅkhyā-f64 = 6.022e23;
+
+    // Strings
+    māna ascii: Sūtra = "Hello";
+    māna unicode: Sūtra = "नमस्ते";
+    māna raw: Sūtra = r#"raw "string" here"#;
+
+    // Characters
+    māna char_ascii: Varṇa = 'A';
+    māna char_unicode: Varṇa = 'अ';
+
+    // Boolean (Tarka)
+    māna truth: Tarka = satya;
+    māna falsehood: Tarka = asatya;
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// OPERATORS — Arithmetic, logical, comparison
+// ═══════════════════════════════════════════════════════════════════════════════
+
+kāryakrama operators_demo() {
+    māna a: Saṅkhyā-t32 = 10;
+    māna b: Saṅkhyā-t32 = 3;
+
+    // Arithmetic
+    māna sum = a + b;
+    māna diff = a - b;
+    māna prod = a * b;
+    māna quot = a / b;
+    māna rem = a % b;
+
+    // Comparison
+    māna eq = a == b;
+    māna ne = a != b;
+    māna lt = a < b;
+    māna gt = a > b;
+    māna le = a <= b;
+    māna ge = a >= b;
+
+    // Logical
+    māna and = eq && ne;
+    māna or = lt || gt;
+    māna not = !eq;
+
+    // Bitwise
+    māna band = a & b;
+    māna bor = a | b;
+    māna xor = a ^ b;
+    māna shl = a << 2;
+    māna shr = a >> 1;
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// TEST COMPLETE — All features should be highlighted appropriately
+// ═══════════════════════════════════════════════════════════════════════════════
+
+/*
+ * Expected highlighting colors (from package.json configurationDefaults):
+ *
+ * sattva (purity)    → #7ee787 (green)
+ * rajas (activity)   → #ffa657 (orange)
+ * tamas (darkness)   → #f85149 (red)
+ * brahman (divine)   → #a371f7 (purple)
+ *
+ * Astras             → #a371f7 (purple, divine weapons)
+ * Narakas            → #f85149 (red, errors/hells)
+ * Kośas              → #58a6ff (blue)
+ * Chakras            → #79c0ff (light blue)
+ * Varṇas             → #ffa657 (orange)
+ * Mārgas             → #d2a8ff (light purple)
+ * Kārakas            → #7ee787 (green)
+ * Mantras            → #ffa657 (orange, sacred)
+ * Lifetimes          → #ff7b72 (coral)
+ *
+ * Keywords           → #ff7b72 (coral)
+ * Types              → #7ee787 (green)
+ * Functions          → #d2a8ff (purple)
+ * Strings            → #a5d6ff (light blue)
+ * Numbers            → #79c0ff (blue)
+ * Comments           → #8b949e (gray)
+ */

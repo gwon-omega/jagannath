@@ -270,7 +270,7 @@ impl UpamanaEngine {
                 }
                 0.0
             }
-            PatternTemplate::Call { name, args } => {
+            PatternTemplate::Call { name: _name, args: _args } => {
                 // Check for function call syntax
                 if expression.contains('(') && expression.contains(')') {
                     0.7 // Basic match
@@ -278,7 +278,7 @@ impl UpamanaEngine {
                     0.0
                 }
             }
-            PatternTemplate::MethodCall { receiver, method, args } => {
+            PatternTemplate::MethodCall { receiver: _receiver, method, args: _args } => {
                 if expression.contains('.') && expression.contains(method) {
                     0.8
                 } else {

@@ -14,7 +14,7 @@
 
 use super::visibility::Visibility;
 use crate::lexer::Span;
-use crate::parser::ast::{Type, FunctionDef, TypeDef};
+use crate::parser::ast::Type;
 use std::collections::HashMap;
 
 /// A symbol in the symbol table
