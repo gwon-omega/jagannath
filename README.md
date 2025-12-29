@@ -217,7 +217,6 @@ Jyotiṣa (9 grahas)        │ 9 compilation factors     │ Temporal optimizat
 
 ## 📚 Documentation
 
-- [AGENTS.md](AGENTS.md) - AI code generation guidelines
 - [Language Specification](v1.md) - Core Sanskrit morphology
 - [Philosophy Integration](docs/philosophy.md) - Hindu systems mapping
 - [Nyāya Guide](docs/philosophy/nyaya_guide.md) - Type inference with 4 pramāṇas
@@ -275,11 +274,7 @@ jagannath/
 
 ## 🤝 Contributing
 
-We welcome contributions! Please read:
-
-1. [AGENTS.md](AGENTS.md) - For AI-assisted development
-2. [IMPLEMENTATION_PLAN_v2.md](IMPLEMENTATION_PLAN_v2.md) - Technical roadmap
-3. [OPTIMIZATION_PLAN.md](OPTIMIZATION_PLAN.md) - Performance goals
+We welcome contributions!
 
 ### Contribution Guidelines
 

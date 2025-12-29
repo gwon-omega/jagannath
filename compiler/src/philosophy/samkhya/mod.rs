@@ -348,7 +348,7 @@ impl SanskritDescribed for Tattva {
 }
 
 impl PhilosophicalEnum for Tattva {
-    fn all_variants() -> &'static [Self] {
+    fn all() -> &'static [Self] {
         const TATTVAS: [Tattva; 25] = [
             Tattva::Purusha,
             Tattva::Prakriti,
@@ -507,7 +507,7 @@ mod tests {
     #[test]
     fn test_tattva_count() {
         assert_eq!(Tattva::count(), 25);
-        assert_eq!(Tattva::all_variants().len(), 25);
+        assert_eq!(Tattva::all().len(), 25);
         assert_eq!(Tattva::all().len(), 25);
     }
 
@@ -559,7 +559,12 @@ mod tests {
     #[test]
     fn test_tattva_ordinal_sequence() {
         for (i, tattva) in Tattva::all().iter().enumerate() {
-            assert_eq!(tattva.ordinal(), i + 1, "Tattva {:?} ordinal mismatch", tattva);
+            assert_eq!(
+                tattva.ordinal(),
+                i + 1,
+                "Tattva {:?} ordinal mismatch",
+                tattva
+            );
             assert_eq!(tattva.index(), i, "Tattva {:?} index mismatch", tattva);
         }
     }
@@ -570,7 +575,10 @@ mod tests {
         assert_eq!(Tattva::Buddhi.phase(), CompilationPhase::Analysis);
         assert_eq!(Tattva::Shrotra.phase(), CompilationPhase::Frontend);
         assert_eq!(Tattva::Vak.phase(), CompilationPhase::Backend);
-        assert_eq!(Tattva::ShabdaTanmatra.phase(), CompilationPhase::Representation);
+        assert_eq!(
+            Tattva::ShabdaTanmatra.phase(),
+            CompilationPhase::Representation
+        );
         assert_eq!(Tattva::Prithvi.phase(), CompilationPhase::Output);
     }
 
@@ -591,4 +599,3 @@ mod tests {
         assert!(pipeline.is_complete());
     }
 }
-

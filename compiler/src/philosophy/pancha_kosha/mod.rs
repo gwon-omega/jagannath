@@ -169,7 +169,7 @@ impl SanskritDescribed for Kosha {
 }
 
 impl PhilosophicalEnum for Kosha {
-    fn all_variants() -> &'static [Self] {
+    fn all() -> &'static [Self] {
         &[
             Kosha::Annamaya,
             Kosha::Pranamaya,
@@ -362,7 +362,7 @@ mod tests {
     #[test]
     fn test_kosha_philosophical_enum_trait() {
         assert_eq!(Kosha::count(), 5);
-        assert_eq!(Kosha::all_variants().len(), 5);
+        assert_eq!(Kosha::all().len(), 5);
         assert_eq!(Kosha::Annamaya.index(), 0);
         assert_eq!(Kosha::Anandamaya.ordinal(), 5);
     }

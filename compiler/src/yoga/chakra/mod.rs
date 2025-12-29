@@ -201,7 +201,7 @@ impl SanskritDescribed for Chakra {
 }
 
 impl PhilosophicalEnum for Chakra {
-    fn all_variants() -> &'static [Self] {
+    fn all() -> &'static [Self] {
         &[
             Chakra::Muladhara,
             Chakra::Svadhisthana,
@@ -389,5 +389,107 @@ impl ChakraArchitecture {
 impl Default for ChakraArchitecture {
     fn default() -> Self {
         Self::new()
+    }
+}
+
+// ============================================================================
+// Tests
+// ============================================================================
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::traits::{PhilosophicalEnum, SanskritDescribed, SanskritNamed};
+
+    #[test]
+    fn test_chakra_count() {
+        assert_eq!(Chakra::count(), 7);
+        assert_eq!(Chakra::all().len(), 7);
+        assert_eq!(Chakra::all().len(), 7);
+    }
+
+    #[test]
+    fn test_chakra_sanskrit_named_trait() {
+        let chakra = Chakra::Muladhara;
+        assert_eq!(chakra.sanskrit(), "मूलाधार");
+        assert_eq!(chakra.iast(), "Mūlādhāra");
+        assert_eq!(chakra.english(), "Root Support");
+    }
+
+    #[test]
+    fn test_chakra_sanskrit_described_trait() {
+        let chakra = Chakra::Anahata;
+        assert_eq!(chakra.meaning(), "Application logic, business rules");
+        assert!(chakra.explanation().contains("air"));
+        assert!(chakra.mantra().is_some());
+        assert_eq!(chakra.category(), "Tantra Yoga (तन्त्र योग)");
+    }
+
+    #[test]
+    fn test_chakra_bija_mantras() {
+        assert_eq!(Chakra::Muladhara.bija_mantra(), "LAM (लं)");
+        assert_eq!(Chakra::Svadhisthana.bija_mantra(), "VAM (वं)");
+        assert_eq!(Chakra::Manipura.bija_mantra(), "RAM (रं)");
+        assert_eq!(Chakra::Anahata.bija_mantra(), "YAM (यं)");
+        assert_eq!(Chakra::Vishuddha.bija_mantra(), "HAM (हं)");
+        assert_eq!(Chakra::Ajna.bija_mantra(), "OM (ॐ)");
+        assert_eq!(Chakra::Sahasrara.bija_mantra(), "AH (अः)");
+    }
+
+    #[test]
+    fn test_chakra_navigation_cycle() {
+        // Forward: kundalini rises
+        assert_eq!(Chakra::Muladhara.next(), Chakra::Svadhisthana);
+        assert_eq!(Chakra::Sahasrara.next(), Chakra::Muladhara); // Cycle back
+
+        // Backward: kundalini descends
+        assert_eq!(Chakra::Svadhisthana.prev(), Chakra::Muladhara);
+        assert_eq!(Chakra::Muladhara.prev(), Chakra::Sahasrara); // Cycle back
+    }
+
+    #[test]
+    fn test_chakra_from_index() {
+        assert_eq!(Chakra::from_index(0), Some(Chakra::Muladhara));
+        assert_eq!(Chakra::from_index(6), Some(Chakra::Sahasrara));
+        assert_eq!(Chakra::from_index(7), None);
+    }
+
+    #[test]
+    fn test_chakra_ordinal_sequence() {
+        for (i, chakra) in Chakra::all().iter().enumerate() {
+            assert_eq!(chakra.ordinal(), i + 1, "Chakra {:?} ordinal mismatch", chakra);
+            assert_eq!(chakra.index(), i, "Chakra {:?} index mismatch", chakra);
+        }
+    }
+
+    #[test]
+    fn test_chakra_software_layers() {
+        assert_eq!(Chakra::Muladhara.layer(), SoftwareLayer::Hardware);
+        assert_eq!(Chakra::Svadhisthana.layer(), SoftwareLayer::Kernel);
+        assert_eq!(Chakra::Manipura.layer(), SoftwareLayer::Runtime);
+        assert_eq!(Chakra::Anahata.layer(), SoftwareLayer::Application);
+        assert_eq!(Chakra::Vishuddha.layer(), SoftwareLayer::Networking);
+        assert_eq!(Chakra::Ajna.layer(), SoftwareLayer::UI);
+        assert_eq!(Chakra::Sahasrara.layer(), SoftwareLayer::Transcendent);
+    }
+
+    #[test]
+    fn test_chakra_architecture_flow() {
+        let mut arch = ChakraArchitecture::new();
+
+        // Register components in proper flow order
+        arch.register_component(Chakra::Muladhara, "Memory Allocator");
+        arch.register_component(Chakra::Svadhisthana, "System Calls");
+        arch.register_component(Chakra::Manipura, "Garbage Collector");
+        arch.register_component(Chakra::Anahata, "Business Logic");
+        arch.register_component(Chakra::Vishuddha, "HTTP Server");
+        arch.register_component(Chakra::Ajna, "Web Interface");
+        arch.register_component(Chakra::Sahasrara, "AI Integration");
+
+        // Check layer health for each chakra
+        for chakra in Chakra::all() {
+            let health = arch.layer_health(*chakra);
+            assert_eq!(health, ChakraHealth::Balanced, "Chakra {:?} should be balanced", chakra);
+        }
     }
 }
