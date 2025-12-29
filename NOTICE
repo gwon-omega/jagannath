@@ -1,0 +1,105 @@
+Jagannath Programming Language
+Copyright 2024-2025 Jagannath Language Contributors
+
+This product includes software developed by the Jagannath Language Team.
+
+================================================================================
+ACKNOWLEDGMENTS
+================================================================================
+
+The Jagannath programming language incorporates concepts from:
+
+1. ACADEMIC RESEARCH
+   ─────────────────
+
+   Pāṇini's Aṣṭādhyāyī (4th century BCE)
+     The foundational grammar of Sanskrit, providing the theoretical basis
+     for morphological type encoding and formal language specification.
+
+   Rishi Rajpopat's Cambridge Research (2022)
+     "In Pāṇini We Trust: Discovering the Algorithm for Rule Conflict
+     Resolution in the Aṣṭādhyāyī"
+     Applied for right-to-left affix processing in type resolution.
+
+   Paul Kiparsky's Stanford Research
+     Computational linguistics research on Pāṇinian grammar.
+     Influenced the design of the Sanskrit morphological analyzer.
+
+   Gerard Huet's Sanskrit Heritage Platform (INRIA)
+     Computational Sanskrit tools and sandhi analysis algorithms.
+     Reference implementation for junction rules.
+
+2. PHILOSOPHICAL SYSTEMS
+   ────────────────────
+
+   Nyāya Darśana (Logic & Epistemology)
+     Gautama's सूत्र, c. 2nd century BCE
+     4 pramāṇas (valid means of knowledge) → Type inference methods
+
+   Sāṃkhya Darśana (Enumeration Philosophy)
+     Attributed to Kapila, c. 6th century BCE
+     25 tattvas → 25 compilation stages
+
+   Yoga Darśana (Union Philosophy)
+     Patañjali's Yoga Sūtras, c. 2nd century BCE
+     Ashtanga (8 limbs) → Software development lifecycle
+
+   Vedānta Darśana (End of Knowledge)
+     Śaṅkarācārya's Advaita, c. 8th century CE
+     Non-dual consciousness → Memory model (Jīva = Ātman = Brahman)
+
+   Garuda Purana
+     Traditional Hindu scripture
+     28 Narakas (hells) → Error classification taxonomy
+
+   Jyotiṣa Śāstra (Vedic Astrology)
+     Traditional astronomical/astrological system
+     9 Grahas, 27 Nakṣatras → Temporal optimization patterns
+
+3. OPEN SOURCE INFLUENCES
+   ─────────────────────
+
+   Rust Programming Language
+     https://www.rust-lang.org/
+     License: MIT OR Apache-2.0
+     Ownership model and memory safety concepts.
+
+   LLVM Compiler Infrastructure
+     https://llvm.org/
+     License: Apache-2.0 with LLVM Exceptions
+     Optimization pass architecture patterns.
+
+   GraalVM
+     https://www.graalvm.org/
+     License: Various (see GraalVM licensing)
+     JIT compilation concepts and polyglot runtime ideas.
+
+================================================================================
+SANSKRIT TRANSLITERATION
+================================================================================
+
+This project uses IAST (International Alphabet of Sanskrit Transliteration)
+for all Sanskrit terms. Key symbols:
+
+   ā ī ū    Long vowels
+   ṛ ṝ ḷ    Vocalic r/l
+   ṃ        Anusvāra (nasal)
+   ḥ        Visarga
+   ṅ ñ ṇ n  Nasals (velar, palatal, retroflex, dental)
+   ṭ ḍ ṇ    Retroflexes
+   ś ṣ s    Sibilants (palatal, retroflex, dental)
+
+================================================================================
+TRADEMARK NOTICE
+================================================================================
+
+"Jagannath" (जगन्नाथ) refers to a form of the Hindu deity Vishnu/Krishna,
+particularly worshipped at the Jagannath Temple in Puri, Odisha, India.
+
+The use of this name for the programming language is intended as a tribute
+to the concept of "Lord of the Universe" (jagat + nātha), reflecting the
+language's ambitious goal of unifying ancient wisdom with modern computing.
+
+No trademark claim is made on the religious/cultural term "Jagannath."
+
+================================================================================

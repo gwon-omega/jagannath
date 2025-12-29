@@ -9,8 +9,10 @@
 
 use std::collections::HashMap;
 
+use crate::traits::{PhilosophicalEnum, SanskritDescribed, SanskritNamed};
+
 /// The 5 Koshas (memory tiers)
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum Kosha {
     /// Annamaya (physical) - Registers/L1 cache
     /// Fastest, smallest, most precious
@@ -34,6 +36,39 @@ pub enum Kosha {
 }
 
 impl Kosha {
+    /// Get all Koshas in order (inner to outer)
+    pub fn all() -> [Kosha; 5] {
+        [
+            Kosha::Annamaya,
+            Kosha::Pranamaya,
+            Kosha::Manomaya,
+            Kosha::Vijnanamaya,
+            Kosha::Anandamaya,
+        ]
+    }
+
+    /// Get IAST transliteration
+    pub fn iast(&self) -> &'static str {
+        match self {
+            Self::Annamaya => "Annamaya",
+            Self::Pranamaya => "Prāṇamaya",
+            Self::Manomaya => "Manomaya",
+            Self::Vijnanamaya => "Vijñānamaya",
+            Self::Anandamaya => "Ānandamaya",
+        }
+    }
+
+    /// Get English meaning
+    pub fn english(&self) -> &'static str {
+        match self {
+            Self::Annamaya => "Food Sheath",
+            Self::Pranamaya => "Vital Sheath",
+            Self::Manomaya => "Mental Sheath",
+            Self::Vijnanamaya => "Wisdom Sheath",
+            Self::Anandamaya => "Bliss Sheath",
+        }
+    }
+
     /// Get Sanskrit name
     pub fn sanskrit_name(&self) -> &'static str {
         match self {
@@ -70,11 +105,120 @@ impl Kosha {
     /// Approximate capacity (symbolic)
     pub fn capacity_order(&self) -> u64 {
         match self {
-            Self::Annamaya => 1,        // ~16 registers
-            Self::Pranamaya => 100,     // ~MB
-            Self::Manomaya => 10_000,   // ~GB
+            Self::Annamaya => 1,            // ~16 registers
+            Self::Pranamaya => 100,         // ~MB
+            Self::Manomaya => 10_000,       // ~GB
             Self::Vijnanamaya => 1_000_000, // ~TB
-            Self::Anandamaya => u64::MAX, // ~unlimited
+            Self::Anandamaya => u64::MAX,   // ~unlimited
+        }
+    }
+}
+
+// ============================================================================
+// v10.0 Trait Implementations
+// ============================================================================
+
+impl SanskritNamed for Kosha {
+    fn sanskrit(&self) -> &'static str {
+        self.sanskrit_name()
+    }
+
+    fn iast(&self) -> &'static str {
+        self.iast()
+    }
+
+    fn english(&self) -> &'static str {
+        self.english()
+    }
+}
+
+impl SanskritDescribed for Kosha {
+    fn meaning(&self) -> &'static str {
+        match self {
+            Self::Annamaya => "The physical sheath made of food, the outermost layer",
+            Self::Pranamaya => "The vital energy sheath, breath and life force",
+            Self::Manomaya => "The mental sheath, thoughts and emotions",
+            Self::Vijnanamaya => "The wisdom sheath, intellect and discernment",
+            Self::Anandamaya => "The bliss sheath, innermost layer of pure joy",
+        }
+    }
+
+    fn explanation(&self) -> &'static str {
+        match self {
+            Self::Annamaya => "Maps to CPU registers and L1 cache - fastest, most precious",
+            Self::Pranamaya => "Maps to L2/L3 cache - vital flow of data between CPU and memory",
+            Self::Manomaya => "Maps to RAM - where thoughts (data) are processed",
+            Self::Vijnanamaya => "Maps to SSD/disk - persistent wisdom (storage)",
+            Self::Anandamaya => "Maps to network/cloud - infinite bliss of distributed data",
+        }
+    }
+
+    fn mantra(&self) -> Option<&'static str> {
+        Some(match self {
+            Self::Annamaya => "अन्नाद्भवन्ति भूतानि (From food beings are born)",
+            Self::Pranamaya => "प्राणस्य प्राणमुत (Of life, the life)",
+            Self::Manomaya => "मनोमयः प्राणशरीरनेता (Mind-made, leader of body and breath)",
+            Self::Vijnanamaya => "विज्ञानं ब्रह्मेति व्यजानात् (Know wisdom as Brahman)",
+            Self::Anandamaya => "आनन्दो ब्रह्मेति व्यजानात् (Know bliss as Brahman)",
+        })
+    }
+
+    fn category(&self) -> &'static str {
+        "Pancha Kosha (पञ्चकोश)"
+    }
+}
+
+impl PhilosophicalEnum for Kosha {
+    fn all_variants() -> &'static [Self] {
+        &[
+            Kosha::Annamaya,
+            Kosha::Pranamaya,
+            Kosha::Manomaya,
+            Kosha::Vijnanamaya,
+            Kosha::Anandamaya,
+        ]
+    }
+
+    fn count() -> usize {
+        5
+    }
+
+    fn index(&self) -> usize {
+        *self as usize - 1
+    }
+
+    fn ordinal(&self) -> usize {
+        *self as usize
+    }
+
+    fn next(&self) -> Self {
+        match self {
+            Self::Annamaya => Self::Pranamaya,
+            Self::Pranamaya => Self::Manomaya,
+            Self::Manomaya => Self::Vijnanamaya,
+            Self::Vijnanamaya => Self::Anandamaya,
+            Self::Anandamaya => Self::Annamaya, // Cycle back
+        }
+    }
+
+    fn prev(&self) -> Self {
+        match self {
+            Self::Annamaya => Self::Anandamaya, // Cycle back
+            Self::Pranamaya => Self::Annamaya,
+            Self::Manomaya => Self::Pranamaya,
+            Self::Vijnanamaya => Self::Manomaya,
+            Self::Anandamaya => Self::Vijnanamaya,
+        }
+    }
+
+    fn from_index(index: usize) -> Option<Self> {
+        match index {
+            0 => Some(Self::Annamaya),
+            1 => Some(Self::Pranamaya),
+            2 => Some(Self::Manomaya),
+            3 => Some(Self::Vijnanamaya),
+            4 => Some(Self::Anandamaya),
+            _ => None,
         }
     }
 }
