@@ -78,11 +78,31 @@ impl Tattva {
     /// Get all 25 Tattvas in order
     pub fn all() -> [Tattva; 25] {
         [
-            Tattva::Purusha, Tattva::Prakriti, Tattva::Buddhi, Tattva::Ahamkara, Tattva::Manas,
-            Tattva::Shrotra, Tattva::Tvak, Tattva::Cakshu, Tattva::Rasana, Tattva::Ghrana,
-            Tattva::Vak, Tattva::Pani, Tattva::Pada, Tattva::Payu, Tattva::Upastha,
-            Tattva::ShabdaTanmatra, Tattva::Sparsha, Tattva::Rupa, Tattva::Rasa, Tattva::Gandha,
-            Tattva::Akasha, Tattva::Vayu, Tattva::Tejas, Tattva::Apas, Tattva::Prithvi,
+            Tattva::Purusha,
+            Tattva::Prakriti,
+            Tattva::Buddhi,
+            Tattva::Ahamkara,
+            Tattva::Manas,
+            Tattva::Shrotra,
+            Tattva::Tvak,
+            Tattva::Cakshu,
+            Tattva::Rasana,
+            Tattva::Ghrana,
+            Tattva::Vak,
+            Tattva::Pani,
+            Tattva::Pada,
+            Tattva::Payu,
+            Tattva::Upastha,
+            Tattva::ShabdaTanmatra,
+            Tattva::Sparsha,
+            Tattva::Rupa,
+            Tattva::Rasa,
+            Tattva::Gandha,
+            Tattva::Akasha,
+            Tattva::Vayu,
+            Tattva::Tejas,
+            Tattva::Apas,
+            Tattva::Prithvi,
         ]
     }
 
@@ -215,10 +235,18 @@ impl Tattva {
         match self {
             Self::Purusha | Self::Prakriti => CompilationPhase::Input,
             Self::Buddhi | Self::Ahamkara | Self::Manas => CompilationPhase::Analysis,
-            Self::Shrotra | Self::Tvak | Self::Cakshu | Self::Rasana | Self::Ghrana => CompilationPhase::Frontend,
-            Self::Vak | Self::Pani | Self::Pada | Self::Payu | Self::Upastha => CompilationPhase::Backend,
-            Self::ShabdaTanmatra | Self::Sparsha | Self::Rupa | Self::Rasa | Self::Gandha => CompilationPhase::Representation,
-            Self::Akasha | Self::Vayu | Self::Tejas | Self::Apas | Self::Prithvi => CompilationPhase::Output,
+            Self::Shrotra | Self::Tvak | Self::Cakshu | Self::Rasana | Self::Ghrana => {
+                CompilationPhase::Frontend
+            }
+            Self::Vak | Self::Pani | Self::Pada | Self::Payu | Self::Upastha => {
+                CompilationPhase::Backend
+            }
+            Self::ShabdaTanmatra | Self::Sparsha | Self::Rupa | Self::Rasa | Self::Gandha => {
+                CompilationPhase::Representation
+            }
+            Self::Akasha | Self::Vayu | Self::Tejas | Self::Apas | Self::Prithvi => {
+                CompilationPhase::Output
+            }
         }
     }
 
@@ -228,10 +256,18 @@ impl Tattva {
             Self::Purusha => TattvaGroup::Purusha,
             Self::Prakriti => TattvaGroup::Prakriti,
             Self::Buddhi | Self::Ahamkara | Self::Manas => TattvaGroup::Antahkarana,
-            Self::Shrotra | Self::Tvak | Self::Cakshu | Self::Rasana | Self::Ghrana => TattvaGroup::Jnanendriya,
-            Self::Vak | Self::Pani | Self::Pada | Self::Payu | Self::Upastha => TattvaGroup::Karmendriya,
-            Self::ShabdaTanmatra | Self::Sparsha | Self::Rupa | Self::Rasa | Self::Gandha => TattvaGroup::Tanmatra,
-            Self::Akasha | Self::Vayu | Self::Tejas | Self::Apas | Self::Prithvi => TattvaGroup::Mahabhuta,
+            Self::Shrotra | Self::Tvak | Self::Cakshu | Self::Rasana | Self::Ghrana => {
+                TattvaGroup::Jnanendriya
+            }
+            Self::Vak | Self::Pani | Self::Pada | Self::Payu | Self::Upastha => {
+                TattvaGroup::Karmendriya
+            }
+            Self::ShabdaTanmatra | Self::Sparsha | Self::Rupa | Self::Rasa | Self::Gandha => {
+                TattvaGroup::Tanmatra
+            }
+            Self::Akasha | Self::Vayu | Self::Tejas | Self::Apas | Self::Prithvi => {
+                TattvaGroup::Mahabhuta
+            }
         }
     }
 }
@@ -280,9 +316,13 @@ impl SanskritDescribed for Tattva {
 
     fn explanation(&self) -> &'static str {
         match self.group() {
-            TattvaGroup::Purusha => "The unchanging witness consciousness - source code before compilation",
+            TattvaGroup::Purusha => {
+                "The unchanging witness consciousness - source code before compilation"
+            }
             TattvaGroup::Prakriti => "The creative matrix - raw source material to be transformed",
-            TattvaGroup::Antahkarana => "Internal instruments of cognition - analysis and understanding",
+            TattvaGroup::Antahkarana => {
+                "Internal instruments of cognition - analysis and understanding"
+            }
             TattvaGroup::Jnanendriya => "Sense organs that perceive - compiler frontend stages",
             TattvaGroup::Karmendriya => "Action organs that transform - compiler backend stages",
             TattvaGroup::Tanmatra => "Subtle essences - intermediate representations",
@@ -310,11 +350,31 @@ impl SanskritDescribed for Tattva {
 impl PhilosophicalEnum for Tattva {
     fn all_variants() -> &'static [Self] {
         const TATTVAS: [Tattva; 25] = [
-            Tattva::Purusha, Tattva::Prakriti, Tattva::Buddhi, Tattva::Ahamkara, Tattva::Manas,
-            Tattva::Shrotra, Tattva::Tvak, Tattva::Cakshu, Tattva::Rasana, Tattva::Ghrana,
-            Tattva::Vak, Tattva::Pani, Tattva::Pada, Tattva::Payu, Tattva::Upastha,
-            Tattva::ShabdaTanmatra, Tattva::Sparsha, Tattva::Rupa, Tattva::Rasa, Tattva::Gandha,
-            Tattva::Akasha, Tattva::Vayu, Tattva::Tejas, Tattva::Apas, Tattva::Prithvi,
+            Tattva::Purusha,
+            Tattva::Prakriti,
+            Tattva::Buddhi,
+            Tattva::Ahamkara,
+            Tattva::Manas,
+            Tattva::Shrotra,
+            Tattva::Tvak,
+            Tattva::Cakshu,
+            Tattva::Rasana,
+            Tattva::Ghrana,
+            Tattva::Vak,
+            Tattva::Pani,
+            Tattva::Pada,
+            Tattva::Payu,
+            Tattva::Upastha,
+            Tattva::ShabdaTanmatra,
+            Tattva::Sparsha,
+            Tattva::Rupa,
+            Tattva::Rasa,
+            Tattva::Gandha,
+            Tattva::Akasha,
+            Tattva::Vayu,
+            Tattva::Tejas,
+            Tattva::Apas,
+            Tattva::Prithvi,
         ];
         &TATTVAS
     }
@@ -338,7 +398,11 @@ impl PhilosophicalEnum for Tattva {
     }
 
     fn prev(&self) -> Self {
-        let prev_val = if *self as u8 == 1 { 25 } else { *self as u8 - 1 };
+        let prev_val = if *self as u8 == 1 {
+            25
+        } else {
+            *self as u8 - 1
+        };
         // Safety: values 1-25 are all valid
         unsafe { std::mem::transmute(prev_val) }
     }
@@ -430,3 +494,101 @@ impl Default for SamkhyaPipeline {
         Self::new()
     }
 }
+
+// ============================================================================
+// Tests
+// ============================================================================
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::traits::{PhilosophicalEnum, SanskritDescribed, SanskritNamed};
+
+    #[test]
+    fn test_tattva_count() {
+        assert_eq!(Tattva::count(), 25);
+        assert_eq!(Tattva::all_variants().len(), 25);
+        assert_eq!(Tattva::all().len(), 25);
+    }
+
+    #[test]
+    fn test_tattva_sanskrit_named_trait() {
+        let tattva = Tattva::Purusha;
+        assert_eq!(tattva.sanskrit(), "पुरुष");
+        assert_eq!(tattva.iast(), "Puruṣa");
+        assert_eq!(tattva.english(), "Pure Consciousness");
+    }
+
+    #[test]
+    fn test_tattva_sanskrit_described_trait() {
+        let tattva = Tattva::Buddhi;
+        assert_eq!(tattva.meaning(), "High-level analysis");
+        assert!(tattva.explanation().contains("Internal instruments"));
+        assert!(tattva.mantra().is_some());
+        assert_eq!(tattva.category(), "Sāṃkhya Philosophy (सांख्य तत्त्व)");
+    }
+
+    #[test]
+    fn test_tattva_groups() {
+        assert_eq!(Tattva::Purusha.group(), TattvaGroup::Purusha);
+        assert_eq!(Tattva::Buddhi.group(), TattvaGroup::Antahkarana);
+        assert_eq!(Tattva::Shrotra.group(), TattvaGroup::Jnanendriya);
+        assert_eq!(Tattva::Vak.group(), TattvaGroup::Karmendriya);
+        assert_eq!(Tattva::ShabdaTanmatra.group(), TattvaGroup::Tanmatra);
+        assert_eq!(Tattva::Akasha.group(), TattvaGroup::Mahabhuta);
+    }
+
+    #[test]
+    fn test_tattva_navigation_cycle() {
+        // Forward
+        assert_eq!(Tattva::Purusha.next(), Tattva::Prakriti);
+        assert_eq!(Tattva::Prithvi.next(), Tattva::Purusha); // Wrap from 25 to 1
+
+        // Backward
+        assert_eq!(Tattva::Prakriti.prev(), Tattva::Purusha);
+        assert_eq!(Tattva::Purusha.prev(), Tattva::Prithvi); // Wrap from 1 to 25
+    }
+
+    #[test]
+    fn test_tattva_from_index() {
+        assert_eq!(Tattva::from_index(0), Some(Tattva::Purusha));
+        assert_eq!(Tattva::from_index(24), Some(Tattva::Prithvi));
+        assert_eq!(Tattva::from_index(25), None);
+    }
+
+    #[test]
+    fn test_tattva_ordinal_sequence() {
+        for (i, tattva) in Tattva::all().iter().enumerate() {
+            assert_eq!(tattva.ordinal(), i + 1, "Tattva {:?} ordinal mismatch", tattva);
+            assert_eq!(tattva.index(), i, "Tattva {:?} index mismatch", tattva);
+        }
+    }
+
+    #[test]
+    fn test_tattva_compilation_phases() {
+        assert_eq!(Tattva::Purusha.phase(), CompilationPhase::Input);
+        assert_eq!(Tattva::Buddhi.phase(), CompilationPhase::Analysis);
+        assert_eq!(Tattva::Shrotra.phase(), CompilationPhase::Frontend);
+        assert_eq!(Tattva::Vak.phase(), CompilationPhase::Backend);
+        assert_eq!(Tattva::ShabdaTanmatra.phase(), CompilationPhase::Representation);
+        assert_eq!(Tattva::Prithvi.phase(), CompilationPhase::Output);
+    }
+
+    #[test]
+    fn test_samkhya_pipeline() {
+        let mut pipeline = SamkhyaPipeline::new();
+        assert_eq!(pipeline.current_tattva(), Tattva::Purusha);
+        assert!(!pipeline.is_complete());
+
+        // Advance through all 25 stages
+        for i in 2..=25 {
+            let next = pipeline.advance();
+            assert!(next.is_some(), "Stage {} should return Some", i);
+        }
+
+        // Should complete after 25th
+        assert!(pipeline.advance().is_none());
+        assert!(pipeline.is_complete());
+    }
+}
+

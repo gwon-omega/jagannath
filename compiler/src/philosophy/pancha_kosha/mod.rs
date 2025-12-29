@@ -410,4 +410,3 @@ mod tests {
         assert!(Kosha::Vijnanamaya.capacity_order() < Kosha::Anandamaya.capacity_order());
     }
 }
-

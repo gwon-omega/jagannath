@@ -46,8 +46,13 @@ impl Chakra {
     /// Get all 7 Chakras in order (root to crown)
     pub fn all() -> [Chakra; 7] {
         [
-            Chakra::Muladhara, Chakra::Svadhisthana, Chakra::Manipura,
-            Chakra::Anahata, Chakra::Vishuddha, Chakra::Ajna, Chakra::Sahasrara,
+            Chakra::Muladhara,
+            Chakra::Svadhisthana,
+            Chakra::Manipura,
+            Chakra::Anahata,
+            Chakra::Vishuddha,
+            Chakra::Ajna,
+            Chakra::Sahasrara,
         ]
     }
 
@@ -198,8 +203,13 @@ impl SanskritDescribed for Chakra {
 impl PhilosophicalEnum for Chakra {
     fn all_variants() -> &'static [Self] {
         &[
-            Chakra::Muladhara, Chakra::Svadhisthana, Chakra::Manipura,
-            Chakra::Anahata, Chakra::Vishuddha, Chakra::Ajna, Chakra::Sahasrara,
+            Chakra::Muladhara,
+            Chakra::Svadhisthana,
+            Chakra::Manipura,
+            Chakra::Anahata,
+            Chakra::Vishuddha,
+            Chakra::Ajna,
+            Chakra::Sahasrara,
         ]
     }
 
