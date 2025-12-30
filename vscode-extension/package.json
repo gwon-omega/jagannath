@@ -246,6 +246,34 @@
         "command": "jagannath.viewNarakaClassification",
         "title": "Jagannath: View Naraka Classification"
       }
+      ,
+      {
+        "command": "jagannath.invokeAstra",
+        "title": "Jagannath: Invoke Astra (Deploy Optimization)",
+        "icon": "$(rocket)"
+      },
+      {
+        "command": "jagannath.yamaJudge",
+        "title": "Jagannath: Yama Judge (Run Static Analysis)",
+        "icon": "$(shield)"
+      },
+      {
+        "command": "jagannath.selectMarga",
+        "title": "Jagannath: Select Mārga (Optimization Path)",
+        "icon": "$(list-selection)"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "jagannath.yamaJudge",
+        "key": "ctrl+alt+y",
+        "when": "editorTextFocus && resourceLangId == jagannath"
+      },
+      {
+        "command": "jagannath.invokeAstra",
+        "key": "ctrl+alt+a",
+        "when": "editorTextFocus && resourceLangId == jagannath"
+      }
     ],
     "menus": {
       "editor/title": [

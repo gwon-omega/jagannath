@@ -1509,6 +1509,15 @@ export function activate(context: vscode.ExtensionContext) {
     vscode.commands.registerCommand("jagannath.build", buildCommand),
     vscode.commands.registerCommand("jagannath.run", runCommand),
     vscode.commands.registerCommand("jagannath.format", formatCommand),
+    vscode.commands.registerCommand(
+      "jagannath.invokeAstra",
+      invokeAstraCommand
+    ),
+    vscode.commands.registerCommand("jagannath.yamaJudge", yamaJudgeCommand),
+    vscode.commands.registerCommand(
+      "jagannath.selectMarga",
+      selectMargaCommand
+    ),
     vscode.commands.registerCommand("jagannath.showAstViewer", () => {
       ASTViewerPanel.createOrShow(context.extensionUri);
     }),
@@ -1545,6 +1554,87 @@ export function activate(context: vscode.ExtensionContext) {
       }
     )
   );
+
+  // Register diagnostics provider (simple Naraka mapper)
+  const diagnosticCollection =
+    vscode.languages.createDiagnosticCollection("jagannath-naraka");
+  context.subscriptions.push(diagnosticCollection);
+
+  context.subscriptions.push(
+    vscode.workspace.onDidSaveTextDocument((doc) => {
+      if (doc.languageId !== "jagannath") return;
+      const diagnostics: vscode.Diagnostic[] = [];
+      const text = doc.getText();
+
+      // Simple patterns mapping to Naraka types
+      const patterns: {
+        regex: RegExp;
+        naraka: string;
+        severity: vscode.DiagnosticSeverity;
+        message: string;
+      }[] = [
+        {
+          regex: /use-after-free/i,
+          naraka: "Tamisram",
+          severity: vscode.DiagnosticSeverity.Error,
+          message: "Use-after-free detected (Tamisram)",
+        },
+        {
+          regex: /null pointer/i,
+          naraka: "Andhakupa",
+          severity: vscode.DiagnosticSeverity.Error,
+          message: "Null pointer dereference (Andhakupa)",
+        },
+        {
+          regex: /tainted data/i,
+          naraka: "Vaitarani",
+          severity: vscode.DiagnosticSeverity.Warning,
+          message: "Tainted data crossing boundary (Vaitarani)",
+        },
+        {
+          regex: /memory leak/i,
+          naraka: "Suchimukha",
+          severity: vscode.DiagnosticSeverity.Warning,
+          message: "Possible memory leak (Suchimukha)",
+        },
+        {
+          regex: /buffer overflow/i,
+          naraka: "Asipatravana",
+          severity: vscode.DiagnosticSeverity.Error,
+          message: "Buffer overflow risk (Asipatravana)",
+        },
+      ];
+
+      const lines = text.split(/\r?\n/);
+      for (let i = 0; i < lines.length; i++) {
+        const line = lines[i];
+        for (const p of patterns) {
+          const m = p.regex.exec(line);
+          if (m) {
+            const range = new vscode.Range(
+              i,
+              m.index,
+              i,
+              m.index + m[0].length
+            );
+            const diag = new vscode.Diagnostic(
+              range,
+              `${p.message} — Naraka: ${p.naraka}. Penance: apply śuddhi-kri()`,
+              p.severity
+            );
+            diag.source = "Yama";
+            diag.code = p.naraka;
+            diagnostics.push(diag);
+          }
+        }
+      }
+
+      diagnosticCollection.set(doc.uri, diagnostics);
+    })
+  );
+
+  // Register Naraka code actions and penance command
+  registerNarakaProviders(context);
 
   // Start the LSP client
   client.start();
@@ -1617,4 +1707,135 @@ async function formatCommand() {
   } else {
     vscode.window.showErrorMessage("No Jagannath file is open");
   }
+}
+
+// =============================================================================
+// NEW COMMAND HANDLERS
+// =============================================================================
+
+async function invokeAstraCommand() {
+  const editor = vscode.window.activeTextEditor;
+  if (!editor || editor.document.languageId !== "jagannath") {
+    vscode.window.showErrorMessage("Open a Jagannath file to invoke an Astra");
+    return;
+  }
+
+  const astra = await vscode.window.showQuickPick(
+    [
+      "Brahmastra",
+      "Agneyastra",
+      "Varunastra",
+      "Pashupatastra",
+      "SudarshanaChakra",
+    ],
+    { placeHolder: "Select Astra to deploy (optimization)" }
+  );
+
+  if (!astra) return;
+
+  const mantra = await vscode.window.showInputBox({
+    prompt: `Enter mantra for ${astra} (or leave empty for default)`,
+  });
+  vscode.window.showInformationMessage(
+    `Invoking ${astra} ${
+      mantra ? `with mantra: ${mantra}` : "with default mantra"
+    }`
+  );
+}
+
+async function yamaJudgeCommand() {
+  const editor = vscode.window.activeTextEditor;
+  if (!editor || editor.document.languageId !== "jagannath") {
+    vscode.window.showErrorMessage("Open a Jagannath file to run Yama Judge");
+    return;
+  }
+
+  // Run a lightweight static analysis using existing diagnostics
+  await editor.document.save();
+  vscode.window.showInformationMessage(
+    "Yama Judge: Static analysis completed — check Problems panel for Naraka diagnostics"
+  );
+}
+
+async function selectMargaCommand() {
+  const options = [
+    { label: "karma", description: "Action: optimize imperative code" },
+    { label: "jnana", description: "Knowledge: optimize pure code" },
+    { label: "bhakti", description: "Devotion: domain-specific" },
+    { label: "raja", description: "Royal: balanced hybrid" },
+  ];
+  const pick = await vscode.window.showQuickPick(options, {
+    placeHolder: "Select Mārga (optimization path)",
+  });
+  if (!pick) return;
+  const config = vscode.workspace.getConfiguration("jagannath");
+  await config.update(
+    "marga",
+    pick.label,
+    vscode.ConfigurationTarget.Workspace
+  );
+  vscode.window.showInformationMessage(`Mārga selected: ${pick.label}`);
+}
+
+// =============================================================================
+// CODE ACTION PROVIDER - Quick fixes for Naraka diagnostics
+// =============================================================================
+
+class NarakaCodeActionProvider implements vscode.CodeActionProvider {
+  public provideCodeActions(
+    document: vscode.TextDocument,
+    range: vscode.Range
+  ): vscode.CodeAction[] | undefined {
+    const diagnostics = vscode.languages
+      .getDiagnostics(document.uri)
+      .filter((d) => d.source === "Yama" && range.intersection(d.range));
+    if (!diagnostics || diagnostics.length === 0) return;
+
+    const actions: vscode.CodeAction[] = [];
+    for (const diag of diagnostics) {
+      const naraka = diag.code as string;
+      const title = `Apply penance for ${naraka}`;
+      const action = new vscode.CodeAction(
+        title,
+        vscode.CodeActionKind.QuickFix
+      );
+      action.command = {
+        command: "jagannath.applyPenance",
+        title,
+        arguments: [document.uri, diag.range, naraka],
+      };
+      action.diagnostics = [diag];
+      actions.push(action);
+    }
+
+    return actions;
+  }
+}
+
+function registerNarakaProviders(context: vscode.ExtensionContext) {
+  context.subscriptions.push(
+    vscode.languages.registerCodeActionsProvider(
+      { language: "jagannath" },
+      new NarakaCodeActionProvider(),
+      { providedCodeActionKinds: [vscode.CodeActionKind.QuickFix] }
+    )
+  );
+
+  context.subscriptions.push(
+    vscode.commands.registerCommand(
+      "jagannath.applyPenance",
+      async (uri: vscode.Uri, range: vscode.Range, naraka: string) => {
+        const doc = await vscode.workspace.openTextDocument(uri);
+        const editor = await vscode.window.showTextDocument(doc);
+        // Simple penance insertion: add a comment with recommended fix
+        await editor.edit((edit) => {
+          edit.insert(
+            new vscode.Position(range.end.line + 1, 0),
+            `// PRĀYAŚCITTA: apply śuddhi-kri() to resolve ${naraka}\n`
+          );
+        });
+        vscode.window.showInformationMessage(`Penance applied for ${naraka}`);
+      }
+    )
+  );
 }
