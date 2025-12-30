@@ -1,4 +1,8 @@
-//! Ashtanga - 8-Limb Software Development Lifecycle
+//! # Aṣṭāṅga - 8-Limb Software Development Lifecycle
+//!
+//! > **"योगश्चित्तवृत्तिनिरोधः"**
+//! > *"Yoga is the cessation of mental fluctuations"*
+//! > — Patañjali's Yoga Sūtra 1.2
 //!
 //! Maps the 8 limbs of Yoga to software development:
 //! 1. Yama (restraints) - Coding standards
@@ -9,6 +13,13 @@
 //! 6. Dhāraṇā (concentration) - Focus/SRP
 //! 7. Dhyāna (meditation) - Code review
 //! 8. Samādhi (absorption) - Deployment
+//!
+//! ## Philosophical Foundation
+//! The Aṣṭāṅga (eight-limbed) path of Patañjali provides a systematic
+//! framework for progressive development, from external constraints
+//! to internal perfection - mirroring the software development lifecycle.
+
+use crate::traits::{PhilosophicalEnum, SanskritDescribed, SanskritNamed};
 
 // Submodules for each limb
 pub mod asana;
@@ -30,44 +41,48 @@ pub use pratyahara::{PratyaharaAnalyzer, Symbol, Visibility};
 pub use samadhi::{DeploymentStage, ReadinessCriterion, SamadhiDeployment};
 pub use yama::{Yama, YamaChecker, YamaViolation};
 
-/// The 8 Angas (limbs) of software development
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+/// The 8 Aṅgas (limbs) of software development
+///
+/// > **"तस्य भूमिषु विनियोगः"**
+/// > *"Their application is in stages"*
+/// > — Yoga Sūtra 3.6
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum Anga {
-    /// Yama (restraints) - Coding standards
-    /// What NOT to do
+    /// यम - Yama (restraints) - Coding standards
+    /// What NOT to do (ahiṃsā, satya, asteya, brahmacarya, aparigraha)
     Yama = 1,
 
-    /// Niyama (observances) - Best practices
-    /// What TO do
+    /// नियम - Niyama (observances) - Best practices
+    /// What TO do (śauca, santoṣa, tapas, svādhyāya, īśvara-praṇidhāna)
     Niyama = 2,
 
-    /// Āsana (posture) - Architecture
-    /// Stable foundation
+    /// आसन - Āsana (posture) - Architecture
+    /// Stable foundation (sthira-sukham āsanam)
     Asana = 3,
 
-    /// Prāṇāyāma (breath control) - Resource management
-    /// Memory, CPU, I/O
+    /// प्राणायाम - Prāṇāyāma (breath control) - Resource management
+    /// Memory, CPU, I/O flow
     Pranayama = 4,
 
-    /// Pratyāhāra (withdrawal) - Encapsulation
-    /// Information hiding
+    /// प्रत्याहार - Pratyāhāra (withdrawal) - Encapsulation
+    /// Information hiding (sense withdrawal)
     Pratyahara = 5,
 
-    /// Dhāraṇā (concentration) - Focus/SRP
-    /// Single responsibility
+    /// धारणा - Dhāraṇā (concentration) - Focus/SRP
+    /// Single responsibility (deśa-bandhaś cittasya)
     Dharana = 6,
 
-    /// Dhyāna (meditation) - Code review
-    /// Deep analysis
+    /// ध्यान - Dhyāna (meditation) - Code review
+    /// Deep analysis (tatra pratyaya-ekatānatā)
     Dhyana = 7,
 
-    /// Samādhi (absorption) - Deployment
-    /// Perfect integration
+    /// समाधि - Samādhi (absorption) - Deployment
+    /// Perfect integration (tad evārtha-mātra-nirbhāsam)
     Samadhi = 8,
 }
 
 impl Anga {
-    /// Get Sanskrit name
+    /// Get Sanskrit name in Devanagari
     pub fn sanskrit_name(&self) -> &'static str {
         match self {
             Self::Yama => "यम",
@@ -78,6 +93,34 @@ impl Anga {
             Self::Dharana => "धारणा",
             Self::Dhyana => "ध्यान",
             Self::Samadhi => "समाधि",
+        }
+    }
+
+    /// Get IAST transliteration
+    pub fn iast(&self) -> &'static str {
+        match self {
+            Self::Yama => "Yama",
+            Self::Niyama => "Niyama",
+            Self::Asana => "Āsana",
+            Self::Pranayama => "Prāṇāyāma",
+            Self::Pratyahara => "Pratyāhāra",
+            Self::Dharana => "Dhāraṇā",
+            Self::Dhyana => "Dhyāna",
+            Self::Samadhi => "Samādhi",
+        }
+    }
+
+    /// Get English translation
+    pub fn english(&self) -> &'static str {
+        match self {
+            Self::Yama => "Restraint",
+            Self::Niyama => "Observance",
+            Self::Asana => "Posture",
+            Self::Pranayama => "Breath Control",
+            Self::Pratyahara => "Withdrawal",
+            Self::Dharana => "Concentration",
+            Self::Dhyana => "Meditation",
+            Self::Samadhi => "Absorption",
         }
     }
 
@@ -92,6 +135,46 @@ impl Anga {
             Self::Dharana => "Single Responsibility",
             Self::Dhyana => "Code Review",
             Self::Samadhi => "Deployment",
+        }
+    }
+
+    /// Get the mantra for this limb
+    pub fn mantra(&self) -> &'static str {
+        match self {
+            Self::Yama => "अहिंसा सत्यमस्तेयं ब्रह्मचर्यापरिग्रहाः यमाः",
+            Self::Niyama => "शौच सन्तोष तपः स्वाध्यायेश्वरप्रणिधानानि नियमाः",
+            Self::Asana => "स्थिरसुखमासनम्",
+            Self::Pranayama => "तस्मिन्सति श्वासप्रश्वासयोर्गतिविच्छेदः प्राणायामः",
+            Self::Pratyahara => "स्वविषयासंप्रयोगे चित्तस्य स्वरूपानुकार इवेन्द्रियाणां प्रत्याहारः",
+            Self::Dharana => "देशबन्धश्चित्तस्य धारणा",
+            Self::Dhyana => "तत्र प्रत्ययैकतानता ध्यानम्",
+            Self::Samadhi => "तदेवार्थमात्रनिर्भासं स्वरूपशून्यमिव समाधिः",
+        }
+    }
+
+    /// All 8 Angas in traditional order
+    pub fn all() -> &'static [Anga] {
+        &[
+            Anga::Yama,
+            Anga::Niyama,
+            Anga::Asana,
+            Anga::Pranayama,
+            Anga::Pratyahara,
+            Anga::Dharana,
+            Anga::Dhyana,
+            Anga::Samadhi,
+        ]
+    }
+
+    /// Get category: Bahiraṅga (external) or Antaraṅga (internal)
+    pub fn category(&self) -> &'static str {
+        match self {
+            // Bahiraṅga (external practices)
+            Self::Yama | Self::Niyama | Self::Asana | Self::Pranayama | Self::Pratyahara => {
+                "Bahiraṅga (बहिरङ्ग - External)"
+            }
+            // Antaraṅga (internal practices)
+            Self::Dharana | Self::Dhyana | Self::Samadhi => "Antaraṅga (अन्तरङ्ग - Internal)",
         }
     }
 
@@ -250,5 +333,168 @@ impl AshtangaLifecycle {
 impl Default for AshtangaLifecycle {
     fn default() -> Self {
         Self::new()
+    }
+}
+
+// ============================================================================
+// TRAIT IMPLEMENTATIONS - Unified abstraction layer (v10.0)
+// ============================================================================
+
+impl SanskritNamed for Anga {
+    fn sanskrit(&self) -> &'static str {
+        self.sanskrit_name()
+    }
+
+    fn iast(&self) -> &'static str {
+        Anga::iast(self)
+    }
+
+    fn english(&self) -> &'static str {
+        Anga::english(self)
+    }
+}
+
+impl SanskritDescribed for Anga {
+    fn meaning(&self) -> &'static str {
+        self.sdlc_phase()
+    }
+
+    fn explanation(&self) -> &'static str {
+        match self {
+            Anga::Yama => "Restraints that prevent harmful code patterns (anti-patterns)",
+            Anga::Niyama => "Positive practices that improve code quality systematically",
+            Anga::Asana => "Stable architecture foundation for sustainable development",
+            Anga::Pranayama => "Balanced flow of resources (memory, CPU, I/O)",
+            Anga::Pratyahara => "Withdrawal from external dependencies via encapsulation",
+            Anga::Dharana => "Single-pointed focus on one responsibility per component",
+            Anga::Dhyana => "Deep meditative analysis through code review",
+            Anga::Samadhi => "Perfect absorption where code and purpose merge seamlessly",
+        }
+    }
+
+    fn mantra(&self) -> Option<&'static str> {
+        Some(Anga::mantra(self))
+    }
+
+    fn category(&self) -> &'static str {
+        Anga::category(self)
+    }
+}
+
+impl PhilosophicalEnum for Anga {
+    fn all() -> &'static [Self] {
+        Anga::all()
+    }
+
+    fn index(&self) -> usize {
+        (*self as usize) - 1 // Convert from 1-based enum to 0-based index
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_anga_count() {
+        assert_eq!(Anga::all().len(), 8);
+        assert_eq!(Anga::count(), 8);
+    }
+
+    #[test]
+    fn test_anga_sanskrit_named_trait() {
+        use crate::traits::SanskritNamed;
+
+        let yama = Anga::Yama;
+        assert_eq!(yama.sanskrit(), "यम");
+        assert_eq!(yama.iast(), "Yama");
+        assert_eq!(yama.english(), "Restraint");
+
+        let samadhi = Anga::Samadhi;
+        assert_eq!(samadhi.sanskrit(), "समाधि");
+        assert_eq!(samadhi.iast(), "Samādhi");
+        assert_eq!(samadhi.english(), "Absorption");
+    }
+
+    #[test]
+    fn test_anga_sanskrit_described_trait() {
+        use crate::traits::SanskritDescribed;
+
+        let asana = Anga::Asana;
+        assert_eq!(asana.meaning(), "Architecture");
+        assert!(asana.explanation().contains("architecture"));
+        assert!(SanskritDescribed::mantra(&asana).is_some());
+        assert_eq!(SanskritDescribed::mantra(&asana).unwrap(), "स्थिरसुखमासनम्");
+        assert!(SanskritDescribed::category(&asana).contains("Bahiraṅga"));
+    }
+
+    #[test]
+    fn test_anga_philosophical_enum_trait() {
+        use crate::traits::PhilosophicalEnum;
+
+        // Index and ordinal
+        assert_eq!(Anga::Yama.index(), 0);
+        assert_eq!(Anga::Yama.ordinal(), 1);
+        assert_eq!(Anga::Samadhi.index(), 7);
+        assert_eq!(Anga::Samadhi.ordinal(), 8);
+
+        // Navigation
+        assert_eq!(Anga::Yama.next(), Anga::Niyama);
+        assert_eq!(Anga::Samadhi.next(), Anga::Yama); // Wraps
+        assert_eq!(Anga::Niyama.prev(), Anga::Yama);
+        assert_eq!(Anga::Yama.prev(), Anga::Samadhi); // Wraps
+
+        // From index
+        assert_eq!(Anga::from_index(0), Some(Anga::Yama));
+        assert_eq!(Anga::from_index(4), Some(Anga::Pratyahara));
+        assert_eq!(Anga::from_index(8), None);
+    }
+
+    #[test]
+    fn test_anga_categories() {
+        use crate::traits::SanskritDescribed;
+
+        // Bahiraṅga (external) - first 5 limbs
+        assert!(SanskritDescribed::category(&Anga::Yama).contains("External"));
+        assert!(SanskritDescribed::category(&Anga::Niyama).contains("External"));
+        assert!(SanskritDescribed::category(&Anga::Asana).contains("External"));
+        assert!(SanskritDescribed::category(&Anga::Pranayama).contains("External"));
+        assert!(SanskritDescribed::category(&Anga::Pratyahara).contains("External"));
+
+        // Antaraṅga (internal) - last 3 limbs
+        assert!(SanskritDescribed::category(&Anga::Dharana).contains("Internal"));
+        assert!(SanskritDescribed::category(&Anga::Dhyana).contains("Internal"));
+        assert!(SanskritDescribed::category(&Anga::Samadhi).contains("Internal"));
+    }
+
+    #[test]
+    fn test_anga_sdlc_phases() {
+        assert_eq!(Anga::Yama.sdlc_phase(), "Coding Standards");
+        assert_eq!(Anga::Asana.sdlc_phase(), "Architecture");
+        assert_eq!(Anga::Dhyana.sdlc_phase(), "Code Review");
+        assert_eq!(Anga::Samadhi.sdlc_phase(), "Deployment");
+    }
+
+    #[test]
+    fn test_anga_mantras_all_present() {
+        use crate::traits::SanskritDescribed;
+
+        for anga in Anga::all() {
+            assert!(
+                SanskritDescribed::mantra(anga).is_some(),
+                "Missing mantra for {:?}",
+                anga
+            );
+            // Verify it's actual Sanskrit from Yoga Sutras
+            assert!(!SanskritDescribed::mantra(anga).unwrap().is_empty());
+        }
+    }
+
+    #[test]
+    fn test_anga_ordinal_sequence() {
+        // Traditional 1-based ordering from Yoga Sutras
+        for (i, anga) in Anga::all().iter().enumerate() {
+            assert_eq!(anga.ordinal(), i + 1);
+        }
     }
 }

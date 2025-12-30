@@ -14,3 +14,5 @@ alloc = []
 embedded = []
 
 [dependencies]
+pin-project-lite = "0.2"
+libm = "0.2"

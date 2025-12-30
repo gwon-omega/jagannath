@@ -3,41 +3,47 @@
 .intel_syntax noprefix
 .text
 
-.global max
-max:
+.global test
+test:
     push rbp
     mov rbp, rsp
     sub rsp, 32
-    # Store arg 0 from rdi
-    mov QWORD PTR [rbp-32], rdi
-    # Store arg 1 from rsi
-    mov QWORD PTR [rbp-40], rsi
 .L0:
     # Assignment
-    mov rcx, QWORD PTR [rbp-8]
-    mov rdx, QWORD PTR [rbp-16]
+    mov rax, 42
+    mov QWORD PTR [rbp-8], rax
+    jmp .Ltest_epilogue
+.Ltest_epilogue:
+    add rsp, 32
+    pop rbp
+    ret
+.L1:
+    # Assignment
+    mov rcx, QWORD PTR [rbp-16]
+    mov rdx, 10
     cmp rcx, rdx
-    setg al
+    setl al
     movzx rax, al
     mov QWORD PTR [rbp-24], rax
     # Switch on discriminant
     mov rax, QWORD PTR [rbp-24]
     cmp rax, 1
-    je .L1
-    jmp .L2
-.L1:
-    # Assignment
-    mov rax, QWORD PTR [rbp-8]
-    mov QWORD PTR [rbp-8], rax
+    je .L2
     jmp .L3
 .L2:
     # Assignment
-    mov rax, QWORD PTR [rbp-16]
-    mov QWORD PTR [rbp-8], rax
-    jmp .L3
+    mov rcx, QWORD PTR [rbp-16]
+    mov rdx, 1
+    mov rax, rcx
+    add rax, rdx
+    mov QWORD PTR [rbp-16], rax
+    jmp .L1
 .L3:
-    jmp .Lmax_epilogue
-.Lmax_epilogue:
+    # Assignment
+    mov rax, QWORD PTR [rbp-8]
+    mov QWORD PTR [rbp-8], rax
+    jmp .Lcount_epilogue
+.Lcount_epilogue:
     add rsp, 32
     pop rbp
     ret

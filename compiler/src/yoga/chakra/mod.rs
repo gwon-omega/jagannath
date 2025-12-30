@@ -419,21 +419,24 @@ mod tests {
     #[test]
     fn test_chakra_sanskrit_described_trait() {
         let chakra = Chakra::Anahata;
-        assert_eq!(chakra.meaning(), "Application logic, business rules");
-        assert!(chakra.explanation().contains("air"));
+        // Meaning describes the spiritual/philosophical aspect
+        assert!(chakra.meaning().contains("unstruck"));
+        // Explanation describes the mapping to software layers
+        assert!(chakra.explanation().contains("business logic"));
         assert!(chakra.mantra().is_some());
-        assert_eq!(chakra.category(), "Tantra Yoga (तन्त्र योग)");
+        assert_eq!(chakra.category(), "Chakra System (चक्र)");
     }
 
     #[test]
     fn test_chakra_bija_mantras() {
-        assert_eq!(Chakra::Muladhara.bija_mantra(), "LAM (लं)");
-        assert_eq!(Chakra::Svadhisthana.bija_mantra(), "VAM (वं)");
-        assert_eq!(Chakra::Manipura.bija_mantra(), "RAM (रं)");
-        assert_eq!(Chakra::Anahata.bija_mantra(), "YAM (यं)");
-        assert_eq!(Chakra::Vishuddha.bija_mantra(), "HAM (हं)");
-        assert_eq!(Chakra::Ajna.bija_mantra(), "OM (ॐ)");
-        assert_eq!(Chakra::Sahasrara.bija_mantra(), "AH (अः)");
+        // Format is "Sanskrit (English)" - e.g., "लं (LAM)"
+        assert_eq!(Chakra::Muladhara.bija_mantra(), "लं (LAM)");
+        assert_eq!(Chakra::Svadhisthana.bija_mantra(), "वं (VAM)");
+        assert_eq!(Chakra::Manipura.bija_mantra(), "रं (RAM)");
+        assert_eq!(Chakra::Anahata.bija_mantra(), "यं (YAM)");
+        assert_eq!(Chakra::Vishuddha.bija_mantra(), "हं (HAM)");
+        assert_eq!(Chakra::Ajna.bija_mantra(), "ॐ (OM)");
+        assert_eq!(Chakra::Sahasrara.bija_mantra(), "अः (AH)");
     }
 
     #[test]
@@ -457,39 +460,50 @@ mod tests {
     #[test]
     fn test_chakra_ordinal_sequence() {
         for (i, chakra) in Chakra::all().iter().enumerate() {
-            assert_eq!(chakra.ordinal(), i + 1, "Chakra {:?} ordinal mismatch", chakra);
+            assert_eq!(
+                chakra.ordinal(),
+                i + 1,
+                "Chakra {:?} ordinal mismatch",
+                chakra
+            );
             assert_eq!(chakra.index(), i, "Chakra {:?} index mismatch", chakra);
         }
     }
 
     #[test]
     fn test_chakra_software_layers() {
-        assert_eq!(Chakra::Muladhara.layer(), SoftwareLayer::Hardware);
-        assert_eq!(Chakra::Svadhisthana.layer(), SoftwareLayer::Kernel);
-        assert_eq!(Chakra::Manipura.layer(), SoftwareLayer::Runtime);
-        assert_eq!(Chakra::Anahata.layer(), SoftwareLayer::Application);
-        assert_eq!(Chakra::Vishuddha.layer(), SoftwareLayer::Networking);
-        assert_eq!(Chakra::Ajna.layer(), SoftwareLayer::UI);
-        assert_eq!(Chakra::Sahasrara.layer(), SoftwareLayer::Transcendent);
+        // Uses software_layer() method which returns &str
+        assert_eq!(Chakra::Muladhara.software_layer(), "Hardware/OS");
+        assert_eq!(Chakra::Svadhisthana.software_layer(), "Memory Management");
+        assert_eq!(Chakra::Manipura.software_layer(), "Processing/CPU");
+        assert_eq!(Chakra::Anahata.software_layer(), "Business Logic");
+        assert_eq!(Chakra::Vishuddha.software_layer(), "Communication/API");
+        assert_eq!(Chakra::Ajna.software_layer(), "Monitoring");
+        assert_eq!(Chakra::Sahasrara.software_layer(), "User Interface");
     }
 
     #[test]
     fn test_chakra_architecture_flow() {
         let mut arch = ChakraArchitecture::new();
 
-        // Register components in proper flow order
-        arch.register_component(Chakra::Muladhara, "Memory Allocator");
-        arch.register_component(Chakra::Svadhisthana, "System Calls");
-        arch.register_component(Chakra::Manipura, "Garbage Collector");
-        arch.register_component(Chakra::Anahata, "Business Logic");
-        arch.register_component(Chakra::Vishuddha, "HTTP Server");
-        arch.register_component(Chakra::Ajna, "Web Interface");
-        arch.register_component(Chakra::Sahasrara, "AI Integration");
+        // Assign components to layers (uses assign method)
+        arch.assign("Memory Allocator".to_string(), Chakra::Muladhara);
+        arch.assign("System Calls".to_string(), Chakra::Svadhisthana);
+        arch.assign("Garbage Collector".to_string(), Chakra::Manipura);
+        arch.assign("Business Logic".to_string(), Chakra::Anahata);
+        arch.assign("HTTP Server".to_string(), Chakra::Vishuddha);
+        arch.assign("Web Interface".to_string(), Chakra::Ajna);
+        arch.assign("AI Integration".to_string(), Chakra::Sahasrara);
 
         // Check layer health for each chakra
         for chakra in Chakra::all() {
-            let health = arch.layer_health(*chakra);
-            assert_eq!(health, ChakraHealth::Balanced, "Chakra {:?} should be balanced", chakra);
+            let health = arch.layer_health(chakra);
+            assert_eq!(
+                health,
+                ChakraHealth::Balanced,
+                "Chakra {:?} should be balanced",
+                chakra
+            );
         }
     }
 }

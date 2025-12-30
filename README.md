@@ -8,10 +8,10 @@
 
 [![License: MIT/Apache-2.0](https://img.shields.io/badge/License-MIT%2FApache--2.0-blue.svg)](LICENSE-MIT)
 [![Version](https://img.shields.io/badge/Version-10.0.0-green.svg)](Cargo.toml)
-[![Tests](https://img.shields.io/badge/Tests-645%2B%20passing-brightgreen.svg)](#-current-status)
+[![Tests](https://img.shields.io/badge/Tests-717%20passing-brightgreen.svg)](#-current-status)
 [![Rust](https://img.shields.io/badge/Rust-1.75%2B-orange.svg)](https://www.rust-lang.org/)
 
-**4.2× Faster Than C** | **645+ Tests** | **Sanskrit-Encoded Type System**
+**4.2× Faster Than C** | **717 Tests** | **Sanskrit-Encoded Type System**
 
 </div>
 
@@ -76,7 +76,7 @@ Build a systems programming language that is **4.2× faster than C** by encoding
 | **Traits** | ✅ Complete | 27 | v10.0 unified abstractions |
 | **Runtime** | ✅ Complete | 16 | Arena allocator, async |
 | **Stdlib** | ✅ Complete | 16 | Collections, strings, time |
-| **Total** | **645+ tests** | | **499 compiler + integration** |
+| **Total** | **700+ tests** | | **554 compiler + integration** |
 
 ### Performance Benchmarks
 ```
@@ -236,7 +236,7 @@ cd jagannath
 # Build compiler
 cargo build --release
 
-# Run all tests (645+)
+# Run all tests (700+)
 cargo test --workspace
 
 # Run benchmarks
@@ -280,7 +280,7 @@ We welcome contributions!
 
 - Use Sanskrit naming conventions (see AGENTS.md §1)
 - Follow affix system rules (see AGENTS.md §2)
-- Add tests for new features (maintain 645+ test count)
+- Add tests for new features (maintain 700+ test count)
 - Map new systems to Hindu philosophy where applicable
 
 ---
