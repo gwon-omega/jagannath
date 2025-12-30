@@ -10,6 +10,7 @@
 //! - `samaya` - Instants and timestamps (समय)
 //! - `avadhi` - Durations and intervals (अवधि)
 //! - `dina` - Date operations (दिन)
+//! - `vaidika` - Vedic time units from truṭi to Mahā-Kalpa (वैदिक काल)
 
 #[cfg(feature = "std")]
 pub mod avadhi;
@@ -17,6 +18,7 @@ pub mod avadhi;
 pub mod dina;
 #[cfg(feature = "std")]
 pub mod samaya;
+pub mod vaidika;
 
 #[cfg(feature = "std")]
 pub use avadhi::*;
@@ -24,6 +26,7 @@ pub use avadhi::*;
 pub use dina::*;
 #[cfg(feature = "std")]
 pub use samaya::*;
+pub use vaidika::*;
 
 /// Time measurement trait (Kāla-Māna - कालमान)
 pub trait KalaMana {

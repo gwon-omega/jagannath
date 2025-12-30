@@ -13,6 +13,8 @@
 //! - [`parisankhya`] - Statistics and probability (परिसंख्या)
 //! - [`vedic`] - Vedic mathematics for fast computation (वैदिक)
 //! - [`bija`] - Abstract algebra: groups, rings, fields (बीज)
+//! - [`mahasankhya`] - Sanskrit large numbers: eka to dhvajāgraniśāmaṇī (महासंख्या)
+//! - [`ramanujan`] - Ramanujan's mathematical formulas (रामानुजन)
 //!
 //! ## Usage
 //!
@@ -38,12 +40,16 @@
 #![allow(dead_code)]
 
 pub mod bija;
+pub mod mahasankhya;
 pub mod parisankhya;
+pub mod ramanujan;
 pub mod rekha;
 pub mod sankhya;
 pub mod vedic;
 
 // Re-exports for convenience
+pub use mahasankhya::*;
 pub use parisankhya::{madhya, manaka_vichalana, prasarana};
+pub use ramanujan::*;
 pub use rekha::{Aavyuha, Sadisha};
 pub use sankhya::*;

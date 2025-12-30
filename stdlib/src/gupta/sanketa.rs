@@ -648,6 +648,7 @@ mod tests {
     use super::*;
 
     #[test]
+    #[cfg(feature = "alloc")]
     fn test_sha256_empty() {
         let hash = sha256(b"");
         // Known SHA-256 hash of empty string
@@ -658,6 +659,7 @@ mod tests {
     }
 
     #[test]
+    #[cfg(feature = "alloc")]
     fn test_sha256_hello() {
         let hash = sha256(b"hello");
         assert_eq!(
@@ -667,6 +669,7 @@ mod tests {
     }
 
     #[test]
+    #[cfg(feature = "alloc")]
     fn test_sha256_abc() {
         let hash = sha256(b"abc");
         assert_eq!(
@@ -676,6 +679,7 @@ mod tests {
     }
 
     #[test]
+    #[cfg(feature = "alloc")]
     fn test_sha512_empty() {
         let hash = sha512(b"");
         // First 32 chars of known SHA-512 hash of empty string
@@ -684,6 +688,7 @@ mod tests {
     }
 
     #[test]
+    #[cfg(feature = "alloc")]
     fn test_sha512_abc() {
         let hash = sha512(b"abc");
         let hex = hash.hex();

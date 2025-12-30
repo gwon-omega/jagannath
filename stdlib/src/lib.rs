@@ -11,6 +11,11 @@
 #[cfg(feature = "alloc")]
 extern crate alloc;
 
+// Core traits (मूल लक्षण)
+pub mod avartana;
+pub mod dosha; // Error handling (दोष)
+pub mod nama; // Sanskrit naming (नाम) // Cyclic iteration (आवर्तन)
+
 // Core types
 pub mod prakara; // Types (प्रकार)
 pub mod sankhya; // Numbers (संख्या)
@@ -94,6 +99,10 @@ pub mod jaanavari; // Genetic/swarm algorithms (जनावरी)
 #[cfg(feature = "alloc")]
 pub mod shabda; // Text/NLP utilities (शब्द)
 
+// Sanskrit Grammar (व्याकरण)
+#[cfg(feature = "alloc")]
+pub mod vyakarana; // Pāṇinian linguistics (व्याकरण)
+
 // Data Structures (संरचना)
 #[cfg(feature = "alloc")]
 pub mod sanrachana; // Trees, Heaps, Graphs (संरचना)
@@ -148,6 +157,10 @@ pub mod tantu; // Threads (तन्तु) // Synchronization (ताल)
 // Time
 #[cfg(feature = "std")]
 pub mod kala; // Time/Duration (काल)
+
+// Vedic Astrology (ज्योतिष)
+#[cfg(feature = "alloc")]
+pub mod jyotisha; // Jyotiṣa Śāstra - Grahas, Nakṣatras, Rāśis, Pañcāṅga (ज्योतिष)
 
 // Memory
 pub mod smriti; // Memory allocation (स्मृति)

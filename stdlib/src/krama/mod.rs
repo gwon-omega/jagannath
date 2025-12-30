@@ -30,5 +30,8 @@ pub mod lekhaganita;
 
 // Re-exports
 pub use anveshan::{dvidha_anveshan, rekha_anveshan};
-pub use kramana::{mishrit_krama, stambha_krama, tvarit_krama};
+#[cfg(feature = "alloc")]
+pub use kramana::mishrit_krama;
+pub use kramana::{stambha_krama, tvarit_krama};
+#[cfg(feature = "alloc")]
 pub use lekhaganita::Lekha;

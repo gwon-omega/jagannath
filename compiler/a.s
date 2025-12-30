@@ -3,20 +3,19 @@
 .intel_syntax noprefix
 .text
 
-.global test
-test:
+.global count
+count:
     push rbp
     mov rbp, rsp
     sub rsp, 32
 .L0:
     # Assignment
-    mov rax, 42
+    mov rax, 0
     mov QWORD PTR [rbp-8], rax
-    jmp .Ltest_epilogue
-.Ltest_epilogue:
-    add rsp, 32
-    pop rbp
-    ret
+    # Assignment
+    mov rax, 0
+    mov QWORD PTR [rbp-16], rax
+    jmp .L1
 .L1:
     # Assignment
     mov rcx, QWORD PTR [rbp-16]

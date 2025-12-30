@@ -69,7 +69,7 @@ pub struct AdeshaPhala {
 }
 
 /// Run a command and capture output
-#[cfg(feature = "std")]
+#[cfg(all(feature = "std", feature = "alloc"))]
 pub fn adesha_chalana(karyakrama: &str, tarkas: &[&str]) -> Result<AdeshaPhala, VidhanaDosha> {
     let output = std::process::Command::new(karyakrama)
         .args(tarkas)
@@ -85,7 +85,7 @@ pub fn adesha_chalana(karyakrama: &str, tarkas: &[&str]) -> Result<AdeshaPhala, 
 }
 
 /// Run a command with custom directory
-#[cfg(feature = "std")]
+#[cfg(all(feature = "std", feature = "alloc"))]
 pub fn adesha_chalana_nirdeshika(
     karyakrama: &str,
     tarkas: &[&str],
@@ -106,7 +106,7 @@ pub fn adesha_chalana_nirdeshika(
 }
 
 /// Run a command with environment variables
-#[cfg(feature = "std")]
+#[cfg(all(feature = "std", feature = "alloc"))]
 pub fn adesha_chalana_parivesh(
     karyakrama: &str,
     tarkas: &[&str],
@@ -135,7 +135,7 @@ pub fn adesha_chalana_parivesh(
 // ============================================================================
 
 /// Command builder
-#[cfg(feature = "std")]
+#[cfg(all(feature = "std", feature = "alloc"))]
 pub struct AdeshaNirmata {
     karyakrama: String,
     tarkas: Vec<String>,
@@ -143,7 +143,7 @@ pub struct AdeshaNirmata {
     parivesh: Vec<(String, String)>,
 }
 
-#[cfg(feature = "std")]
+#[cfg(all(feature = "std", feature = "alloc"))]
 impl AdeshaNirmata {
     /// Create new command
     pub fn nava(karyakrama: impl Into<String>) -> Self {
@@ -232,13 +232,13 @@ impl AdeshaNirmata {
 // ============================================================================
 
 /// Run shell command (uses sh on Unix, cmd on Windows)
-#[cfg(all(feature = "std", not(target_os = "windows")))]
+#[cfg(all(feature = "std", feature = "alloc", not(target_os = "windows")))]
 pub fn kalava_chalana(adesha: &str) -> Result<AdeshaPhala, VidhanaDosha> {
     adesha_chalana("sh", &["-c", adesha])
 }
 
 /// Run shell command (uses sh on Unix, cmd on Windows)
-#[cfg(all(feature = "std", target_os = "windows"))]
+#[cfg(all(feature = "std", feature = "alloc", target_os = "windows"))]
 pub fn kalava_chalana(adesha: &str) -> Result<AdeshaPhala, VidhanaDosha> {
     adesha_chalana("cmd", &["/C", adesha])
 }
@@ -289,7 +289,7 @@ mod tests {
     }
 
     #[test]
-    #[cfg(all(feature = "std", not(target_os = "windows")))]
+    #[cfg(all(feature = "std", feature = "alloc", not(target_os = "windows")))]
     fn test_echo() {
         let result = adesha_chalana("echo", &["hello"]).unwrap();
         assert!(result.safala);
@@ -297,7 +297,7 @@ mod tests {
     }
 
     #[test]
-    #[cfg(all(feature = "std", target_os = "windows"))]
+    #[cfg(all(feature = "std", feature = "alloc", target_os = "windows"))]
     fn test_echo_windows() {
         let result = kalava_chalana("echo hello").unwrap();
         assert!(result.safala);
@@ -305,7 +305,7 @@ mod tests {
     }
 
     #[test]
-    #[cfg(feature = "std")]
+    #[cfg(all(feature = "std", feature = "alloc"))]
     fn test_command_builder() {
         #[cfg(not(target_os = "windows"))]
         let result = AdeshaNirmata::nava("echo").tarka("test").chalana().unwrap();

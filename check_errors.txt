@@ -1,0 +1,1117 @@
+warning: unused import: `super::rashis::Rashi`
+  --> compiler\src\jyotisha\muhurta.rs:13:5
+   |
+13 | use super::rashis::Rashi;
+   |     ^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: field `index` is never read
+   --> compiler\src\diagnostics\sink.rs:201:5
+    |
+199 | pub struct DiagnosticIter<'a> {
+    |            -------------- field in this struct
+200 |     collector: &'a DiagnosticCollector,
+201 |     index: usize,
+    |     ^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: fields `dhatu_dict` and `sandhi_fst` are never read
+  --> compiler\src\lexer\mod.rs:33:5
+   |
+27 | pub struct Lexer<'src> {
+   |            ----- fields in this struct
+...
+33 |     dhatu_dict: Option<&'src DhatuDictionary>,
+   |     ^^^^^^^^^^
+34 |     /// Sandhi FST for phonetic splitting (optional)
+35 |     sandhi_fst: Option<&'src SandhiFst>,
+   |     ^^^^^^^^^^
+
+warning: field `cache` is never read
+  --> compiler\src\lexer\sandhi.rs:49:5
+   |
+43 | pub struct SandhiFst {
+   |            --------- field in this struct
+...
+49 |     cache: HashMap<String, Vec<String>>,
+   |     ^^^^^
+
+warning: fields `parent` and `is_loop` are never read
+   --> compiler\src\semantics\borrow.rs:137:5
+    |
+133 | struct ScopeInfo {
+    |        --------- fields in this struct
+...
+137 |     parent: Option<usize>,
+    |     ^^^^^^
+...
+143 |     is_loop: bool,
+    |     ^^^^^^^
+    |
+    = note: `ScopeInfo` has derived impls for the traits `Clone` and `Debug`, but these are intentionally ignored during dead code analysis
+
+warning: fields `name`, `params`, `return_ownership`, and `output_param` are never read
+   --> compiler\src\semantics\borrow.rs:150:5
+    |
+148 | struct FunctionContext {
+    |        --------------- fields in this struct
+149 |     /// Function name
+150 |     name: String,
+    |     ^^^^
+151 |     /// Parameter names and their ownership kinds
+152 |     params: HashMap<String, OwnershipKind>,
+    |     ^^^^^^
+153 |     /// Return type ownership
+154 |     return_ownership: Option<OwnershipKind>,
+    |     ^^^^^^^^^^^^^^^^
+155 |     /// Output parameter (for linear returns)
+156 |     output_param: Option<String>,
+    |     ^^^^^^^^^^^^
+    |
+    = note: `FunctionContext` has derived impls for the traits `Clone` and `Debug`, but these are intentionally ignored during dead code analysis
+
+warning: fields `name` and `lifetime_params` are never read
+   --> compiler\src\semantics\lifetime.rs:105:5
+    |
+103 | struct FunctionLifetimeContext {
+    |        ----------------------- fields in this struct
+104 |     /// Function name
+105 |     name: String,
+    |     ^^^^
+106 |     /// Named lifetime parameters
+107 |     lifetime_params: HashMap<String, u8>,
+    |     ^^^^^^^^^^^^^^^
+    |
+    = note: `FunctionLifetimeContext` has derived impls for the traits `Clone` and `Debug`, but these are intentionally ignored during dead code analysis
+
+warning: fields `name` and `generics` are never read
+  --> compiler\src\semantics\typeck_impl.rs:60:9
+   |
+59 | pub struct TypeDefInfo {
+   |            ----------- fields in this struct
+60 |     pub name: String,
+   |         ^^^^
+61 |     pub generics: Vec<String>,
+   |         ^^^^^^^^
+   |
+   = note: `TypeDefInfo` has derived impls for the traits `Clone` and `Debug`, but these are intentionally ignored during dead code analysis
+
+warning: field `0` is never read
+  --> compiler\src\semantics\typeck_impl.rs:70:11
+   |
+70 |     Alias(ResolvedType),
+   |     ----- ^^^^^^^^^^^^
+   |     |
+   |     field in this variant
+   |
+   = note: `TypeBodyResolved` has derived impls for the traits `Clone` and `Debug`, but these are intentionally ignored during dead code analysis
+help: consider changing the field to be of unit type to suppress this warning while preserving the field numbering, or remove the field
+   |
+70 -     Alias(ResolvedType),
+70 +     Alias(()),
+   |
+
+warning: fields `name` and `span` are never read
+  --> compiler\src\semantics\typeck_impl.rs:76:9
+   |
+75 | pub struct FunctionSig {
+   |            ----------- fields in this struct
+76 |     pub name: String,
+   |         ^^^^
+...
+79 |     pub span: Option<Span>,
+   |         ^^^^
+   |
+   = note: `FunctionSig` has derived impls for the traits `Clone` and `Debug`, but these are intentionally ignored during dead code analysis
+
+warning: methods `generalize` and `instantiate` are never used
+   --> compiler\src\semantics\typeck_impl.rs:453:8
+    |
+223 | impl TypeInference {
+    | ------------------ methods in this implementation
+...
+453 |     fn generalize(&self, ty: &ResolvedType, _env_vars: &[TypeVar]) -> ResolvedType {
+    |        ^^^^^^^^^^
+...
+460 |     fn instantiate(&mut self, ty: &ResolvedType) -> ResolvedType {
+    |        ^^^^^^^^^^^
+
+warning: field `substitutions` is never read
+   --> compiler\src\semantics\typeck\generics.rs:157:5
+    |
+153 | pub struct PolymorphismEngine {
+    |            ------------------ field in this struct
+...
+157 |     substitutions: HashMap<TypeVar, ResolvedType>,
+    |     ^^^^^^^^^^^^^
+
+warning: struct `SpillDecision` is never constructed
+   --> compiler\src\codegen\asm\x86_64.rs:242:8
+    |
+242 | struct SpillDecision {
+    |        ^^^^^^^^^^^^^
+
+warning: fields `xmm_available`, `xmm_used`, `live_intervals`, and `next_spill_slot` are never read
+   --> compiler\src\codegen\asm\x86_64.rs:260:5
+    |
+250 | struct X86RegAlloc {
+    |        ----------- fields in this struct
+...
+260 |     xmm_available: Vec<XmmReg>,
+    |     ^^^^^^^^^^^^^
+261 |     /// Used XMM registers
+262 |     xmm_used: Vec<XmmReg>,
+    |     ^^^^^^^^
+263 |     /// Live intervals for linear scan register allocation
+264 |     live_intervals: Vec<LiveInterval>,
+    |     ^^^^^^^^^^^^^^
+265 |     /// Next available spill slot offset
+266 |     next_spill_slot: i64,
+    |     ^^^^^^^^^^^^^^^
+
+warning: multiple fields are never read
+   --> compiler\src\codegen\asm\x86_64.rs:273:5
+    |
+271 | struct LiveInterval {
+    |        ------------ fields in this struct
+272 |     /// Variable/local index
+273 |     local: usize,
+    |     ^^^^^
+274 |     /// Start instruction index
+275 |     start: usize,
+    |     ^^^^^
+276 |     /// End instruction index
+277 |     end: usize,
+    |     ^^^
+278 |     /// Assigned register (None if spilled)
+279 |     assigned_reg: Option<X86Reg>,
+    |     ^^^^^^^^^^^^
+280 |     /// Is this a float?
+281 |     is_float: bool,
+    |     ^^^^^^^^
+282 |     /// Assigned XMM register if float
+283 |     assigned_xmm: Option<XmmReg>,
+    |     ^^^^^^^^^^^^
+284 |     /// Spill slot offset if spilled
+285 |     spill_slot: Option<i64>,
+    |     ^^^^^^^^^^
+    |
+    = note: `LiveInterval` has derived impls for the traits `Clone` and `Debug`, but these are intentionally ignored during dead code analysis
+
+warning: methods `allocate_xmm`, `free_xmm`, and `linear_scan_allocate` are never used
+   --> compiler\src\codegen\asm\x86_64.rs:336:8
+    |
+288 | impl X86RegAlloc {
+    | ---------------- methods in this implementation
+...
+336 |     fn allocate_xmm(&mut self) -> Option<XmmReg> {
+    |        ^^^^^^^^^^^^
+...
+343 |     fn free_xmm(&mut self, reg: XmmReg) {
+    |        ^^^^^^^^
+...
+356 |     fn linear_scan_allocate(
+    |        ^^^^^^^^^^^^^^^^^^^^
+
+warning: method `operand_to_str` is never used
+   --> compiler\src\codegen\asm\x86_64.rs:548:8
+    |
+513 | impl X86_64Emitter {
+    | ------------------ method in this implementation
+...
+548 |     fn operand_to_str(&self, operand: &MirOperand) -> String {
+    |        ^^^^^^^^^^^^^^
+
+warning: field `v_available` is never read
+   --> compiler\src\codegen\asm\aarch64.rs:242:5
+    |
+232 | struct AArch64RegAlloc {
+    |        --------------- field in this struct
+...
+242 |     v_available: Vec<VReg>,
+    |     ^^^^^^^^^^^
+
+warning: method `const_to_str` is never used
+   --> compiler\src\codegen\asm\aarch64.rs:463:8
+    |
+429 | impl AArch64Emitter {
+    | ------------------- method in this implementation
+...
+463 |     fn const_to_str(&self, constant: &MirConstant) -> String {
+    |        ^^^^^^^^^^^^
+
+warning: field `platform` is never read
+  --> compiler\src\codegen\linker.rs:17:5
+   |
+11 | pub struct Assembler {
+   |            --------- field in this struct
+...
+17 |     platform: Platform,
+   |     ^^^^^^^^
+
+warning: field `linker` is never read
+   --> compiler\src\codegen\linker.rs:380:5
+    |
+378 | pub struct BuildPipeline {
+    |            ------------- field in this struct
+379 |     assembler: Assembler,
+380 |     linker: Linker,
+    |     ^^^^^^
+
+warning: methods `karaka_to_class`, `num_gp_registers`, and `num_callee_saved` are never used
+   --> compiler\src\codegen\regalloc.rs:337:8
+    |
+ 80 | impl RegisterAllocator {
+    | ---------------------- methods in this implementation
+...
+337 |     fn karaka_to_class(&self, karaka: &Karaka) -> RegisterClass {
+    |        ^^^^^^^^^^^^^^^
+...
+611 |     fn num_gp_registers(&self) -> usize {
+    |        ^^^^^^^^^^^^^^^^
+...
+620 |     fn num_callee_saved(&self) -> usize {
+    |        ^^^^^^^^^^^^^^^^
+
+warning: field `current_function` is never read
+  --> compiler\src\mir\builder.rs:14:5
+   |
+12 | pub struct MirBuilder {
+   |            ---------- field in this struct
+13 |     /// Current function being built
+14 |     current_function: Option<MirFunction>,
+   |     ^^^^^^^^^^^^^^^^
+
+warning: fields `guna` and `const_prop` are never read
+  --> compiler\src\mir\optimizer.rs:13:5
+   |
+ 9 | pub struct MirOptimizer {
+   |            ------------ fields in this struct
+...
+13 |     guna: GunaMode,
+   |     ^^^^
+...
+21 |     const_prop: ConstantPropagation,
+   |     ^^^^^^^^^^
+
+warning: field `induction_var` is never read
+    --> compiler\src\mir\passes.rs:1632:5
+     |
+1622 | struct NaturalLoop {
+     |        ----------- field in this struct
+...
+1632 |     induction_var: Option<(usize, i64)>,
+     |     ^^^^^^^^^^^^^
+     |
+     = note: `NaturalLoop` has derived impls for the traits `Clone` and `Debug`, but these are intentionally ignored during dead code analysis
+
+warning: field `type_idx` is never read
+    --> compiler\src\mir\passes.rs:2398:5
+     |
+2396 | struct FieldAccessInfo {
+     |        --------------- field in this struct
+2397 |     /// Type index (for grouping accesses to same type)
+2398 |     type_idx: usize,
+     |     ^^^^^^^^
+     |
+     = note: `FieldAccessInfo` has derived impls for the traits `Clone` and `Debug`, but these are intentionally ignored during dead code analysis
+
+warning: field `local` is never read
+    --> compiler\src\mir\passes.rs:2732:5
+     |
+2730 | struct AggregateInfo {
+     |        ------------- field in this struct
+2731 |     /// Local index of the aggregate
+2732 |     local: usize,
+     |     ^^^^^
+     |
+     = note: `AggregateInfo` has derived impls for the traits `Clone` and `Debug`, but these are intentionally ignored during dead code analysis
+
+warning: field `similarity_rules` is never read
+  --> compiler\src\philosophy\nyaya\upamana.rs:18:5
+   |
+14 | pub struct UpamanaEngine {
+   |            ------------- field in this struct
+...
+18 |     similarity_rules: Vec<SimilarityRule>,
+   |     ^^^^^^^^^^^^^^^^
+
+warning: field `cache_line_size` is never read
+  --> compiler\src\philosophy\advaita\brahman_memory.rs:25:5
+   |
+15 | pub struct BrahmanMemory {
+   |            ------------- field in this struct
+...
+25 |     cache_line_size: usize,
+   |     ^^^^^^^^^^^^^^^
+
+warning: field `start_time` is never read
+  --> compiler\src\ayurveda\mod.rs:61:5
+   |
+53 | pub struct AyurvedaMonitor {
+   |            --------------- field in this struct
+...
+61 |     start_time: Instant,
+   |     ^^^^^^^^^^
+
+warning: field `patterns` is never read
+  --> compiler\src\tantra\mod.rs:71:5
+   |
+67 | pub struct YantraOptimizer {
+   |            --------------- field in this struct
+...
+71 |     patterns: Vec<YantraPattern>,
+   |     ^^^^^^^^
+
+warning: fields `cache_line_size` and `l2_size` are never read
+  --> compiler\src\tantra\sri_yantra.rs:15:5
+   |
+13 | pub struct ShriYantra {
+   |            ---------- fields in this struct
+14 |     /// Cache line size (bytes)
+15 |     cache_line_size: usize,
+   |     ^^^^^^^^^^^^^^^
+...
+19 |     l2_size: usize,
+   |     ^^^^^^^
+
+warning: fields `global_vars` and `max_nesting` are never read
+  --> compiler\src\yoga\ashtanga\yama.rs:79:5
+   |
+73 | pub struct YamaChecker {
+   |            ----------- fields in this struct
+...
+79 |     global_vars: HashSet<String>,
+   |     ^^^^^^^^^^^
+80 |     /// Nesting depth tracker
+81 |     max_nesting: HashMap<String, usize>,
+   |     ^^^^^^^^^^^
+
+warning: struct `FixApplicator` is never constructed
+  --> compiler\src\garuda\moksha\suggestion.rs:75:12
+   |
+75 | pub struct FixApplicator;
+   |            ^^^^^^^^^^^^^
+
+warning: associated function `apply` is never used
+  --> compiler\src\garuda\moksha\suggestion.rs:79:12
+   |
+77 | impl FixApplicator {
+   | ------------------ associated function in this implementation
+78 |     /// Apply fixes to source code
+79 |     pub fn apply(source: &str, fixes: &[FixSuggestion]) -> String {
+   |            ^^^^^
+
+warning: field `secure_alternatives` is never read
+  --> compiler\src\garuda\narakas\ksharakardama.rs:18:5
+   |
+12 | pub struct KsharakardamaChecker {
+   |            -------------------- field in this struct
+...
+18 |     secure_alternatives: HashSet<&'static str>,
+   |     ^^^^^^^^^^^^^^^^^^^
+
+warning: field `graceful_fns` is never read
+  --> compiler\src\garuda\narakas\maharaurava.rs:15:5
+   |
+11 | pub struct MaharauravaChecker {
+   |            ------------------ field in this struct
+...
+15 |     graceful_fns: HashSet<&'static str>,
+   |     ^^^^^^^^^^^^
+
+warning: enum `LockState` is never used
+  --> compiler\src\garuda\narakas\pranarodha.rs:13:6
+   |
+13 | enum LockState {
+   |      ^^^^^^^^^
+
+warning: variant `Returned` is never constructed
+  --> compiler\src\garuda\narakas\sarameyadana.rs:17:5
+   |
+13 | enum PointerState {
+   |      ------------ variant in this enum
+...
+17 |     Returned, // Pointer to local returned
+   |     ^^^^^^^^
+   |
+   = note: `PointerState` has derived impls for the traits `Debug` and `Clone`, but these are intentionally ignored during dead code analysis
+
+warning: field `collection_types` is never read
+  --> compiler\src\garuda\narakas\suchimukha.rs:24:5
+   |
+20 | pub struct SuchimukhaChecker {
+   |            ----------------- field in this struct
+...
+24 |     collection_types: HashSet<&'static str>,
+   |     ^^^^^^^^^^^^^^^^
+
+warning: field `async_alts` is never read
+  --> compiler\src\garuda\narakas\sukaramukha.rs:15:5
+   |
+11 | pub struct SukaramukhaChecker {
+   |            ------------------ field in this struct
+...
+15 |     async_alts: HashSet<&'static str>,
+   |     ^^^^^^^^^^
+
+warning: variant `Moved` is never constructed
+  --> compiler\src\garuda\narakas\tamisram.rs:16:5
+   |
+13 | enum MemoryState {
+   |      ----------- variant in this enum
+...
+16 |     Moved,
+   |     ^^^^^
+   |
+   = note: `MemoryState` has derived impls for the traits `Clone` and `Debug`, but these are intentionally ignored during dead code analysis
+
+warning: field `name` is never read
+   --> compiler\src\garuda\preta\detector.rs:144:5
+    |
+142 | struct ResourceAllocation {
+    |        ------------------ field in this struct
+143 |     /// Variable name
+144 |     name: String,
+    |     ^^^^
+    |
+    = note: `ResourceAllocation` has derived impls for the traits `Clone` and `Debug`, but these are intentionally ignored during dead code analysis
+
+warning: methods `count_blocks` and `count_stmt_blocks` are never used
+   --> compiler\src\garuda\preta\detector.rs:289:8
+    |
+177 | impl PretaDetector {
+    | ------------------ methods in this implementation
+...
+289 |     fn count_blocks(&self, block: &Block) -> usize {
+    |        ^^^^^^^^^^^^
+...
+297 |     fn count_stmt_blocks(&self, stmt: &Stmt) -> usize {
+    |        ^^^^^^^^^^^^^^^^^
+
+warning: fields `tainted` and `violations` are never read
+  --> compiler\src\garuda\vaitarani\boundary.rs:62:5
+   |
+51 | pub struct VaitaraniBoundary {
+   |            ----------------- fields in this struct
+...
+62 |     tainted: HashMap<String, TaintInfo>,
+   |     ^^^^^^^
+...
+65 |     violations: Vec<VaitaraniViolation>,
+   |     ^^^^^^^^^^
+
+warning: struct `SqlPurifier` is never constructed
+  --> compiler\src\garuda\vaitarani\purification.rs:24:12
+   |
+24 | pub struct SqlPurifier;
+   |            ^^^^^^^^^^^
+
+warning: struct `HtmlPurifier` is never constructed
+  --> compiler\src\garuda\vaitarani\purification.rs:44:12
+   |
+44 | pub struct HtmlPurifier;
+   |            ^^^^^^^^^^^^
+
+warning: struct `ShellPurifier` is never constructed
+  --> compiler\src\garuda\vaitarani\purification.rs:63:12
+   |
+63 | pub struct ShellPurifier;
+   |            ^^^^^^^^^^^^^
+
+warning: field `description` is never read
+  --> compiler\src\garuda\yama\dharmaraja.rs:22:9
+   |
+20 | pub struct DharmaRule {
+   |            ---------- field in this struct
+21 |     pub name: String,
+22 |     pub description: String,
+   |         ^^^^^^^^^^^
+
+warning: fields `max_inline_size` and `max_unroll` are never read
+  --> compiler\src\astras\agneyastra.rs:20:5
+   |
+18 | pub struct Agneyastra {
+   |            ---------- fields in this struct
+19 |     /// Maximum inline size (instructions)
+20 |     max_inline_size: usize,
+   |     ^^^^^^^^^^^^^^^
+21 |     /// Maximum unroll factor
+22 |     max_unroll: usize,
+   |     ^^^^^^^^^^
+
+warning: field `inline_threshold` is never read
+  --> compiler\src\astras\brahmashira.rs:29:5
+   |
+25 | pub struct Brahmashira {
+   |            ----------- field in this struct
+...
+29 |     inline_threshold: usize,
+   |     ^^^^^^^^^^^^^^^^
+
+warning: field `types` is never read
+   --> compiler\src\astras\brahmashira.rs:100:5
+    |
+ 98 | struct ForwardInfo {
+    |        ----------- field in this struct
+ 99 |     constants: Vec<(String, i64)>,
+100 |     types: Vec<(String, String)>,
+    |     ^^^^^
+
+warning: field `branch_predictions` is never read
+   --> compiler\src\astras\brahmashira.rs:116:5
+    |
+114 | struct SpeculativeInfo {
+    |        --------------- field in this struct
+115 |     hot_paths: Vec<Vec<String>>,
+116 |     branch_predictions: Vec<(String, bool)>,
+    |     ^^^^^^^^^^^^^^^^^^
+
+warning: field `aggressive` is never read
+  --> compiler\src\astras\brahmastra.rs:20:5
+   |
+18 | pub struct Brahmastra {
+   |            ---------- field in this struct
+19 |     /// Whether to be aggressive in elimination
+20 |     aggressive: bool,
+   |     ^^^^^^^^^^
+
+warning: field `scalar_replacement` is never read
+  --> compiler\src\astras\garudastra.rs:20:5
+   |
+18 | pub struct Garudastra {
+   |            ---------- field in this struct
+19 |     /// Whether to apply scalar replacement
+20 |     scalar_replacement: bool,
+   |     ^^^^^^^^^^^^^^^^^^
+
+warning: field `non_escaping` is never read
+  --> compiler\src\astras\garudastra.rs:48:5
+   |
+47 | struct EscapeInfo {
+   |        ---------- field in this struct
+48 |     non_escaping: Vec<String>,     // objects that don't escape
+   |     ^^^^^^^^^^^^
+
+warning: method `determine_ordering` is never used
+  --> compiler\src\astras\indrastra.rs:46:8
+   |
+34 | impl Indrastra {
+   | -------------- method in this implementation
+...
+46 |     fn determine_ordering(&self, _module: &MirModule) -> Vec<String> {
+   |        ^^^^^^^^^^^^^^^^^^
+
+warning: field `variable` is never read
+   --> compiler\src\astras\nagapasha.rs:164:5
+    |
+163 | struct CaptureDecision {
+    |        --------------- field in this struct
+164 |     variable: String,
+    |     ^^^^^^^^
+
+warning: field `size` is never read
+   --> compiler\src\astras\nagapasha.rs:171:5
+    |
+170 | struct EnvironmentLayout {
+    |        ----------------- field in this struct
+171 |     size: usize,
+    |     ^^^^
+
+warning: variant `Invalid` is never constructed
+   --> compiler\src\astras\nagapasha.rs:181:5
+    |
+179 | enum LifetimeResult {
+    |      -------------- variant in this enum
+180 |     Valid,
+181 |     Invalid(String),
+    |     ^^^^^^^
+
+warning: field `analysis_depth` is never read
+  --> compiler\src\astras\nagastra.rs:20:5
+   |
+18 | pub struct Nagastra {
+   |            -------- field in this struct
+19 |     /// Analysis depth
+20 |     analysis_depth: usize,
+   |     ^^^^^^^^^^^^^^
+
+warning: fields `aliases` and `escape_set` are never read
+  --> compiler\src\astras\nagastra.rs:46:5
+   |
+45 | struct PointerInfo {
+   |        ----------- fields in this struct
+46 |     aliases: Vec<(String, String)>, // pairs that may alias
+   |     ^^^^^^^
+47 |     escape_set: Vec<String>,        // pointers that escape
+   |     ^^^^^^^^^^
+
+warning: field `sample_rate` is never read
+  --> compiler\src\astras\suryaastra.rs:32:5
+   |
+26 | pub struct Suryaastra {
+   |            ---------- field in this struct
+...
+32 |     sample_rate: u32,
+   |     ^^^^^^^^^^^
+
+warning: fields `location` and `kind` are never read
+   --> compiler\src\astras\suryaastra.rs:120:5
+    |
+119 | struct HotspotInfo {
+    |        ----------- fields in this struct
+120 |     location: String,
+    |     ^^^^^^^^
+121 |     kind: HotspotKind,
+    |     ^^^^
+
+warning: field `function_name` is never read
+   --> compiler\src\astras\suryaastra.rs:153:5
+    |
+152 | struct HeatMap {
+    |        ------- field in this struct
+153 |     function_name: String,
+    |     ^^^^^^^^^^^^^
+
+warning: field `optimize_layout` is never read
+  --> compiler\src\astras\varunastra.rs:20:5
+   |
+18 | pub struct Varunastra {
+   |            ---------- field in this struct
+19 |     /// Whether to optimize memory layout
+20 |     optimize_layout: bool,
+   |     ^^^^^^^^^^^^^^^
+
+warning: fields `live_ranges` and `def_use_chains` are never read
+  --> compiler\src\astras\varunastra.rs:46:5
+   |
+45 | struct DataflowInfo {
+   |        ------------ fields in this struct
+46 |     live_ranges: Vec<(String, usize, usize)>, // (var, start, end)
+   |     ^^^^^^^^^^^
+47 |     def_use_chains: Vec<(String, usize, Vec<usize>)>, // (var, def_site, use_sites)
+   |     ^^^^^^^^^^^^^^
+
+warning: field `eliminate_unreachable` is never read
+  --> compiler\src\astras\vayuastra.rs:20:5
+   |
+18 | pub struct Vayuastra {
+   |            --------- field in this struct
+19 |     /// Whether to eliminate unreachable blocks
+20 |     eliminate_unreachable: bool,
+   |     ^^^^^^^^^^^^^^^^^^^^^
+
+warning: field `base_local` is never read
+  --> compiler\src\margas\bhakti.rs:27:5
+   |
+25 | struct MemoryPattern {
+   |        ------------- field in this struct
+26 |     /// Base local
+27 |     base_local: usize,
+   |     ^^^^^^^^^^
+   |
+   = note: `MemoryPattern` has derived impls for the traits `Clone` and `Debug`, but these are intentionally ignored during dead code analysis
+
+warning: fields `block` and `instructions` are never read
+  --> compiler\src\margas\bhakti.rs:40:5
+   |
+38 | struct ParallelOpportunity {
+   |        ------------------- fields in this struct
+39 |     /// Block ID where parallelism is possible
+40 |     block: usize,
+   |     ^^^^^
+41 |     /// Instructions that can be parallelized
+42 |     instructions: Vec<usize>,
+   |     ^^^^^^^^^^^^
+   |
+   = note: `ParallelOpportunity` has a derived impl for the trait `Debug`, but this is intentionally ignored during dead code analysis
+
+warning: variant `Gpu` is never constructed
+  --> compiler\src\margas\bhakti.rs:54:5
+   |
+48 | enum ParallelKind {
+   |      ------------ variant in this enum
+...
+54 |     Gpu,
+   |     ^^^
+   |
+   = note: `ParallelKind` has a derived impl for the trait `Debug`, but this is intentionally ignored during dead code analysis
+
+warning: field `memo_cache` is never read
+  --> compiler\src\margas\jnana.rs:24:5
+   |
+18 | pub struct JnanaMarga {
+   |            ---------- field in this struct
+...
+24 |     memo_cache: HashMap<String, MirConstant>,
+   |     ^^^^^^^^^^
+
+warning: fields `block`, `inst_idx`, `func_name`, and `const_args` are never read
+  --> compiler\src\margas\jnana.rs:48:5
+   |
+46 | struct CallInfo {
+   |        -------- fields in this struct
+47 |     /// Block ID
+48 |     block: usize,
+   |     ^^^^^
+49 |     /// Instruction index
+50 |     inst_idx: usize,
+   |     ^^^^^^^^
+51 |     /// Function name
+52 |     func_name: String,
+   |     ^^^^^^^^^
+53 |     /// Arguments (if constant)
+54 |     const_args: Vec<Option<MirConstant>>,
+   |     ^^^^^^^^^^
+   |
+   = note: `CallInfo` has derived impls for the traits `Clone` and `Debug`, but these are intentionally ignored during dead code analysis
+
+warning: fields `header`, `back_edge_src`, and `induction_var` are never read
+  --> compiler\src\margas\karma.rs:35:5
+   |
+33 | struct LoopInfo {
+   |        -------- fields in this struct
+34 |     /// Header block ID
+35 |     header: usize,
+   |     ^^^^^^
+36 |     /// Back edge source
+37 |     back_edge_src: usize,
+   |     ^^^^^^^^^^^^^
+...
+41 |     induction_var: Option<usize>,
+   |     ^^^^^^^^^^^^^
+   |
+   = note: `LoopInfo` has derived impls for the traits `Clone` and `Debug`, but these are intentionally ignored during dead code analysis
+
+warning: fields `state_var` and `transitions` are never read
+  --> compiler\src\margas\karma.rs:50:5
+   |
+48 | struct StateMachineInfo {
+   |        ---------------- fields in this struct
+49 |     /// State variable local
+50 |     state_var: usize,
+   |     ^^^^^^^^^
+...
+54 |     transitions: Vec<(i64, usize, i64)>, // (from_state, block, to_state)
+   |     ^^^^^^^^^^^
+   |
+   = note: `StateMachineInfo` has a derived impl for the trait `Debug`, but this is intentionally ignored during dead code analysis
+
+warning: field `capabilities` is never read
+  --> compiler\src\varnas\brahmin.rs:18:5
+   |
+16 | pub struct BrahminPrivilege {
+   |            ---------------- field in this struct
+17 |     /// All capabilities are available
+18 |     capabilities: Vec<Capability>,
+   |     ^^^^^^^^^^^^
+
+warning: field `strict` is never read
+  --> compiler\src\varnas\varna_checker.rs:19:5
+   |
+17 | pub struct VarnaChecker {
+   |            ------------ field in this struct
+18 |     /// Enable strict mode (no implicit elevations)
+19 |     strict: bool,
+   |     ^^^^^^
+
+warning: field `kind` is never read
+   --> compiler\src\modules\symbol.rs:117:5
+    |
+113 | struct Scope {
+    |        ----- field in this struct
+...
+117 |     kind: ScopeKind,
+    |     ^^^^
+    |
+    = note: `Scope` has derived impls for the traits `Clone` and `Debug`, but these are intentionally ignored during dead code analysis
+
+warning: struct `AtomicRevision` is never constructed
+  --> compiler\src\queries\revision.rs:67:12
+   |
+67 | pub struct AtomicRevision {
+   |            ^^^^^^^^^^^^^^
+
+warning: associated items `new`, `get`, `increment`, and `set` are never used
+  --> compiler\src\queries\revision.rs:74:12
+   |
+72 | impl AtomicRevision {
+   | ------------------- associated items in this implementation
+73 |     /// Create a new atomic revision
+74 |     pub fn new() -> Self {
+   |            ^^^
+...
+81 |     pub fn get(&self) -> Revision {
+   |            ^^^
+...
+88 |     pub fn increment(&self) -> Revision {
+   |            ^^^^^^^^^
+...
+94 |     pub fn set(&self, revision: Revision) {
+   |            ^^^
+
+warning: field `pipeline` is never read
+  --> compiler\src\driver\session.rs:19:5
+   |
+15 | pub struct CompilerSession {
+   |            --------------- field in this struct
+...
+19 |     pipeline: SamkhyaPipeline,
+   |     ^^^^^^^^
+
+warning: `jagannath-compiler` (lib) generated 81 warnings (run `cargo fix --lib -p jagannath-compiler` to apply 1 suggestion)
+    Checking jagannath-stdlib v0.1.0 (D:\fullstack\jagannath\stdlib)
+    Building [=======================> ] 304/305: jagannath-stdlib            
+error[E0432]: unresolved import `kramana::mishrit_krama`
+   --> stdlib\src\krama\mod.rs:33:19
+    |
+ 33 | pub use kramana::{mishrit_krama, stambha_krama, tvarit_krama};
+    |                   ^^^^^^^^^^^^^
+    |                   |
+    |                   no `mishrit_krama` in `krama::kramana`
+    |                   help: a similar name exists in the module: `tvarit_krama`
+    |
+note: found an item that was configured out
+   --> stdlib\src\krama\kramana.rs:144:8
+    |
+143 | #[cfg(feature = "alloc")]
+    |       ----------------- the item is gated behind the `alloc` feature
+144 | pub fn mishrit_krama<T: Ord + Clone>(arr: &mut [T]) {
+    |        ^^^^^^^^^^^^^
+
+error[E0432]: unresolved import `lekhaganita::Lekha`
+  --> stdlib\src\krama\mod.rs:34:9
+   |
+34 | pub use lekhaganita::Lekha;
+   |         ^^^^^^^^^^^^^^^^^^ no `Lekha` in `krama::lekhaganita`
+   |
+note: found an item that was configured out
+  --> stdlib\src\krama\lekhaganita.rs:76:12
+   |
+75 | #[cfg(feature = "alloc")]
+   |       ----------------- the item is gated behind the `alloc` feature
+76 | pub struct Lekha {
+   |            ^^^^^
+error[E0412]: cannot find type `SaralDosha` in this scope
+   --> stdlib\src\dosha.rs:414:28
+    |
+414 | impl std::error::Error for SaralDosha {}
+    |                            ^^^^^^^^^^ not found in this scope
+
+error[E0412]: cannot find type `BTreeMap` in this scope
+  --> stdlib\src\yantra\parivesh.rs:53:19
+   |
+53 | pub fn sabhi() -> BTreeMap<String, String> {
+   |                   ^^^^^^^^ not found in this scope
+   |
+help: consider importing this struct
+   |
+ 8 + use std::collections::BTreeMap;
+   |
+
+error[E0412]: cannot find type `PariveshDosha` in this scope
+   --> stdlib\src\yantra\parivesh.rs:105:54
+    |
+105 | pub fn nirdeshika_sthapita(path: &str) -> Result<(), PariveshDosha> {
+    |                                                      ^^^^^^^^^^^^^ not found in this scope
+    |
+help: you might be missing a type parameter
+    |
+105 | pub fn nirdeshika_sthapita<PariveshDosha>(path: &str) -> Result<(), PariveshDosha> {
+    |                           +++++++++++++++
+
+error[E0412]: cannot find type `AdeshaPhala` in this scope
+  --> stdlib\src\yantra\vidhana.rs:73:68
+   |
+73 | pub fn adesha_chalana(karyakrama: &str, tarkas: &[&str]) -> Result<AdeshaPhala, VidhanaDosha> {
+   |                                                                    ^^^^^^^^^^^ not found in this scope
+   |
+help: you might be missing a type parameter
+   |
+73 | pub fn adesha_chalana<AdeshaPhala>(karyakrama: &str, tarkas: &[&str]) -> Result<AdeshaPhala, VidhanaDosha> {
+   |                      +++++++++++++
+
+error[E0412]: cannot find type `VidhanaDosha` in this scope
+  --> stdlib\src\yantra\vidhana.rs:73:81
+   |
+73 | pub fn adesha_chalana(karyakrama: &str, tarkas: &[&str]) -> Result<AdeshaPhala, VidhanaDosha> {
+   |                                                                                 ^^^^^^^^^^^^ not found in this scope
+   |
+help: you might be missing a type parameter
+   |
+73 | pub fn adesha_chalana<VidhanaDosha>(karyakrama: &str, tarkas: &[&str]) -> Result<AdeshaPhala, VidhanaDosha> {
+   |                      ++++++++++++++
+
+error[E0422]: cannot find struct, variant or union type `AdeshaPhala` in this scope
+  --> stdlib\src\yantra\vidhana.rs:79:8
+   |
+79 |     Ok(AdeshaPhala {
+   |        ^^^^^^^^^^^ not found in this scope
+
+error[E0412]: cannot find type `AdeshaPhala` in this scope
+  --> stdlib\src\yantra\vidhana.rs:93:13
+   |
+93 | ) -> Result<AdeshaPhala, VidhanaDosha> {
+   |             ^^^^^^^^^^^ not found in this scope
+   |
+help: you might be missing a type parameter
+   |
+89 | pub fn adesha_chalana_nirdeshika<AdeshaPhala>(
+   |                                 +++++++++++++
+
+error[E0412]: cannot find type `VidhanaDosha` in this scope
+  --> stdlib\src\yantra\vidhana.rs:93:26
+   |
+93 | ) -> Result<AdeshaPhala, VidhanaDosha> {
+   |                          ^^^^^^^^^^^^ not found in this scope
+   |
+help: you might be missing a type parameter
+   |
+89 | pub fn adesha_chalana_nirdeshika<VidhanaDosha>(
+   |                                 ++++++++++++++
+
+error[E0422]: cannot find struct, variant or union type `AdeshaPhala` in this scope
+   --> stdlib\src\yantra\vidhana.rs:100:8
+    |
+100 |     Ok(AdeshaPhala {
+    |        ^^^^^^^^^^^ not found in this scope
+
+error[E0412]: cannot find type `AdeshaPhala` in this scope
+   --> stdlib\src\yantra\vidhana.rs:114:13
+    |
+114 | ) -> Result<AdeshaPhala, VidhanaDosha> {
+    |             ^^^^^^^^^^^ not found in this scope
+    |
+help: you might be missing a type parameter
+    |
+110 | pub fn adesha_chalana_parivesh<AdeshaPhala>(
+    |                               +++++++++++++
+
+error[E0412]: cannot find type `VidhanaDosha` in this scope
+   --> stdlib\src\yantra\vidhana.rs:114:26
+    |
+114 | ) -> Result<AdeshaPhala, VidhanaDosha> {
+    |                          ^^^^^^^^^^^^ not found in this scope
+    |
+help: you might be missing a type parameter
+    |
+110 | pub fn adesha_chalana_parivesh<VidhanaDosha>(
+    |                               ++++++++++++++
+
+error[E0422]: cannot find struct, variant or union type `AdeshaPhala` in this scope
+   --> stdlib\src\yantra\vidhana.rs:125:8
+    |
+125 |     Ok(AdeshaPhala {
+    |        ^^^^^^^^^^^ not found in this scope
+
+error[E0412]: cannot find type `AdeshaPhala` in this scope
+   --> stdlib\src\yantra\vidhana.rs:185:36
+    |
+185 |     pub fn chalana(self) -> Result<AdeshaPhala, VidhanaDosha> {
+    |                                    ^^^^^^^^^^^ not found in this scope
+    |
+help: you might be missing a type parameter
+    |
+147 | impl<AdeshaPhala> AdeshaNirmata {
+    |     +++++++++++++
+
+error[E0412]: cannot find type `VidhanaDosha` in this scope
+   --> stdlib\src\yantra\vidhana.rs:185:49
+    |
+185 |     pub fn chalana(self) -> Result<AdeshaPhala, VidhanaDosha> {
+    |                                                 ^^^^^^^^^^^^ not found in this scope
+    |
+help: you might be missing a type parameter
+    |
+147 | impl<VidhanaDosha> AdeshaNirmata {
+    |     ++++++++++++++
+
+error[E0422]: cannot find struct, variant or union type `AdeshaPhala` in this scope
+   --> stdlib\src\yantra\vidhana.rs:201:12
+    |
+201 |         Ok(AdeshaPhala {
+    |            ^^^^^^^^^^^ not found in this scope
+
+error[E0412]: cannot find type `VidhanaDosha` in this scope
+   --> stdlib\src\yantra\vidhana.rs:210:47
+    |
+210 |     pub fn chalana_antar(self) -> Result<i32, VidhanaDosha> {
+    |                                               ^^^^^^^^^^^^ not found in this scope
+    |
+help: you might be missing a type parameter
+    |
+147 | impl<VidhanaDosha> AdeshaNirmata {
+    |     ++++++++++++++
+
+error[E0412]: cannot find type `AdeshaPhala` in this scope
+   --> stdlib\src\yantra\vidhana.rs:242:47
+    |
+242 | pub fn kalava_chalana(adesha: &str) -> Result<AdeshaPhala, VidhanaDosha> {
+    |                                               ^^^^^^^^^^^ not found in this scope
+    |
+help: you might be missing a type parameter
+    |
+242 | pub fn kalava_chalana<AdeshaPhala>(adesha: &str) -> Result<AdeshaPhala, VidhanaDosha> {
+    |                      +++++++++++++
+
+error[E0412]: cannot find type `VidhanaDosha` in this scope
+   --> stdlib\src\yantra\vidhana.rs:242:60
+    |
+242 | pub fn kalava_chalana(adesha: &str) -> Result<AdeshaPhala, VidhanaDosha> {
+    |                                                            ^^^^^^^^^^^^ not found in this scope
+    |
+help: you might be missing a type parameter
+    |
+242 | pub fn kalava_chalana<VidhanaDosha>(adesha: &str) -> Result<AdeshaPhala, VidhanaDosha> {
+    |                      ++++++++++++++
+
+warning: type `Dirgha_Vritta` should have an upper camel case name
+   --> stdlib\src\chitran\aakaar.rs:385:12
+    |
+385 | pub struct Dirgha_Vritta {
+    |            ^^^^^^^^^^^^^ help: convert the identifier to upper camel case: `DirghaVritta`
+    |
+    = note: `#[warn(non_camel_case_types)]` (part of `#[warn(nonstandard_style)]`) on by default
+
+error[E0433]: failed to resolve: use of undeclared type `PariveshDosha`
+   --> stdlib\src\yantra\parivesh.rs:106:49
+    |
+106 |     std::env::set_current_dir(path).map_err(|e| PariveshDosha::NirdeshikaParivartana(e.to_string()))
+    |                                                 ^^^^^^^^^^^^^ use of undeclared type `PariveshDosha`
+
+error[E0433]: failed to resolve: use of undeclared type `VidhanaDosha`
+  --> stdlib\src\yantra\vidhana.rs:77:22
+   |
+77 |         .map_err(|e| VidhanaDosha::ChalaanaAsafala(e.to_string()))?;
+   |                      ^^^^^^^^^^^^ use of undeclared type `VidhanaDosha`
+
+error[E0433]: failed to resolve: use of undeclared type `VidhanaDosha`
+  --> stdlib\src\yantra\vidhana.rs:98:22
+   |
+98 |         .map_err(|e| VidhanaDosha::ChalaanaAsafala(e.to_string()))?;
+   |                      ^^^^^^^^^^^^ use of undeclared type `VidhanaDosha`
+
+error[E0433]: failed to resolve: use of undeclared type `VidhanaDosha`
+   --> stdlib\src\yantra\vidhana.rs:123:22
+    |
+123 |         .map_err(|e| VidhanaDosha::ChalaanaAsafala(e.to_string()))?;
+    |                      ^^^^^^^^^^^^ use of undeclared type `VidhanaDosha`
+
+error[E0433]: failed to resolve: use of undeclared type `VidhanaDosha`
+   --> stdlib\src\yantra\vidhana.rs:199:26
+    |
+199 |             .map_err(|e| VidhanaDosha::ChalaanaAsafala(e.to_string()))?;
+    |                          ^^^^^^^^^^^^ use of undeclared type `VidhanaDosha`
+
+error[E0433]: failed to resolve: use of undeclared type `VidhanaDosha`
+   --> stdlib\src\yantra\vidhana.rs:224:26
+    |
+224 |             .map_err(|e| VidhanaDosha::ChalaanaAsafala(e.to_string()))?;
+    |                          ^^^^^^^^^^^^ use of undeclared type `VidhanaDosha`
+
+Some errors have detailed explanations: E0412, E0422, E0432, E0433.
+For more information about an error, try `rustc --explain E0412`.
+warning: `jagannath-stdlib` (lib) generated 1 warning
+error: could not compile `jagannath-stdlib` (lib) due to 26 previous errors; 1 warning emitted

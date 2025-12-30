@@ -2,6 +2,13 @@
 //!
 //! Common imports for Jagannath programs.
 
+// Core traits (मूल लक्षण)
+pub use crate::avartana::{ChakraGati, Chakrika, EkaChakra};
+#[cfg(feature = "alloc")]
+pub use crate::dosha::Chikitsa;
+pub use crate::dosha::{Dosha, DoshaVarga};
+pub use crate::nama::{NamaShaili, NamaVistar, SanskritNama};
+
 // Core types
 pub use crate::prakara::{Parinama, Shunya, Tarka, Vikalpa, ASATYA, SATYA};
 

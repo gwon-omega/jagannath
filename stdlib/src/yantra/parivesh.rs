@@ -49,7 +49,7 @@ pub fn vidyamana(nama: &str) -> bool {
 }
 
 /// Get all environment variables
-#[cfg(feature = "std")]
+#[cfg(all(feature = "std", feature = "alloc"))]
 pub fn sabhi() -> BTreeMap<String, String> {
     std::env::vars().collect()
 }
@@ -101,7 +101,7 @@ pub fn vartamana_nirdeshika() -> Option<String> {
 }
 
 /// Set current directory
-#[cfg(feature = "std")]
+#[cfg(all(feature = "std", feature = "alloc"))]
 pub fn nirdeshika_sthapita(path: &str) -> Result<(), PariveshDosha> {
     std::env::set_current_dir(path).map_err(|e| PariveshDosha::NirdeshikaParivartana(e.to_string()))
 }

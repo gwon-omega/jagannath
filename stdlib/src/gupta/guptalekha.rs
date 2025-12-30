@@ -586,6 +586,7 @@ mod tests {
     }
 
     #[test]
+    #[cfg(feature = "alloc")]
     fn test_chacha20() {
         let key = [0u8; 32];
         let nonce = [0u8; 12];
